@@ -36,5 +36,5 @@ O servidor irá rodar em:
 http://localhost:8080
 ```
 ### Segurança
-- **Admin**: Acesso protegido para administradores com autenticação.
+- **Admin**: Acesso protegido para administradores com autenticação. O usuário é `admin` e a senha é `admin123`
 - **Cliente**: Endpoints públicos para operações de compra e consulta de criptomoedas.
