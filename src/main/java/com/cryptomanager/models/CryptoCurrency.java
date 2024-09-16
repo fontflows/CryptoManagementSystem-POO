@@ -1,8 +1,8 @@
 package com.cryptomanager.models;
 
 public class CryptoCurrency {
-    private final String name;
-    private final double price;
+    private String name;
+    private double price;
 
     public CryptoCurrency(String name, double price) {
         this.name = name;
@@ -13,12 +13,20 @@ public class CryptoCurrency {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public double getPrice() {
         return price;
     }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     @Override
     public String toString() {
-        return "CryptoCurrency{name='" + name + "', price=" + price + "}";
+        return name + "," + price;
     }
 }

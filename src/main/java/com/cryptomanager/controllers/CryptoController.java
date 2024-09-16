@@ -23,7 +23,6 @@ public class CryptoController {
         return cryptoService.getAllCryptos();
     }
 
-    // Endpoint protegido para adicionar novas criptomoedas
     @PostMapping("/add")
     public String addCrypto(@RequestBody CryptoCurrency crypto) {
         cryptoService.addCrypto(crypto);

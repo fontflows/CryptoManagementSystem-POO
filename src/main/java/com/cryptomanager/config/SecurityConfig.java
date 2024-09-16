@@ -34,9 +34,8 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        // Criando o usuário ADMIN com função ADMIN usando um encoder padrão
         UserDetails admin = User.withUsername("admin")
-                .password("{noop}admin123")  // {noop} indica que a senha não será codificada
+                .password("{noop}admin123")
                 .roles("ADMIN")
                 .build();
 

@@ -13,19 +13,22 @@ public class CryptoRepository {
     private static final String FILE_PATH = "cryptos.txt";
 
     public void saveCrypto(CryptoCurrency crypto) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true));
-        writer.write(crypto.toString() + "\n");
-        writer.close();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
+            writer.write(crypto.toString() + "\n");
+        }
     }
 
     public List<CryptoCurrency> loadCryptos() throws IOException {
         List<CryptoCurrency> cryptos = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            cryptos.add(new CryptoCurrency(line.split(",")[0], Double.parseDouble(line.split(",")[1])));
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    cryptos.add(new CryptoCurrency(parts[0], Double.parseDouble(parts[1])));
+                }
+            }
         }
-        reader.close();
         return cryptos;
     }
 }
