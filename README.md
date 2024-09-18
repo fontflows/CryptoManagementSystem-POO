@@ -117,7 +117,7 @@ mvn test
 
 ## Suporte
 
-Para suporte, por favor abra uma issue no GitHub ou entre em contato por email: eduardo.fontenele@usp.br
+Para suporte, por favor abra uma issue no GitHub ou entre em contato por email: alvarocampioni@usp.br, christyan.nantes@usp.br, davi.gabriel.domingues@usp.br e eduardo.fontenele@usp.br
 
 ## Licença
 
