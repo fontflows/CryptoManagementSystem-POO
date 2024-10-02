@@ -1,1 +1,2 @@
 testetxt,12345.0
+davizovsky,100.0
