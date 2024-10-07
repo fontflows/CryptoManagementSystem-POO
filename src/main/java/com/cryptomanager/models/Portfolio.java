@@ -3,13 +3,13 @@ package com.cryptomanager.models;
 import com.cryptomanager.repositories.PortifolioRepository;
 import java.util.List;
 
-public class Portifolio extends PortifolioRepository {
+public class Portfolio extends PortifolioRepository {
     private String id, userId, list;
-    private List<Investiment> investimentos;
+    private List<Investment> investimentos;
     private String codigo;
     private double valor;
 
-    public Portifolio(String codigo, double valor) {
+    public Portfolio(String codigo, double valor) {
         this.codigo = codigo;
         this.valor = valor;
     }
@@ -18,19 +18,19 @@ public class Portifolio extends PortifolioRepository {
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
-        Portifolio that = (Portifolio) obj;
+        Portfolio that = (Portfolio) obj;
         return Double.compare(that.valor, valor) == 0 && codigo.equals(that.codigo);
     }
 
     public static double calculoTotalPortifolio(double tempo, double taxaAtualCrypto, double valorCompra, int totalCryptos) {
-        Investiment investiment = new Investiment(tempo);
+        Investment investment = new Investment(tempo);
 
-        investiment.setQuantidade(totalCryptos);
-        investiment.setCryptoCurrency(taxaAtualCrypto);
-        investiment.setPrecoCompra(valorCompra);
-        investiment.setTempo(tempo);
+        investment.setQuantidade(totalCryptos);
+        investment.setCryptoCurrency(taxaAtualCrypto);
+        investment.setPrecoCompra(valorCompra);
+        investment.setTempoInvestment(tempo);
 
-        return investiment.modulacaoEPrestacaoParcelada();
+        return investment.modulacaoEPrestacaoParcelada();
     }
 
     public String toString() {
