@@ -2,9 +2,12 @@ package com.cryptomanager.models;
 
 public class Investment {
         private double cryptoCurrency, precoCompra, tempoInvestment;
-        private int quantidade;
+        private int quantidadeCryptosInvestidos;
 
-        public Investment(double tempoInvestment){
+        public Investment(double tempoInvestment, double cryptoCurrency, double precoCompra, int quantidadeCryptosInvestidos){
+            this.cryptoCurrency = cryptoCurrency;
+            this.precoCompra = precoCompra;
+            this.quantidadeCryptosInvestidos = quantidadeCryptosInvestidos;
             this.tempoInvestment = tempoInvestment;
         }
 
@@ -12,8 +15,8 @@ public class Investment {
             return tempoInvestment;
         }
 
-        public double getQuantidade() {
-            return quantidade;
+        public double getQuantidadeCryptosInvestidos() {
+            return quantidadeCryptosInvestidos;
         }
 
         public double getCryptoCurrency() {
@@ -36,12 +39,12 @@ public class Investment {
             this.cryptoCurrency = cryptoCurrency;
         }
 
-        public void setQuantidade(int quantidade){
-            this.quantidade = quantidade;
+        public void setQuantidadeCryptosInvestidos(int quantidadeCryptosInvestidos){
+            this.quantidadeCryptosInvestidos = quantidadeCryptosInvestidos;
         }
 
         public double modulacaoEPrestacaoParcelada(){
-            return quantidade*(precoCompra*Math.pow(1 + cryptoCurrency, tempoInvestment) +
+            return quantidadeCryptosInvestidos *(precoCompra*Math.pow(1 + cryptoCurrency, tempoInvestment) +
                     precoCompra/((Math.pow(1 + cryptoCurrency, tempoInvestment) - 1)/
                             (Math.pow(1 + cryptoCurrency, tempoInvestment))* tempoInvestment));
 
@@ -56,7 +59,7 @@ public class Investment {
             taxa de juros (ou retorno) por período e tempo é o número de períodos de capitalização.
 
             ii) A segunda parte, precoCompra/((Math.pow(1 + cryptoCurrency, tempo) - 1)/
-            (Math.pow(1 + cryptoCurrency, tempo))*tempo), parece calcular o valor presente de uma série de pagamentos
+            (Math.pow(1 + cryptoCurrency, tempo))*tempo), calcular o valor presente de uma série de pagamentos
             (anuidade) ao longo do tempo, onde os pagamentos são feitos em intervalos regulares. */
         }
     }
