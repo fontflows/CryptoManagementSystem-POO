@@ -1,18 +1,13 @@
 package com.cryptomanager.models;
 
 public class Investment {
-        private double cryptoCurrency, precoCompra, tempoInvestment;
+        private double cryptoCurrency, precoCompra;
         private int quantidadeCryptosInvestidos;
 
-        public Investment(double tempoInvestment, double cryptoCurrency, double precoCompra, int quantidadeCryptosInvestidos){
+        public Investment(double cryptoCurrency, double precoCompra, int quantidadeCryptosInvestidos){
             this.cryptoCurrency = cryptoCurrency;
             this.precoCompra = precoCompra;
             this.quantidadeCryptosInvestidos = quantidadeCryptosInvestidos;
-            this.tempoInvestment = tempoInvestment;
-        }
-
-        public double getTempoInvestment() {
-            return tempoInvestment;
         }
 
         public double getQuantidadeCryptosInvestidos() {
@@ -27,10 +22,6 @@ public class Investment {
             return precoCompra;
         }
 
-        public void setTempoInvestment(double tempoInvestment) {
-            this.tempoInvestment = tempoInvestment;
-        }
-
         public void setPrecoCompra(double precoCompra) {
             this.precoCompra = precoCompra;
         }
@@ -43,7 +34,7 @@ public class Investment {
             this.quantidadeCryptosInvestidos = quantidadeCryptosInvestidos;
         }
 
-        public double modulacaoEPrestacaoParcelada(){
+        public double modulacaoEPrestacaoParcelada(double tempoInvestment){
             return quantidadeCryptosInvestidos *(precoCompra*Math.pow(1 + cryptoCurrency, tempoInvestment) +
                     precoCompra/((Math.pow(1 + cryptoCurrency, tempoInvestment) - 1)/
                             (Math.pow(1 + cryptoCurrency, tempoInvestment))* tempoInvestment));

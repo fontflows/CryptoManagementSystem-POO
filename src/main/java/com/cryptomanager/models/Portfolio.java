@@ -1,51 +1,105 @@
 package com.cryptomanager.models;
 
-import com.cryptomanager.repositories.PortifolioRepository;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public class Portfolio extends PortifolioRepository {
-    private String id, userId, listName; /*são respectivamente o id, o usuario e o nome da lista associados ao portifolio.
-    uso ao longo do código, ou seja, voláteis às informações declaradas posteriormente pelo usário*/
-    private List<Investment> investments; //lista dos investimentos realizados na plataforma
-    private final String codigo; //codigo da criptomoeda
-    private final double valor; //valor associado à criptomoeda
-    private static Scanner sc;
+public class Portfolio {
+    private String id; // ID do portfólio
+    private String userId; // ID do usuário
+    private List<String> list; // Lista de ativos no formato "nome,quantidade"
 
-    public Portfolio(String codigo, double valor) {
-        this.codigo = codigo;
-        this.valor = valor;
+    // Construtor
+    public Portfolio(String id, String userId) {
+        if (id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("portfolioId não pode ser nulo ou vazio.");
+        }
+        if (userId == null || userId.trim().isEmpty()) {
+            throw new IllegalArgumentException("userId não pode ser nulo ou vazio.");
+        }
+
+        this.id = id;
+        this.userId = userId;
+        this.list = new ArrayList<>(); // Inicializa a lista de ativos
     }
 
+    // Adiciona um ativo ao portfólio
+    public void addAsset(String assetName, double amount) {
+        if (assetName == null || assetName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do ativo não pode ser nulo ou vazio.");
+        }
+        if (amount < 0) {
+            throw new IllegalArgumentException("Quantidade de ativo não pode ser negativa.");
+        }
+        this.list.add(assetName + "," + amount); // Armazena como "nome,quantidade"
+    }
+
+    // Método para obter a quantidade de um ativo específico
+    public Double getAssetAmount(String assetName) {
+        for (String asset : list) {
+            String[] parts = asset.split(",");
+            if (parts.length == 2 && parts[0].equals(assetName)) {
+                try {
+                    return Double.parseDouble(parts[1]);
+                } catch (NumberFormatException e) {
+                    System.err.println("Erro ao converter a quantidade do ativo: " + e.getMessage());
+                }
+            }
+        }
+        return null; // Retorna null se o ativo não for encontrado
+    }
+
+    // Método para validar se um ativo existe no portfólio
+    public boolean hasAsset(String assetName) {
+        for (String asset : list) {
+            String[] parts = asset.split(",");
+            if (parts.length == 2 && parts[0].equals(assetName)) {
+                return true; // Ativo encontrado
+            }
+        }
+        return false; // Ativo não encontrado
+    }
+
+    // Método para obter a lista de ativos no portfólio
+    public List<String> getAssets() {
+        return new ArrayList<>(list); // Retorna uma cópia da lista de ativos
+    }
+
+    // Getters
+    public String getId() {
+        return id;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public List<String> getList() { // Retorna a lista de ativos
+        return new ArrayList<>(list); // Retorna uma cópia da lista
+    }
+
+    // Método toString para representar o portfólio em formato de string
     @Override
-    public boolean equals(Object obj) { //verificador de portfolios
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(id).append(",").append(userId);
+        for (String asset : list) {
+            sb.append(",").append(asset);
+        }
+        return sb.toString();
+    }
+
+    // Método equals para comparação
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Portfolio that = (Portfolio) obj;
-        return Double.compare(that.valor, valor) == 0 && codigo.equals(that.codigo);
+        if (!(obj instanceof Portfolio)) return false;
+        Portfolio other = (Portfolio) obj;
+        return id.equals(other.id) && userId.equals(other.userId);
     }
 
-    public static void preeencherPortfolio(String id, String userId, String listName){
-        sc = new Scanner(System.in);
-        System.out.print("ID da operacao: ");
-        id = sc.nextLine();
-
-        System.out.print("ID do usuario: ");
-        userId = sc.nextLine();
-
-        System.out.println("Nome da lista de execucao: "); /*aqui seria o nome dado a operacao que o usuário está
-        realizando, como se salvasse o nome de cada investimento feito na plataforma de forma personalizada*/
-        listName = sc.nextLine();
-
-        System.out.println("Dados do portfolio preenchidos com sucesso!\n");
-    }
-
-    public static double calculoTotalPortifolio(double tempo, double taxaAtualCrypto, double valorCompra, int totalCryptos) {
-        Investment investment = new Investment(tempo,taxaAtualCrypto, valorCompra, totalCryptos);
-        return investment.modulacaoEPrestacaoParcelada();
-    }
-
-    public String toString() { //realiza a impressao dos dados relacionados ao portfolio de maneira ordenada
-        return investments + "," + id + "," + userId + "," + listName;
+    // Método hashCode para consistência em coleções
+    @Override
+    public int hashCode() {
+        return 31 * id.hashCode() + userId.hashCode();
     }
 }
