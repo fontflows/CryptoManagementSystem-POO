@@ -1,56 +1,43 @@
 package com.cryptomanager.models;
 
 public class Investment {
-        private double cryptoCurrency, precoCompra;
-        private int quantidadeCryptosInvestidos;
+    private double purchasePrice; // preço de compra da crypto
+    private CryptoCurrency cryptoCurrency;
+    private int cryptoInvestedQuantity;
 
-        public Investment(double cryptoCurrency, double precoCompra, int quantidadeCryptosInvestidos){
-            this.cryptoCurrency = cryptoCurrency;
-            this.precoCompra = precoCompra;
-            this.quantidadeCryptosInvestidos = quantidadeCryptosInvestidos;
-        }
-
-        public double getQuantidadeCryptosInvestidos() {
-            return quantidadeCryptosInvestidos;
-        }
-
-        public double getCryptoCurrency() {
-            return cryptoCurrency;
-        }
-
-        public double getPrecoCompra() {
-            return precoCompra;
-        }
-
-        public void setPrecoCompra(double precoCompra) {
-            this.precoCompra = precoCompra;
-        }
-
-        public void setCryptoCurrency(double cryptoCurrency) {
-            this.cryptoCurrency = cryptoCurrency;
-        }
-
-        public void setQuantidadeCryptosInvestidos(int quantidadeCryptosInvestidos){
-            this.quantidadeCryptosInvestidos = quantidadeCryptosInvestidos;
-        }
-
-        public double modulacaoEPrestacaoParcelada(double tempoInvestment){
-            return quantidadeCryptosInvestidos *(precoCompra*Math.pow(1 + cryptoCurrency, tempoInvestment) +
-                    precoCompra/((Math.pow(1 + cryptoCurrency, tempoInvestment) - 1)/
-                            (Math.pow(1 + cryptoCurrency, tempoInvestment))* tempoInvestment));
-
-            /* A fórmula completa calcula o valor total de um investimento que é aumentado por um montante fixo a cada
-            período (representando uma anuidade), além do crescimento devido aos juros compostos.
-            Isso ilustra contextos onde você está investindo um valor inicial e fazendo contribuições adicionais ao
-            longo do tempo.
-
-            Partes:
-            i) A expressão precoCompra * Math.pow(1 + cryptoCurrency, tempoInvestment) refere-se ao montante acumulado
-            de um investimento com juros compostos. Aqui, precoCompra é o valor inicial investido, cryptoCurrency é a
-            taxa de juros (ou retorno) por período e tempo é o número de períodos de capitalização.
-
-            ii) A segunda parte, precoCompra/((Math.pow(1 + cryptoCurrency, tempo) - 1)/
-            (Math.pow(1 + cryptoCurrency, tempo))*tempo), calcular o valor presente de uma série de pagamentos
-            (anuidade) ao longo do tempo, onde os pagamentos são feitos em intervalos regulares. */
-        }
+    public Investment(CryptoCurrency cryptoCurrency, double purchasePrice, int cryptoInvestedQuantity) {
+        this.cryptoCurrency = cryptoCurrency;
+        this.purchasePrice = purchasePrice;
+        this.cryptoInvestedQuantity = cryptoInvestedQuantity;
     }
+
+    public int getCryptoInvestedQuantity() {
+        return cryptoInvestedQuantity;
+    }
+
+    public CryptoCurrency getCryptoCurrency() {
+        return cryptoCurrency;
+    }
+
+    public double getPurchasePrice() {
+        return purchasePrice;
+    }
+
+    public void setPurchasePrice(double purchasePrice) {
+        this.purchasePrice = purchasePrice;
+    }
+
+    public void setCryptoCurrency(CryptoCurrency cryptoCurrency) {
+        this.cryptoCurrency = cryptoCurrency;
+    }
+
+    public void setCryptoInvestedQuantity(int cryptoInvestedQuantity) {
+        this.cryptoInvestedQuantity = cryptoInvestedQuantity;
+    }
+
+    @Override
+    public String toString() {
+        return cryptoCurrency.getName() + ", " + cryptoInvestedQuantity + ", " + purchasePrice; /* Formato: nomeCrypto,
+        quantidadeInvestida, precoCompra*/
+    }
+}
