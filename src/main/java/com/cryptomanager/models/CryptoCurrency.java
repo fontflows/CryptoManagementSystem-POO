@@ -10,9 +10,9 @@ public class CryptoCurrency {
     public CryptoCurrency(String name, double price,double growthRate, double marketCap, double volume24h) {
         this.name = name;
         this.price = price;
-		this.growthRate = growthRate;
-		this.marketCap = marketCap;
-		this.volume24h = volume24h;
+        this.growthRate = growthRate;
+        this.marketCap = marketCap;
+        this.volume24h = volume24h;
     }
 
     public String getName() {
