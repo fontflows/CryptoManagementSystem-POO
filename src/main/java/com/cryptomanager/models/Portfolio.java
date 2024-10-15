@@ -9,13 +9,11 @@ public class Portfolio {
     private final List<Investment> investments;
 
     public Portfolio(String id, String userId) {
-        if (id == null || id.isEmpty()) {
+        if (id == null || id.isEmpty())
             throw new IllegalArgumentException("portfolioId não pode ser nulo ou vazio.");
-        }
 
-        if (userId == null || userId.isEmpty()) {
+        if (userId == null || userId.isEmpty())
             throw new IllegalArgumentException("userId não pode ser nulo ou vazio.");
-        }
 
         this.id = id;
         this.userId = userId;
@@ -34,31 +32,42 @@ public class Portfolio {
         return investments;
     }
 
-    // Método para obter a quantidade de um ativo específico
     public Double getAssetAmount(String assetName) {
         for (Investment investment : investments) {
-            if (investment.getCryptoCurrency().getName().equals(assetName)) {
-                return (double) investment.getCryptoInvestedQuantity(); // Retorna a quantidade
-            }
+            if (investment.getCryptoCurrency().getName().equals(assetName))
+                return investment.getCryptoInvestedQuantity(); // Retorna a quantidade
         }
         return null; // Retorna null se o ativo não for encontrado
     }
 
-    // Método para validar se um ativo existe no portfólio
-    public boolean hasAsset(String assetName) { // Argumento expressa o nome do ativo
-        for (Investment investment : investments) {
-            if (investment.getCryptoCurrency().getName().equals(assetName)) {
-                return true; // Ativo encontrado
-            }
-        }
-        return false; // Ativo não encontrado
+    public boolean hasAsset(String assetName) { // Verifica se há algum ativo existente
+        for (Investment investment : investments)
+            if (investment.getCryptoCurrency().getName().equals(assetName))
+                return true;
+        return false;
     }
 
-    public void addAsset(CryptoCurrency cryptoCurrency, double purchasePrice, int cryptoInvestedQuantity) {
-        this.investments.add(new Investment(cryptoCurrency, purchasePrice, cryptoInvestedQuantity));
+    public void addAsset(CryptoCurrency cryptoCurrency, double purchasePrice, double cryptoInvestedQuantity) { // Adiciona ativo
+        Investment existingInvestment = investments.stream()
+                .filter(investment -> investment.getCryptoCurrency().getName().equals(cryptoCurrency.getName()))
+                .findFirst()
+                .orElse(null);
+
+        if (existingInvestment != null) {
+            // Atualiza o investimento existente, além de ter lógica de preço médio.
+            double totalQuantity = existingInvestment.getCryptoInvestedQuantity() + cryptoInvestedQuantity;
+            double totalValue = (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity()) +
+                    (purchasePrice * cryptoInvestedQuantity);
+            double averagePrice = totalValue / totalQuantity;
+
+            // Atualiza o investimento
+            existingInvestment.setCryptoInvestedQuantity(totalQuantity);
+            existingInvestment.setPurchasePrice(averagePrice);
+        } else
+            // Adiciona um novo investimento
+            investments.add(new Investment(cryptoCurrency, purchasePrice, cryptoInvestedQuantity));
     }
 
-    // Método equals para comparação
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

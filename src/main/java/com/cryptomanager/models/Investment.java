@@ -3,15 +3,15 @@ package com.cryptomanager.models;
 public class Investment {
     private double purchasePrice; // preço de compra da crypto
     private CryptoCurrency cryptoCurrency;
-    private int cryptoInvestedQuantity;
+    private double cryptoInvestedQuantity;
 
-    public Investment(CryptoCurrency cryptoCurrency, double purchasePrice, int cryptoInvestedQuantity) {
+    public Investment(CryptoCurrency cryptoCurrency, double purchasePrice, double cryptoInvestedQuantity) {
         this.cryptoCurrency = cryptoCurrency;
         this.purchasePrice = purchasePrice;
         this.cryptoInvestedQuantity = cryptoInvestedQuantity;
     }
 
-    public int getCryptoInvestedQuantity() {
+    public double getCryptoInvestedQuantity() {
         return cryptoInvestedQuantity;
     }
 
@@ -31,7 +31,7 @@ public class Investment {
         this.cryptoCurrency = cryptoCurrency;
     }
 
-    public void setCryptoInvestedQuantity(int cryptoInvestedQuantity) {
+    public void setCryptoInvestedQuantity(double cryptoInvestedQuantity) {
         this.cryptoInvestedQuantity = cryptoInvestedQuantity;
     }
 
