@@ -25,10 +25,13 @@ public class PortfolioRepository {
 
         // Atualiza ou adiciona investimentos
         for (Investment investment : portfolio.getInvestments()) {
-            Portfolio existingPortfolio = existingPortfolios.stream()
-                    .filter(p -> p.getId().equals(portfolio.getId()))
-                    .findFirst()
-                    .orElse(null);
+            Portfolio existingPortfolio = null;
+            for (Portfolio p : existingPortfolios) {
+                if (p.getId().equals(portfolio.getId())) {
+                    existingPortfolio = p;
+                    break;
+                }
+            }
 
             if (existingPortfolio != null) {
                 // Atualiza a quantidade e preço de compra se o ativo já existir
@@ -75,9 +78,8 @@ public class PortfolioRepository {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                if (line.isEmpty()) {
+                if (line.isEmpty())
                     continue;
-                }
 
                 String[] parts = line.split(",");
                 if (parts.length < 5) continue; // Verifica se a linha tem dados suficientes
@@ -90,13 +92,18 @@ public class PortfolioRepository {
                     double quantity = Double.parseDouble(parts[3]);
                     double purchasePrice = Double.parseDouble(parts[4]);
 
-                    Portfolio portfolio = portfolioList.stream()
-                            .filter(p -> p.getId().equals(portfolioId))
-                            .findFirst()
-                            .orElse(new Portfolio(portfolioId, userIdFromFile));
+                    Portfolio portfolio = null;
+                    for (Portfolio p : portfolioList) {
+                        if (p.getId().equals(portfolioId)) {
+                            portfolio = p;
+                            break;
+                        }
+                    }
 
-                    if (!portfolioList.contains(portfolio))
+                    if (portfolio == null) {
+                        portfolio = new Portfolio(portfolioId, userIdFromFile);
                         portfolioList.add(portfolio);
+                    }
 
                     CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, purchasePrice);
                     portfolio.addAsset(cryptoCurrency, purchasePrice, quantity);
@@ -116,10 +123,13 @@ public class PortfolioRepository {
         }
 
         List<Portfolio> portfolios = loadPortfolioByUserId(userId);
-        Portfolio portfolioToRemoveFrom = portfolios.stream()
-                .filter(p -> p.getId().equals(portfolioId))
-                .findFirst()
-                .orElse(null);
+        Portfolio portfolioToRemoveFrom = null;
+        for (Portfolio p : portfolios) {
+            if (p.getId().equals(portfolioId)) {
+                portfolioToRemoveFrom = p;
+                break;
+            }
+        }
 
         if (portfolioToRemoveFrom != null && portfolioToRemoveFrom.hasAsset(assetName)) {
             List<Investment> newInvestments = new ArrayList<>();
@@ -151,20 +161,5 @@ public class PortfolioRepository {
             return false;
         }
         return true;
-    }
-
-    public void displayPortfolioInfo(Portfolio portfolio) {
-        for (Investment investment : portfolio.getInvestments()) {
-            String assetName = investment.getCryptoCurrency().getName();
-            System.out.println("Ativo: " + assetName);
-            System.out.println("Quantidade: " + portfolio.getAssetAmount(assetName));
-            System.out.println("Preço de compra: " + investment.getPurchasePrice());
-
-            // Usando hasAsset para uma verificação adicional
-            if (portfolio.hasAsset(assetName))
-                System.out.println(assetName + " está no portfólio.");
-            else
-                System.out.println(assetName + " não está no portfólio.");
-        }
     }
 }

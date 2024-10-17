@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Portfolio {
     private final String id; // ID do portfolio
-    private final String userId;
-    private final List<Investment> investments;
+    private final String userId; // ID do usuário
+    private final List<Investment> investments; // Lista de investimentos
 
     public Portfolio(String id, String userId) {
         if (id == null || id.isEmpty())
@@ -48,10 +48,14 @@ public class Portfolio {
     }
 
     public void addAsset(CryptoCurrency cryptoCurrency, double purchasePrice, double cryptoInvestedQuantity) { // Adiciona ativo
-        Investment existingInvestment = investments.stream()
-                .filter(investment -> investment.getCryptoCurrency().getName().equals(cryptoCurrency.getName()))
-                .findFirst()
-                .orElse(null);
+        Investment existingInvestment = null;
+
+        for (Investment investment : investments) {
+            if (investment.getCryptoCurrency().getName().equals(cryptoCurrency.getName())) {
+                existingInvestment = investment;
+                break;
+            }
+        }
 
         if (existingInvestment != null) {
             // Atualiza o investimento existente, além de ter lógica de preço médio.
@@ -70,9 +74,18 @@ public class Portfolio {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Portfolio other)) return false;
-        return id.equals(other.id) && userId.equals(other.userId);
+        if (this == obj) return true; /* Este trecho verifica se o objeto atual (this) é o mesmo que o objeto passado
+        como argumento (obj). Se forem o mesmo objeto na memória, retorna true, indicando que são iguais.*/
+
+        if (!(obj instanceof Portfolio other)) return false; /* O método verifica se obj é uma instância da classe
+        Portfolio. Se não for, retorna false.
+        A parte instanceof Portfolio other também realiza uma conversão segura de obj para Portfolio, atribuindo-o à
+        variável other. Isso permite que acessar os atributos do objeto other mais adiante sem precisar fazer uma
+        conversão adicional.*/
+
+        return id.equals(other.id) && userId.equals(other.userId); /* Se obj é uma instância de Portfolio, o
+        método compara os atributos id e userId do objeto atual (this) com os do objeto other.
+        Se ambos os atributos forem iguais, o método retorna true. Caso contrário, retorna false. */
     }
 
     @Override

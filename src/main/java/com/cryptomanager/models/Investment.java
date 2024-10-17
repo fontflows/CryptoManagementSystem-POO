@@ -1,9 +1,9 @@
 package com.cryptomanager.models;
 
 public class Investment {
-    private double purchasePrice; // preço de compra da crypto
-    private CryptoCurrency cryptoCurrency;
-    private double cryptoInvestedQuantity;
+    private double purchasePrice; // Preço de compra da crypto
+    private CryptoCurrency cryptoCurrency; // Variável que faz referência à classe CryptoCurrency
+    private double cryptoInvestedQuantity; // Quantidade de cryptos investidas
 
     public Investment(CryptoCurrency cryptoCurrency, double purchasePrice, double cryptoInvestedQuantity) {
         this.cryptoCurrency = cryptoCurrency;
