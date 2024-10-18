@@ -47,7 +47,8 @@ public class Portfolio {
         return false;
     }
 
-    public void addAsset(CryptoCurrency cryptoCurrency, double purchasePrice, double cryptoInvestedQuantity) { // Adiciona ativo
+    public void addAsset(CryptoCurrency cryptoCurrency, double purchasePrice, double cryptoInvestedQuantity) { /* Adição
+    de ativos*/
         Investment existingInvestment = null;
 
         for (Investment investment : investments) {
@@ -60,8 +61,8 @@ public class Portfolio {
         if (existingInvestment != null) {
             // Atualiza o investimento existente, além de ter lógica de preço médio.
             double totalQuantity = existingInvestment.getCryptoInvestedQuantity() + cryptoInvestedQuantity;
-            double totalValue = (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity()) +
-                    (purchasePrice * cryptoInvestedQuantity);
+            double totalValue = (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity())
+                    + (purchasePrice * cryptoInvestedQuantity);
             double averagePrice = totalValue / totalQuantity;
 
             // Atualiza o investimento
@@ -80,12 +81,12 @@ public class Portfolio {
         if (!(obj instanceof Portfolio other)) return false; /* O método verifica se obj é uma instância da classe
         Portfolio. Se não for, retorna false.
         A parte instanceof Portfolio other também realiza uma conversão segura de obj para Portfolio, atribuindo-o à
-        variável other. Isso permite que acessar os atributos do objeto other mais adiante sem precisar fazer uma
+        variável other. Isso permite acessar os atributos do objeto other mais adiante sem precisar fazer uma
         conversão adicional.*/
 
         return id.equals(other.id) && userId.equals(other.userId); /* Se obj é uma instância de Portfolio, o
-        método compara os atributos id e userId do objeto atual (this) com os do objeto other.
-        Se ambos os atributos forem iguais, o método retorna true. Caso contrário, retorna false. */
+        método compara os atributos ID e userId do objeto atual (this) com os do objeto other.
+        Se ambos os atributos forem iguais, o método retorna true. Caso contrário, false. */
     }
 
     @Override
@@ -97,8 +98,8 @@ public class Portfolio {
                     .append(getAssetAmount(investment.getCryptoCurrency().getName()))
                     .append(", Preço: ")
                     .append(investment.getPurchasePrice())
-                    .append("\n"); // Adiciona nova linha entre os investimentos
+                    .append("\n"); // Adição de nova linha entre os investimentos
         }
-        return sb.toString(); // Retorna a string dos investimentos
+        return sb.toString(); // Retorno da string dos investimentos
     }
 }

@@ -20,39 +20,117 @@ public class PortfolioRepository {
             return;
         }
 
-        // Carrega portfólios existentes
-        List<Portfolio> existingPortfolios = loadPortfolioByUserId(portfolio.getUserId());
+        // Carregamento do portfólio existente
+        Portfolio existingPortfolio = loadPortfolioByUserIdAndPortfolioId(portfolio.getUserId(), portfolio.getId());
 
         // Atualiza ou adiciona investimentos
         for (Investment investment : portfolio.getInvestments()) {
-            Portfolio existingPortfolio = null;
-            for (Portfolio p : existingPortfolios) {
-                if (p.getId().equals(portfolio.getId())) {
-                    existingPortfolio = p;
-                    break;
-                }
-            }
-
             if (existingPortfolio != null) {
-                // Atualiza a quantidade e preço de compra se o ativo já existir
+                // Atualização da quantidade e do preço de compra, caso o ativo já exista
                 if (existingPortfolio.hasAsset(investment.getCryptoCurrency().getName())) {
                     existingPortfolio.getInvestments().remove(investment);
-                    existingPortfolio.addAsset(investment.getCryptoCurrency(), investment.getPurchasePrice(), investment.getCryptoInvestedQuantity());
-                } else {
-                    existingPortfolio.addAsset(investment.getCryptoCurrency(), investment.getPurchasePrice(), investment.getCryptoInvestedQuantity());
                 }
+                existingPortfolio.addAsset(investment.getCryptoCurrency(), investment.getPurchasePrice(),
+                        investment.getCryptoInvestedQuantity());
             } else {
-                portfolio.addAsset(investment.getCryptoCurrency(), investment.getPurchasePrice(), investment.getCryptoInvestedQuantity());
+                portfolio.addAsset(investment.getCryptoCurrency(), investment.getPurchasePrice(),
+                        investment.getCryptoInvestedQuantity());
             }
         }
-        // Salva todos os portfólios de volta ao arquivo
-        savePortfolios(existingPortfolios);
+        // Salvamento de todos os portfólios de volta ao arquivo txt
+        savePortfolio(portfolio); // Salva o portfólio atualizado
+    }
+
+    // Método para salvar um portfólio no arquivo
+    private void savePortfolio(Portfolio portfolio) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
+            writer.write(portfolio.getId() + "," + portfolio.getUserId() + "\n");
+            for (Investment investment : portfolio.getInvestments()) {
+                writer.write(portfolio.getId() + "," + portfolio.getUserId() + "," +
+                        investment.getCryptoCurrency().getName() + "," +
+                        investment.getCryptoInvestedQuantity() + "," +
+                        investment.getPurchasePrice() + "\n");
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar portfólio: " + e.getMessage());
+        }
+    }
+
+    // Método para carregar um portfólio específico de um usuário
+    public Portfolio loadPortfolioByUserIdAndPortfolioId(String userId, String portfolioId) {
+        if (userId == null || userId.isEmpty()) {
+            System.err.println("Erro: userId não pode ser nulo ou vazio.");
+            return null; // Retorna null se o userId for inválido
+        }
+
+        if (portfolioId == null || portfolioId.isEmpty()) {
+            System.err.println("Erro: portfolioId não pode ser nulo ou vazio.");
+            return null; // Retorna null se o portfolioId for inválido
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.isEmpty()) continue;
+
+                String[] parts = line.split(",");
+                if (parts.length < 5) continue; // Verifica se a linha tem dados suficientes
+
+                String loadedPortfolioId = parts[0];
+                String userIdFromFile = parts[1];
+
+                if (userIdFromFile.equals(userId) && loadedPortfolioId.equals(portfolioId)) {
+                    String cryptoName = parts[2];
+                    double quantity = Double.parseDouble(parts[3]);
+                    double purchasePrice = Double.parseDouble(parts[4]);
+
+                    Portfolio portfolio = new Portfolio(loadedPortfolioId, userIdFromFile);
+                    CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, purchasePrice);
+                    portfolio.addAsset(cryptoCurrency, purchasePrice, quantity);
+
+                    return portfolio; // Retorna o portfólio encontrado
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao carregar portfólio: " + e.getMessage());
+        }
+
+        return null; // Retorna null se o portfólio não for encontrado
+    }
+
+    // Método para remover um ativo de um portfólio pelo ID e userId
+    public void removeAssetFromPortfolio(String portfolioId, String userId, String assetName) {
+        if (portfolioId == null || portfolioId.isEmpty() || userId == null || userId.isEmpty()) {
+            System.err.println("Erro: portfolioId e/ou userId não podem ser nulos ou vazios.");
+            return;
+        }
+
+        Portfolio portfolioToRemoveFrom = loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
+
+        if (portfolioToRemoveFrom != null && portfolioToRemoveFrom.hasAsset(assetName)) {
+            List<Investment> newInvestments = new ArrayList<>();
+            for (Investment investment : portfolioToRemoveFrom.getInvestments()) {
+                if (!investment.getCryptoCurrency().getName().equals(assetName)) {
+                    newInvestments.add(investment);
+                }
+            }
+            portfolioToRemoveFrom.getInvestments().clear();
+            portfolioToRemoveFrom.getInvestments().addAll(newInvestments);
+
+            // Reescreve o arquivo com todos os portfólios atualizados
+            saveAllPortfolios();
+        } else {
+            System.err.println("Erro: Ativo não encontrado no portfólio ou portfólio inválido.");
+        }
     }
 
     // Método para salvar todos os portfólios no arquivo
-    private void savePortfolios(List<Portfolio> portfolios) {
+    private void saveAllPortfolios() {
+        List<Portfolio> allPortfolios = loadAllPortfolios(); // Método para carregar todos os portfólios
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            for (Portfolio portfolio : portfolios) {
+            for (Portfolio portfolio : allPortfolios) {
                 writer.write(portfolio.getId() + "," + portfolio.getUserId() + "\n");
                 for (Investment investment : portfolio.getInvestments()) {
                     writer.write(portfolio.getId() + "," + portfolio.getUserId() + "," +
@@ -66,88 +144,49 @@ public class PortfolioRepository {
         }
     }
 
-    // Método para carregar o portfólio de um usuário específico
-    public List<Portfolio> loadPortfolioByUserId(String userId) {
-        if (userId == null || userId.isEmpty()) {
-            System.err.println("Erro: userId não pode ser nulo ou vazio.");
-            return new ArrayList<>();
-        }
-
+    // Método para carregar todos os portfólios
+    private List<Portfolio> loadAllPortfolios() {
         List<Portfolio> portfolioList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
 
             while ((line = reader.readLine()) != null) {
-                if (line.isEmpty())
-                    continue;
+                if (line.isEmpty()) continue;
 
                 String[] parts = line.split(",");
                 if (parts.length < 5) continue; // Verifica se a linha tem dados suficientes
 
                 String portfolioId = parts[0];
-                String userIdFromFile = parts[1];
+                String userId = parts[1];
+                String cryptoName = parts[2];
+                double quantity = Double.parseDouble(parts[3]);
+                double purchasePrice = Double.parseDouble(parts[4]);
 
-                if (userIdFromFile.equals(userId)) {
-                    String cryptoName = parts[2];
-                    double quantity = Double.parseDouble(parts[3]);
-                    double purchasePrice = Double.parseDouble(parts[4]);
-
-                    Portfolio portfolio = null;
-                    for (Portfolio p : portfolioList) {
-                        if (p.getId().equals(portfolioId)) {
-                            portfolio = p;
-                            break;
-                        }
+                Portfolio portfolio = null;
+                for (Portfolio p : portfolioList) {
+                    if (p.getId().equals(portfolioId)) {
+                        portfolio = p;
+                        break;
                     }
-
-                    if (portfolio == null) {
-                        portfolio = new Portfolio(portfolioId, userIdFromFile);
-                        portfolioList.add(portfolio);
-                    }
-
-                    CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, purchasePrice);
-                    portfolio.addAsset(cryptoCurrency, purchasePrice, quantity);
                 }
+
+                if (portfolio == null) {
+                    portfolio = new Portfolio(portfolioId, userId);
+                    portfolioList.add(portfolio);
+                }
+
+                CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, purchasePrice);
+                portfolio.addAsset(cryptoCurrency, purchasePrice, quantity);
             }
         } catch (IOException e) {
-            System.err.println("Erro ao carregar portfólio: " + e.getMessage());
+            System.err.println("Erro ao carregar portfólios: " + e.getMessage());
         }
         return portfolioList;
     }
 
-    // Método para remover um portfólio pelo ID e userId
-    public void removePortfolio(String portfolioId, String userId, String assetName) {
-        if (portfolioId == null || portfolioId.isEmpty() || userId == null || userId.isEmpty()) {
-            System.err.println("Erro: portfolioId e/ou userId não podem ser nulos ou vazios.");
-            return;
-        }
-
-        List<Portfolio> portfolios = loadPortfolioByUserId(userId);
-        Portfolio portfolioToRemoveFrom = null;
-        for (Portfolio p : portfolios) {
-            if (p.getId().equals(portfolioId)) {
-                portfolioToRemoveFrom = p;
-                break;
-            }
-        }
-
-        if (portfolioToRemoveFrom != null && portfolioToRemoveFrom.hasAsset(assetName)) {
-            List<Investment> newInvestments = new ArrayList<>();
-            for (Investment investment : portfolioToRemoveFrom.getInvestments()) {
-                if (!investment.getCryptoCurrency().getName().equals(assetName))
-                    newInvestments.add(investment);
-            }
-            portfolioToRemoveFrom.getInvestments().clear();
-            portfolioToRemoveFrom.getInvestments().addAll(newInvestments);
-        } else
-            System.err.println("Erro: Ativo não encontrado no portfólio ou portfólio inválido.");
-        // Reescreve o arquivo, omitindo o ativo removido
-    }
-
     // Método de validação de portfólio
     private boolean isValidPortfolio(Portfolio portfolio) {
-        if (portfolio == null)
-            return false;
+        if (portfolio == null) return false;
         if (portfolio.getUserId() == null || portfolio.getUserId().isEmpty()) {
             System.err.println("Erro: userId não pode ser nulo ou vazio.");
             return false;
