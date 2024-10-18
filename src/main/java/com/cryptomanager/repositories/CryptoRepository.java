@@ -24,8 +24,8 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 2) {
-                    cryptos.add(new CryptoCurrency(parts[0], Double.parseDouble(parts[1])));
+                if (parts.length == 5) {
+                    cryptos.add(new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]),Double.parseDouble(parts[3]),Double.parseDouble(parts[4])));
                 }
             }
         }
