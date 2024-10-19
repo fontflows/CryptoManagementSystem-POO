@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Portfolio {
-    private final String id; // ID do portfolio
-    private final String userId; // ID do usuário
-    private final List<Investment> investments; // Lista de investimentos
+    private String id; // ID do portfolio
+    private String userId; // ID do usuário
+    private  List<Investment> investments; // Lista de investimentos
 
     public Portfolio(String id, String userId) {
         if (id == null || id.isEmpty())
@@ -32,45 +32,18 @@ public class Portfolio {
         return investments;
     }
 
+    public void setId(final String id) {this.id = id;}
+
+    public void setUserId(final String userId) {this.userId = userId;}
+
+    public void setInvestments(final List<Investment> investments) {this.investments = investments;}
+
     public Double getAssetAmount(String assetName) {
         for (Investment investment : investments) {
             if (investment.getCryptoCurrency().getName().equals(assetName))
                 return investment.getCryptoInvestedQuantity(); // Retorna a quantidade
         }
         return null; // Retorna null se o ativo não for encontrado
-    }
-
-    public boolean hasAsset(String assetName) { // Verifica se há algum ativo existente
-        for (Investment investment : investments)
-            if (investment.getCryptoCurrency().getName().equals(assetName))
-                return true;
-        return false;
-    }
-
-    public void addAsset(CryptoCurrency cryptoCurrency, double purchasePrice, double cryptoInvestedQuantity) { /* Adição
-    de ativos*/
-        Investment existingInvestment = null;
-
-        for (Investment investment : investments) {
-            if (investment.getCryptoCurrency().getName().equals(cryptoCurrency.getName())) {
-                existingInvestment = investment;
-                break;
-            }
-        }
-
-        if (existingInvestment != null) {
-            // Atualiza o investimento existente, além de ter lógica de preço médio.
-            double totalQuantity = existingInvestment.getCryptoInvestedQuantity() + cryptoInvestedQuantity;
-            double totalValue = (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity())
-                    + (purchasePrice * cryptoInvestedQuantity);
-            double averagePrice = totalValue / totalQuantity;
-
-            // Atualiza o investimento
-            existingInvestment.setCryptoInvestedQuantity(totalQuantity);
-            existingInvestment.setPurchasePrice(averagePrice);
-        } else
-            // Adiciona um novo investimento
-            investments.add(new Investment(cryptoCurrency, purchasePrice, cryptoInvestedQuantity));
     }
 
     @Override

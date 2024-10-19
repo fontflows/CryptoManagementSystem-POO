@@ -31,4 +31,12 @@ public class CryptoRepository {
         }
         return cryptos;
     }
+
+    public void deleteCrypto(CryptoCurrency cryptoToDelete) throws IOException {
+        List<CryptoCurrency> cryptos = loadCryptos();
+        cryptos.removeIf(crypto -> crypto.getName().equals(cryptoToDelete.getName()));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
+            writer.write(cryptos.toString() + "\n");
+        } // ta errado
+    }
 }

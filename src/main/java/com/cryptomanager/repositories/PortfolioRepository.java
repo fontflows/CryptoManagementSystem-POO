@@ -13,36 +13,8 @@ import java.util.List;
 public class PortfolioRepository {
     private static final String FILE_PATH = "portfolio.txt";
 
-    // Método para adicionar ou atualizar um portfólio
-    public void addPortfolio(Portfolio portfolio) {
-        if (!isValidPortfolio(portfolio)) {
-            System.err.println("Erro: Portfólio inválido.");
-            return;
-        }
-
-        // Carregamento do portfólio existente
-        Portfolio existingPortfolio = loadPortfolioByUserIdAndPortfolioId(portfolio.getUserId(), portfolio.getId());
-
-        // Atualiza ou adiciona investimentos
-        for (Investment investment : portfolio.getInvestments()) {
-            if (existingPortfolio != null) {
-                // Atualização da quantidade e do preço de compra, caso o ativo já exista
-                if (existingPortfolio.hasAsset(investment.getCryptoCurrency().getName())) {
-                    existingPortfolio.getInvestments().remove(investment);
-                }
-                existingPortfolio.addAsset(investment.getCryptoCurrency(), investment.getPurchasePrice(),
-                        investment.getCryptoInvestedQuantity());
-            } else {
-                portfolio.addAsset(investment.getCryptoCurrency(), investment.getPurchasePrice(),
-                        investment.getCryptoInvestedQuantity());
-            }
-        }
-        // Salvamento de todos os portfólios de volta ao arquivo txt
-        savePortfolio(portfolio); // Salva o portfólio atualizado
-    }
-
     // Método para salvar um portfólio no arquivo
-    private void savePortfolio(Portfolio portfolio) {
+    public void savePortfolio(Portfolio portfolio) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
             writer.write(portfolio.getId() + "," + portfolio.getUserId() + "\n");
             for (Investment investment : portfolio.getInvestments()) {
@@ -87,7 +59,7 @@ public class PortfolioRepository {
 
                     Portfolio portfolio = new Portfolio(loadedPortfolioId, userIdFromFile);
                     CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, purchasePrice);
-                    portfolio.addAsset(cryptoCurrency, purchasePrice, quantity);
+                    addAsset(cryptoCurrency, purchasePrice, quantity, portfolio);
 
                     return portfolio; // Retorna o portfólio encontrado
                 }
@@ -99,6 +71,14 @@ public class PortfolioRepository {
         return null; // Retorna null se o portfólio não for encontrado
     }
 
+    public boolean hasAsset(String assetName, Portfolio portfolio) { // Verifica se há algum ativo existente
+        for (Investment investment : portfolio.getInvestments())
+            if (investment.getCryptoCurrency().getName().equals(assetName))
+                return true;
+        return false;
+    }
+
+    // Aqui vai usar quando fizermos a função de delete do txt
     // Método para remover um ativo de um portfólio pelo ID e userId
     public void removeAssetFromPortfolio(String portfolioId, String userId, String assetName) {
         if (portfolioId == null || portfolioId.isEmpty() || userId == null || userId.isEmpty()) {
@@ -108,7 +88,7 @@ public class PortfolioRepository {
 
         Portfolio portfolioToRemoveFrom = loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
 
-        if (portfolioToRemoveFrom != null && portfolioToRemoveFrom.hasAsset(assetName)) {
+        if (portfolioToRemoveFrom != null && hasAsset(assetName, portfolioToRemoveFrom)) {
             List<Investment> newInvestments = new ArrayList<>();
             for (Investment investment : portfolioToRemoveFrom.getInvestments()) {
                 if (!investment.getCryptoCurrency().getName().equals(assetName)) {
@@ -176,7 +156,7 @@ public class PortfolioRepository {
                 }
 
                 CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, purchasePrice);
-                portfolio.addAsset(cryptoCurrency, purchasePrice, quantity);
+                addAsset(cryptoCurrency, purchasePrice, quantity, portfolio);
             }
         } catch (IOException e) {
             System.err.println("Erro ao carregar portfólios: " + e.getMessage());
@@ -185,7 +165,7 @@ public class PortfolioRepository {
     }
 
     // Método de validação de portfólio
-    private boolean isValidPortfolio(Portfolio portfolio) {
+    public boolean isValidPortfolio(Portfolio portfolio) {
         if (portfolio == null) return false;
         if (portfolio.getUserId() == null || portfolio.getUserId().isEmpty()) {
             System.err.println("Erro: userId não pode ser nulo ou vazio.");
@@ -200,5 +180,32 @@ public class PortfolioRepository {
             return false;
         }
         return true;
+    }
+
+    public static void addAsset(CryptoCurrency cryptoCurrency, double purchasePrice, double cryptoInvestedQuantity, Portfolio portfolioToAdd) { /* Adição
+    de ativos*/
+        Investment existingInvestment = null;
+        List<Investment> investmentsActual = portfolioToAdd.getInvestments();
+
+        for (Investment investment : investmentsActual) {
+            if (investment.getCryptoCurrency().getName().equals(cryptoCurrency.getName())) {
+                existingInvestment = investment;
+                break;
+            }
+        }
+
+        if (existingInvestment != null) {
+            // Atualiza o investimento existente, além de ter lógica de preço médio.
+            double totalQuantity = existingInvestment.getCryptoInvestedQuantity() + cryptoInvestedQuantity;
+            double totalValue = (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity())
+                    + (purchasePrice * cryptoInvestedQuantity);
+            double averagePrice = totalValue / totalQuantity;
+
+            // Atualiza o investimento
+            existingInvestment.setCryptoInvestedQuantity(totalQuantity);
+            existingInvestment.setPurchasePrice(averagePrice);
+        } else
+            // Adiciona um novo investimento
+            investmentsActual.add(new Investment(cryptoCurrency, purchasePrice, cryptoInvestedQuantity));
     }
 }

@@ -39,4 +39,13 @@ public class CryptoService {
             throw new CryptoServiceException("Erro ao salvar criptomoeda: " + crypto.getName(), e);
         }
     }
+
+    public void deleteCrypto(CryptoCurrency cryptotoDelete) {
+        try {
+                cryptoRepository.deleteCrypto(cryptotoDelete);
+        } catch (Exception e) {
+            logger.error("Erro ao deletar criptomoeda: {}", cryptotoDelete.getName(), e);
+            throw new CryptoServiceException("Erro ao deletar criptomoeda", e);
+        }
+    }
 }
