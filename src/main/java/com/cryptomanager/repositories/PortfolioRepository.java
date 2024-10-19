@@ -42,6 +42,7 @@ public class PortfolioRepository {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
+            List<Investment> investments = new ArrayList<>(); // Lista para armazenar os investimentos
 
             while ((line = reader.readLine()) != null) {
                 if (line.isEmpty()) continue;
@@ -51,18 +52,19 @@ public class PortfolioRepository {
 
                 String loadedPortfolioId = parts[0];
                 String userIdFromFile = parts[1];
-                List<Investment> investments = new ArrayList<>(); //MUDAR
 
                 if (userIdFromFile.equals(userId) && loadedPortfolioId.equals(portfolioId)) {
+                    // Carrega os investimentos
                     String cryptoName = parts[2];
                     double quantity = Double.parseDouble(parts[3]);
                     double purchasePrice = Double.parseDouble(parts[4]);
 
-                    Portfolio portfolio = new Portfolio(loadedPortfolioId, userIdFromFile, investments);
                     CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, purchasePrice);
-                    addAsset(cryptoCurrency, purchasePrice, quantity, portfolio);
+                    Investment investment = new Investment(cryptoCurrency, purchasePrice, quantity);
+                    investments.add(investment); // Adiciona o investimento à lista
 
-                    return portfolio; // Retorna o portfólio encontrado
+                    // Cria e retorna o portfólio
+                    return new Portfolio(loadedPortfolioId, userIdFromFile, investments);
                 }
             }
         } catch (IOException e) {
@@ -142,8 +144,8 @@ public class PortfolioRepository {
                 String cryptoName = parts[2];
                 double quantity = Double.parseDouble(parts[3]);
                 double purchasePrice = Double.parseDouble(parts[4]);
-                List<Investment> investments = new ArrayList<>(); //MUDAR
 
+                // Verifica se o portfólio já existe
                 Portfolio portfolio = null;
                 for (Portfolio p : portfolioList) {
                     if (p.getId().equals(portfolioId)) {
@@ -152,13 +154,16 @@ public class PortfolioRepository {
                     }
                 }
 
+                // Se o portfólio não existe, cria um novo
                 if (portfolio == null) {
-                    portfolio = new Portfolio(portfolioId, userId, investments);
+                    portfolio = new Portfolio(portfolioId, userId, new ArrayList<>());
                     portfolioList.add(portfolio);
                 }
 
+                // Cria o investimento e adiciona ao portfólio
                 CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, purchasePrice);
-                addAsset(cryptoCurrency, purchasePrice, quantity, portfolio);
+                Investment investment = new Investment(cryptoCurrency, purchasePrice, quantity);
+                portfolio.getInvestments().add(investment);
             }
         } catch (IOException e) {
             System.err.println("Erro ao carregar portfólios: " + e.getMessage());
