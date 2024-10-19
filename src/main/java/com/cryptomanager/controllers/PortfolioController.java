@@ -17,8 +17,8 @@ public class PortfolioController {
     }
 
     @GetMapping("/total-value")
-    public double calculateTotalValue(@RequestBody Portfolio portfolio) {
-        return portfolioService.calculateTotalValue(portfolio);
+    public double calculateTotalValue(@RequestParam String userId, @RequestParam String portfolioId) {
+        return portfolioService.calculateTotalValue(userId, portfolioId);
     }
 
     @PostMapping("/add")

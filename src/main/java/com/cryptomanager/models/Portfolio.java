@@ -8,7 +8,7 @@ public class Portfolio {
     private String userId; // ID do usuário
     private  List<Investment> investments; // Lista de investimentos
 
-    public Portfolio(String id, String userId) {
+    public Portfolio(String id, String userId, List<Investment> investments) {
         if (id == null || id.isEmpty())
             throw new IllegalArgumentException("portfolioId não pode ser nulo ou vazio.");
 

@@ -17,8 +17,9 @@ public class PortfolioService{
         this.portfolioRepository = portfolioRepository;
     }
 
-    public double calculateTotalValue(Portfolio portfolio) {
+    public double calculateTotalValue(String userId, String portfolioId) {
         double totalValue = 0.0;
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
         for (Investment investment : portfolio.getInvestments()) {
             // Obtém a criptomoeda e seu preço atual
             CryptoCurrency cryptoCurrency = investment.getCryptoCurrency();

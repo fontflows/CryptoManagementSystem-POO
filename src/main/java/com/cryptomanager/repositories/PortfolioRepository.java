@@ -13,7 +13,7 @@ import java.util.List;
 public class PortfolioRepository {
     private static final String FILE_PATH = "portfolio.txt";
 
-    // Método para salvar um portfólio no arquivo
+    // Funcao para salvar um portfólio no arquivo
     public void savePortfolio(Portfolio portfolio) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
             writer.write(portfolio.getId() + "," + portfolio.getUserId() + "\n");
@@ -28,7 +28,7 @@ public class PortfolioRepository {
         }
     }
 
-    // Método para carregar um portfólio específico de um usuário
+    // Funcao para carregar um portfólio específico de um usuário
     public Portfolio loadPortfolioByUserIdAndPortfolioId(String userId, String portfolioId) {
         if (userId == null || userId.isEmpty()) {
             System.err.println("Erro: userId não pode ser nulo ou vazio.");
@@ -51,13 +51,14 @@ public class PortfolioRepository {
 
                 String loadedPortfolioId = parts[0];
                 String userIdFromFile = parts[1];
+                List<Investment> investments = new ArrayList<>(); //MUDAR
 
                 if (userIdFromFile.equals(userId) && loadedPortfolioId.equals(portfolioId)) {
                     String cryptoName = parts[2];
                     double quantity = Double.parseDouble(parts[3]);
                     double purchasePrice = Double.parseDouble(parts[4]);
 
-                    Portfolio portfolio = new Portfolio(loadedPortfolioId, userIdFromFile);
+                    Portfolio portfolio = new Portfolio(loadedPortfolioId, userIdFromFile, investments);
                     CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, purchasePrice);
                     addAsset(cryptoCurrency, purchasePrice, quantity, portfolio);
 
@@ -79,7 +80,7 @@ public class PortfolioRepository {
     }
 
     // Aqui vai usar quando fizermos a função de delete do txt
-    // Método para remover um ativo de um portfólio pelo ID e userId
+    // Funcao para remover um ativo de um portfólio pelo ID e userId
     public void removeAssetFromPortfolio(String portfolioId, String userId, String assetName) {
         if (portfolioId == null || portfolioId.isEmpty() || userId == null || userId.isEmpty()) {
             System.err.println("Erro: portfolioId e/ou userId não podem ser nulos ou vazios.");
@@ -105,7 +106,7 @@ public class PortfolioRepository {
         }
     }
 
-    // Método para salvar todos os portfólios no arquivo
+    // Funcao para salvar todos os portfólios no arquivo
     private void saveAllPortfolios() {
         List<Portfolio> allPortfolios = loadAllPortfolios(); // Método para carregar todos os portfólios
 
@@ -124,7 +125,7 @@ public class PortfolioRepository {
         }
     }
 
-    // Método para carregar todos os portfólios
+    // Funcao para carregar todos os portfólios
     private List<Portfolio> loadAllPortfolios() {
         List<Portfolio> portfolioList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
@@ -141,6 +142,7 @@ public class PortfolioRepository {
                 String cryptoName = parts[2];
                 double quantity = Double.parseDouble(parts[3]);
                 double purchasePrice = Double.parseDouble(parts[4]);
+                List<Investment> investments = new ArrayList<>(); //MUDAR
 
                 Portfolio portfolio = null;
                 for (Portfolio p : portfolioList) {
@@ -151,7 +153,7 @@ public class PortfolioRepository {
                 }
 
                 if (portfolio == null) {
-                    portfolio = new Portfolio(portfolioId, userId);
+                    portfolio = new Portfolio(portfolioId, userId, investments);
                     portfolioList.add(portfolio);
                 }
 
@@ -164,7 +166,7 @@ public class PortfolioRepository {
         return portfolioList;
     }
 
-    // Método de validação de portfólio
+    // Funcao de validação de portfólio
     public boolean isValidPortfolio(Portfolio portfolio) {
         if (portfolio == null) return false;
         if (portfolio.getUserId() == null || portfolio.getUserId().isEmpty()) {
