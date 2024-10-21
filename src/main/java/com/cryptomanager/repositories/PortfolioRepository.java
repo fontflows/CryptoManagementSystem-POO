@@ -15,13 +15,36 @@ public class PortfolioRepository {
 
     // Funcao para salvar um portfólio no arquivo
     public void savePortfolio(Portfolio portfolio) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
-            writer.write(portfolio.getId() + "," + portfolio.getUserId() + "\n");
-            for (Investment investment : portfolio.getInvestments()) {
-                writer.write(portfolio.getId() + "," + portfolio.getUserId() + "," +
-                        investment.getCryptoCurrency().getName() + "," +
-                        investment.getCryptoInvestedQuantity() + "," +
-                        investment.getPurchasePrice() + "\n");
+        // Primeiro, carregue todos os portfólios existentes
+        List<Portfolio> allPortfolios = loadAllPortfolios();
+        
+        // Verifique se o portfólio já existe
+        boolean portfolioExists = false;
+        for (Portfolio existingPortfolio : allPortfolios) {
+            if (existingPortfolio.getId().equals(portfolio.getId()) && existingPortfolio.getUserId().equals(portfolio.getUserId())) {
+                portfolioExists = true;
+                break;
+            }
+        }
+
+        // Se o portfólio já existe, atualize-o
+        if (portfolioExists) {
+            // Remova o portfólio existente da lista
+            allPortfolios.removeIf(existingPortfolio -> existingPortfolio.getId().equals(portfolio.getId()) && existingPortfolio.getUserId().equals(portfolio.getUserId()));
+        }
+
+        // Adicione o portfólio (novo ou atualizado) à lista
+        allPortfolios.add(portfolio);
+
+        // Salve todos os portfólios de volta ao arquivo
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (Portfolio p : allPortfolios) {
+                writer.write(p.getId() + "," + p.getUserId() + "\n");
+                for (Investment investment : p.getInvestments()) {
+                    writer.write(investment.getCryptoCurrency().getName() + "," +
+                            investment.getCryptoInvestedQuantity() + "," +
+                            investment.getPurchasePrice() + "\n");
+                }
             }
         } catch (IOException e) {
             System.err.println("Erro ao salvar portfólio: " + e.getMessage());
@@ -43,29 +66,33 @@ public class PortfolioRepository {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             List<Investment> investments = new ArrayList<>(); // Lista para armazenar os investimentos
+            boolean isPortfolioFound = false;
 
             while ((line = reader.readLine()) != null) {
                 if (line.isEmpty()) continue;
 
                 String[] parts = line.split(",");
-                if (parts.length < 5) continue; // Verifica se a linha tem dados suficientes
+                if (parts.length == 2) { // Verifica se é a linha do portfólio
+                    String loadedPortfolioId = parts[0];
+                    String userIdFromFile = parts[1];
 
-                String loadedPortfolioId = parts[0];
-                String userIdFromFile = parts[1];
-
-                if (userIdFromFile.equals(userId) && loadedPortfolioId.equals(portfolioId)) {
-                    // Carrega os investimentos
-                    String cryptoName = parts[2];
-                    double quantity = Double.parseDouble(parts[3]);
-                    double purchasePrice = Double.parseDouble(parts[4]);
+                    if (userIdFromFile.equals(userId) && loadedPortfolioId.equals(portfolioId)) {
+                        isPortfolioFound = true; // Marca que o portfólio foi encontrado
+                    }
+                } else if (parts.length == 3 && isPortfolioFound) { // Verifica se é uma linha de investimento
+                    String cryptoName = parts[0];
+                    double quantity = Double.parseDouble(parts[1]);
+                    double purchasePrice = Double.parseDouble(parts[2]);
 
                     CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, purchasePrice);
                     Investment investment = new Investment(cryptoCurrency, purchasePrice, quantity);
                     investments.add(investment); // Adiciona o investimento à lista
-
-                    // Cria e retorna o portfólio
-                    return new Portfolio(loadedPortfolioId, userIdFromFile, investments);
                 }
+            }
+
+            if (isPortfolioFound) {
+                // Cria e retorna o portfólio
+                return new Portfolio(portfolioId, userId, investments);
             }
         } catch (IOException e) {
             System.err.println("Erro ao carregar portfólio: " + e.getMessage());

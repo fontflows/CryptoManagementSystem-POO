@@ -1,7 +1,5 @@
-testetxt,12345.0
 teste22,192121.0
 teste22,192121.0
 moeda de teste,999.0
 moeda de teste 2,8001.0
-[teste22,192121.0,0.0,0.0,0.0, teste22,192121.0,0.0,0.0,0.0, moeda de teste,999.0,0.0,0.0,0.0, moeda de teste 2,8001.0,0.0,0.0,0.0]
 davizovsky,100.0

@@ -34,6 +34,7 @@ public class PortfolioService{
 
     // Método para adicionar ou atualizar um portfólio
     public void addPortfolio(Portfolio portfolio) {
+        System.out.println("Adicionando portfólio: " + portfolio); // Log para verificar o portfólio
         if (!portfolioRepository.isValidPortfolio(portfolio)) {
             System.err.println("Erro: Portfólio inválido.");
             return;
@@ -42,19 +43,32 @@ public class PortfolioService{
         // Carregamento do portfólio existente
         Portfolio existingPortfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(portfolio.getUserId(), portfolio.getId());
 
-        // Atualiza ou adiciona investimentos
-        for (Investment investment : portfolio.getInvestments()) {
-            if (existingPortfolio != null) {
-                // Atualização da quantidade e do preço de compra, caso o ativo já exista
-                if (portfolioRepository.hasAsset(investment.getCryptoCurrency().getName(), existingPortfolio)) {
-                    existingPortfolio.getInvestments().remove(investment);
+        // Se o portfólio já existe, atualiza os investimentos
+        if (existingPortfolio != null) {
+            for (Investment newInvestment : portfolio.getInvestments()) {
+                boolean investmentExists = false;
+
+                // Verifica se o investimento já existe
+                for (Investment existingInvestment : existingPortfolio.getInvestments()) {
+                    if (existingInvestment.getCryptoCurrency().getName().equals(newInvestment.getCryptoCurrency().getName())) {
+                        // Atualiza a quantidade investida e o preço de compra
+                        existingInvestment.setCryptoInvestedQuantity(existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity());
+                        existingInvestment.setPurchasePrice(newInvestment.getPurchasePrice()); // Aqui você pode implementar lógica para calcular o preço médio, se necessário
+                        investmentExists = true;
+                        break;
+                    }
                 }
-                PortfolioRepository.addAsset(investment.getCryptoCurrency(), investment.getPurchasePrice(), investment.getCryptoInvestedQuantity(), existingPortfolio);
-            } else {
-                PortfolioRepository.addAsset(investment.getCryptoCurrency(), investment.getPurchasePrice(), investment.getCryptoInvestedQuantity(), portfolio);
+
+                // Se o investimento não existe, adiciona um novo
+                if (!investmentExists) {
+                    existingPortfolio.getInvestments().add(newInvestment);
+                }
             }
+            // Salva o portfólio atualizado
+            portfolioRepository.savePortfolio(existingPortfolio);
+        } else {
+            // Se o portfólio não existe, cria um novo
+            portfolioRepository.savePortfolio(portfolio);
         }
-        // Salvamento de todos os portfólios de volta ao arquivo txt
-        portfolioRepository.savePortfolio(portfolio); // Salva o portfólio atualizado
     }
 }

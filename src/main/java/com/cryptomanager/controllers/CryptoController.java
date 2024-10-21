@@ -30,8 +30,8 @@ public class CryptoController {
     }
 
     @DeleteMapping("/delete")
-    public String deleteCrypto(@RequestBody CryptoCurrency crypto) {
-        cryptoService.deleteCrypto(crypto);
+    public String deleteCrypto(@RequestParam String name) {
+        cryptoService.deleteCryptoByName(name);
         return "Criptomoeda removida com sucesso!";
     }
 }
