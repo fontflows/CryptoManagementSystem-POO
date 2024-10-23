@@ -1,0 +1,5 @@
+31415,926535
+testePortfolio,20.0,999.0
+Bitcoin,0.02,999.0
+Ethereum,0.5,1500.0
+Solana,10.0,300.0

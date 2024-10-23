@@ -28,4 +28,10 @@ public class CryptoController {
         cryptoService.addCrypto(crypto);
         return "Criptomoeda adicionada com sucesso!";
     }
+
+    @DeleteMapping("/delete")
+    public String deleteCrypto(@RequestParam String name) {
+        cryptoService.deleteCryptoByName(name);
+        return "Criptomoeda removida com sucesso!";
+    }
 }
