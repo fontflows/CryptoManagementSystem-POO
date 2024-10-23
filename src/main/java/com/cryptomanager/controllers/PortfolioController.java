@@ -22,14 +22,11 @@ public class PortfolioController {
     public ResponseEntity<String> calculateTotalValue(@RequestParam String userId, @RequestParam String portfolioId) {
         try {
             double totalValue = portfolioService.calculateTotalValue(userId, portfolioId);
-            // Formata a resposta com uma mensagem descritiva
             String responseMessage = "O valor total do portfólio é: " + totalValue;
             return ResponseEntity.ok(responseMessage);
         } catch (IllegalArgumentException e) {
-            // Retorna uma resposta com status 404 e a mensagem de erro
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            // Retorna uma resposta genérica para outros erros
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor: " + e.getMessage());
         }
     }

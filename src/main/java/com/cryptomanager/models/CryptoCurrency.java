@@ -1,10 +1,22 @@
 package com.cryptomanager.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Modelo que representa uma criptomoeda")
 public class CryptoCurrency {
+    @Schema(description = "Nome da criptomoeda", example = "Bitcoin")
     private String name;
+
+    @Schema(description = "Preço atual da criptomoeda", example = "50000.0")
     private double price;
+
+    @Schema(description = "Taxa de crescimento da criptomoeda", example = "0.05")
     private double growthRate;
+
+    @Schema(description = "Capitalização de mercado da criptomoeda", example = "900000000000.0")
     private double marketCap;
+
+    @Schema(description = "Volume negociado nas últimas 24 horas", example = "20000000.0")
     private double volume24h;
 
     public CryptoCurrency(String name, double price,double growthRate, double marketCap, double volume24h) {

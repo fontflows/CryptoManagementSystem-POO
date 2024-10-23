@@ -20,15 +20,26 @@ public class PortfolioService{
     public double calculateTotalValue(String userId, String portfolioId) {
         double totalValue = 0.0;
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
+        
+        if (portfolio == null) {
+            throw new IllegalArgumentException("Portfólio não encontrado.");
+        }
+
         for (Investment investment : portfolio.getInvestments()) {
             // Obtém a criptomoeda e seu preço atual
             CryptoCurrency cryptoCurrency = investment.getCryptoCurrency();
             double actualPrice = cryptoCurrency.getPrice(); // O preço é armazenado na própria classe CryptoCurrency
             double quantity = investment.getCryptoInvestedQuantity();
 
+            // Adiciona logs para depuração
+            System.out.println("Nome da Criptomoeda: " + cryptoCurrency.getName());
+            System.out.println("Preço Atual: " + actualPrice);
+            System.out.println("Quantidade Investida: " + quantity);
+
             // Adiciona o valor do investimento ao valor total
-            totalValue += actualPrice*quantity;
+            totalValue += actualPrice * quantity;
         }
+        
         return totalValue;
     }
 
@@ -45,6 +56,7 @@ public class PortfolioService{
 
         // Se o portfólio já existe, atualiza os investimentos
         if (existingPortfolio != null) {
+            // Atualiza os investimentos existentes
             for (Investment newInvestment : portfolio.getInvestments()) {
                 boolean investmentExists = false;
 
@@ -52,7 +64,9 @@ public class PortfolioService{
                 for (Investment existingInvestment : existingPortfolio.getInvestments()) {
                     if (existingInvestment.getCryptoCurrency().getName().equals(newInvestment.getCryptoCurrency().getName())) {
                         // Atualiza a quantidade investida e o preço de compra
-                        existingInvestment.setPurchasePrice(((newInvestment.getPurchasePrice()*newInvestment.getCryptoInvestedQuantity()) + (existingInvestment.getPurchasePrice()*existingInvestment.getCryptoInvestedQuantity()))/existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity()); //calcula preço médio
+                        existingInvestment.setPurchasePrice(((newInvestment.getPurchasePrice() * newInvestment.getCryptoInvestedQuantity()) + 
+                            (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity())) / 
+                            (existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity())); // calcula preço médio
                         existingInvestment.setCryptoInvestedQuantity(existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity());
                         investmentExists = true;
                         break;

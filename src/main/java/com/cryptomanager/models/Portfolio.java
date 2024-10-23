@@ -1,11 +1,19 @@
 package com.cryptomanager.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Schema(description = "Modelo que representa um portfólio de investimentos")
 public class Portfolio {
+    @Schema(description = "ID do portfólio", example = "PORTFOLIO-1")
     private String id; // ID do portfolio
+
+    @Schema(description = "ID do usuário que possui o portfólio", example = "USER-1")
     private String userId; // ID do usuário
+
+    @Schema(description = "Lista de investimentos no portfólio")
     private List<Investment> investments; // Lista de investimentos
 
     public Portfolio(String id, String userId, List<Investment> investments) {

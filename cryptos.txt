@@ -1,5 +1,1 @@
-teste22,192121.0
-teste22,192121.0
-moeda de teste,999.0
-moeda de teste 2,8001.0
-davizovsky,100.0
+TESTE 23/10 - 2,999.0,0.5,1.0,32.0
