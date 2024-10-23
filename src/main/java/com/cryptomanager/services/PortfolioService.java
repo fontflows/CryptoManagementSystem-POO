@@ -52,8 +52,8 @@ public class PortfolioService{
                 for (Investment existingInvestment : existingPortfolio.getInvestments()) {
                     if (existingInvestment.getCryptoCurrency().getName().equals(newInvestment.getCryptoCurrency().getName())) {
                         // Atualiza a quantidade investida e o preço de compra
+                        existingInvestment.setPurchasePrice(((newInvestment.getPurchasePrice()*newInvestment.getCryptoInvestedQuantity()) + (existingInvestment.getPurchasePrice()*existingInvestment.getCryptoInvestedQuantity()))/existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity()); //calcula preço médio
                         existingInvestment.setCryptoInvestedQuantity(existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity());
-                        existingInvestment.setPurchasePrice(newInvestment.getPurchasePrice()); // Aqui você pode implementar lógica para calcular o preço médio, se necessário
                         investmentExists = true;
                         break;
                     }
