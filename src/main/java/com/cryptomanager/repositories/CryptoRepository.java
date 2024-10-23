@@ -31,4 +31,15 @@ public class CryptoRepository {
         }
         return cryptos;
     }
+
+    public void deleteCryptoByName(String name) throws IOException {
+        List<CryptoCurrency> cryptos = loadCryptos();
+        cryptos.removeIf(crypto -> crypto.getName().equals(name));
+        // Reescreve o arquivo com a lista atualizada
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (CryptoCurrency crypto : cryptos) {
+                writer.write(crypto.toString() + "\n");
+            }
+        }
+    }
 }
