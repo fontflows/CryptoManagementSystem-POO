@@ -2,6 +2,7 @@ package com.cryptomanager.services;
 
 import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.models.Investment;
+import com.cryptomanager.models.InvestmentStrategy;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.repositories.PortfolioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,5 +85,9 @@ public class PortfolioService{
             // Se o portfólio não existe, cria um novo
             portfolioRepository.savePortfolio(portfolio);
         }
+    }
+
+    public CryptoCurrency suggestCryptoCurrency(Portfolio portfolio) {
+        return portfolio.getInvestmentStrategy().getRandomCrypto();
     }
 }
