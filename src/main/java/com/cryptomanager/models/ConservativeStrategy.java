@@ -36,6 +36,8 @@ public class ConservativeStrategy implements InvestmentStrategy{
     @Override
     public CryptoCurrency getRandomCrypto() {
         Random rng = new Random();
+        if (conservativeCryptos.isEmpty())
+            throw new IllegalStateException("A lista de criptomoedas está vazia.");
         return conservativeCryptos.get(rng.nextInt(conservativeCryptos.size()));
     }
 }

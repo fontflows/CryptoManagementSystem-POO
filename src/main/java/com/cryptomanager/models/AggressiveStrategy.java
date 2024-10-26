@@ -36,6 +36,8 @@ public class AggressiveStrategy implements InvestmentStrategy{
     @Override
     public CryptoCurrency getRandomCrypto() {
         Random rng = new Random();
+        if (aggressiveCryptos.isEmpty())
+            throw new IllegalStateException("A lista de criptomoedas está vazia.");
         return aggressiveCryptos.get(rng.nextInt(aggressiveCryptos.size()));
     }
 }

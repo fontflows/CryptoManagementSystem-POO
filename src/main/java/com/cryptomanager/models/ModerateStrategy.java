@@ -37,6 +37,8 @@ public class ModerateStrategy implements InvestmentStrategy{
     @Override
     public CryptoCurrency getRandomCrypto() {
         Random rng = new Random();
+        if (moderateCryptos.isEmpty())
+            throw new IllegalStateException("A lista de criptomoedas está vazia.");
         return moderateCryptos.get(rng.nextInt(moderateCryptos.size()));
     }
 }
