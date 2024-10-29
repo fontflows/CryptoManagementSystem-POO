@@ -46,7 +46,7 @@ public class PortfolioService{
     // Método para adicionar ou atualizar um portfólio
     public void addPortfolio(Portfolio portfolio) {
         System.out.println("Adicionando portfólio: " + portfolio); // Log para verificar o portfólio
-        if (portfolioRepository.isValidPortfolio(portfolio)) {
+        if (!portfolioRepository.isValidPortfolio(portfolio)) {
             System.err.println("Erro: Portfólio inválido.");
             return;
         }
