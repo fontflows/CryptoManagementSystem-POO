@@ -2,7 +2,6 @@ package com.cryptomanager.services;
 
 import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.models.Investment;
-import com.cryptomanager.models.InvestmentStrategy;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.repositories.PortfolioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class PortfolioService{
     // Método para adicionar ou atualizar um portfólio
     public void addPortfolio(Portfolio portfolio) {
         System.out.println("Adicionando portfólio: " + portfolio); // Log para verificar o portfólio
-        if (!portfolioRepository.isValidPortfolio(portfolio)) {
+        if (portfolioRepository.isValidPortfolio(portfolio)) {
             System.err.println("Erro: Portfólio inválido.");
             return;
         }
