@@ -27,7 +27,7 @@ public class CurrencyConverter {
         this.investmentList = investmentList;
     }
 
-    public double cryptoConverter(String fromCryptoName, String toCryptoName) {
+    public double cryptoConverter(String fromCryptoName, String toCryptoName, double balance) {
         CryptoCurrency fromCrypto = findCryptoByName(fromCryptoName);
         Investment investmentListFromCrypto = findInvestmentByName(fromCryptoName);
         CryptoCurrency toCrypto = findCryptoByName(toCryptoName);
@@ -38,20 +38,28 @@ public class CurrencyConverter {
         double taxConversionPrice = fromCrypto.getPrice()/toCrypto.getPrice();
         double quantityOriginalCryptoQuantityInvested = investmentListFromCrypto.getCryptoInvestedQuantity();
 
-        return quantityOriginalCryptoQuantityInvested*taxConversionPrice;
+        if (balance == 0)
+            throw new IllegalArgumentException("Saldo nao pode ser nulo.");
+
+        else if (balance <= quantityOriginalCryptoQuantityInvested && balance > 0)
+            return balance*taxConversionPrice;
+
+        else
+            throw new IllegalArgumentException("Saldo excede o total investido, previamente, informado.");
+
     }
 
-    private CryptoCurrency findCryptoByName(String name) {
+    public CryptoCurrency findCryptoByName(String cryptoName) {
         for (CryptoCurrency crypto : cryptoList) {
-            if (crypto.getName().equalsIgnoreCase(name))
+            if (crypto.getName().equalsIgnoreCase(cryptoName))
                 return crypto;
         }
         return null;
     }
 
-    private Investment findInvestmentByName(String name) {
+    public Investment findInvestmentByName(String cryptoName) {
         for (Investment investment : investmentList) {
-            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(name))
+            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName))
                 return investment;
         }
         return null;
