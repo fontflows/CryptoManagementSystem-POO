@@ -4,13 +4,15 @@ import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.models.Investment;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.services.InvestmentProjectionService;
+import java.io.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class InvestmentReportRepository{
+    private int id = 0;
+    public void generateCurrentPortfolioReport(Portfolio portfolio) throws IOException {
 
-    public String generateCurrentPortfolioReport (Portfolio portfolio) {
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -20,14 +22,10 @@ public class InvestmentReportRepository{
 
 
 
-        // Cabeçalho do relatório
-        //RELATÓRIO DE PORTFOLIO: Data,id,userid;
+        // Cabeçalho do relatório: Data,id,userid;
         report.append(reportDate.format(formatter)).append(",")
                 .append(portfolio.getId()).append(",")
                 .append(portfolio.getUserId()).append("\n");
-
-        // Detalhes dos investimentos
-
 
         for (Investment investment : portfolio.getInvestments()) {
             CryptoCurrency crypto = investment.getCryptoCurrency();
@@ -37,7 +35,7 @@ public class InvestmentReportRepository{
             double currentValue = investedQuantity * crypto.getPrice();
             double percentageReturn = ((currentValue - investedValue) / investedValue) * 100;
 
-            // Conteúdo: cryptoname,qntinvestida,cryptoPrice,investedValue,currentValue,percentageReturn
+            // Conteúdo: cryptoname,investedQuantity,purshacePrice,cryptoPrice,investedValue,currentValue,percentageReturn
 
             report.append(crypto.getName()).append(",")
                     .append(investedQuantity).append(",")
@@ -51,7 +49,7 @@ public class InvestmentReportRepository{
             currentTotalValue += currentValue;
         }
 
-        // Sumário do portfolio : investedTotal,currentTotalValue,totalPercentageReturn
+        // rodapé do portfolio : investedTotal,currentTotalValue,totalPercentageReturn
 
         double totalPercentageReturn = ((currentTotalValue - investedTotal) / investedTotal) * 100;
         report.append("\n")
@@ -59,9 +57,13 @@ public class InvestmentReportRepository{
                 .append(currentTotalValue).append(",")
                 .append(totalPercentageReturn).append("\n");
 
-        return report.toString();
+        try {
+            saveReport(report.toString());
+        } catch (IOException e) {
+            throw new IOException(e);
+        }
     }
-    public String generateProjectionReport(Portfolio portfolio,int meses) {
+    public void generateProjectionReport(Portfolio portfolio,int meses) {
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -98,8 +100,20 @@ public class InvestmentReportRepository{
                 .append(totalProjectedValue).append(",")
                 .append(projectedGrowth).append(",\n");
 
-        return report.toString();
+        try {
+            saveReport(report.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
+    public void saveReport(String report) throws IOException{
 
+        String PATH =  Integer.toString(id);
+        id++;
+        final String FILE_PATH = "Report"+PATH+".txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            writer.write(report);
+        }
+    }
 
 }
