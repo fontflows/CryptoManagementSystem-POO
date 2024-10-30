@@ -34,4 +34,10 @@ public class CryptoController {
         cryptoService.deleteCryptoByName(name);
         return "Criptomoeda removida com sucesso!";
     }
+
+    @PostMapping("/edit")
+    public String updateCrypto(@RequestBody CryptoCurrency crypto) {
+        cryptoService.updateCrypto(crypto);
+        return "Criptomoeda editada com sucesso!";
+    }
 }
