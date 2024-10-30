@@ -63,7 +63,7 @@ public class InvestmentReportRepository{
             throw new IOException(e);
         }
     }
-    public void generateProjectionReport(Portfolio portfolio,int meses) {
+    public void generateProjectionReport(Portfolio portfolio,int meses) throws IOException {
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -103,7 +103,7 @@ public class InvestmentReportRepository{
         try {
             saveReport(report.toString());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IOException(e);
         }
     }
     public void saveReport(String report) throws IOException{
