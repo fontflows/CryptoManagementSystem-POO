@@ -36,10 +36,9 @@ public class CurrencyConverter {
             throw new IllegalArgumentException("Criptomoeda não encontrada.");
 
         double taxConversionPrice = fromCrypto.getPrice()/toCrypto.getPrice();
-        double taxConversionGrowthRate = fromCrypto.getGrowthRate()/toCrypto.getGrowthRate();
         double quantityOriginalCryptoQuantityInvested = investmentListFromCrypto.getCryptoInvestedQuantity();
 
-        return quantityOriginalCryptoQuantityInvested*toCrypto.getMarketCap()*taxConversionGrowthRate*taxConversionPrice;
+        return quantityOriginalCryptoQuantityInvested*taxConversionPrice;
     }
 
     private CryptoCurrency findCryptoByName(String name) {
