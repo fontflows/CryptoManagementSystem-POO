@@ -1,11 +1,15 @@
 package com.cryptomanager.controllers;
 
+import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.models.Portfolio;
+import com.cryptomanager.models.StrategyNames;
 import com.cryptomanager.services.PortfolioService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/portfolio")
@@ -35,5 +39,19 @@ public class PortfolioController {
     public ResponseEntity<String> addPortfolio(@RequestBody Portfolio portfolio) {
         portfolioService.addPortfolio(portfolio);
         return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
+    }
+
+    @GetMapping("/get-suggested-crypto")
+    public ResponseEntity<CryptoCurrency> suggestCryptoCurrency(@RequestParam String userID, @RequestParam String portfolioID){
+        try {
+            return ResponseEntity.ok(portfolioService.suggestCryptoCurrency(userID, portfolioID));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping("/set-Investment-Strategy")
+    public void setPortfolioInvestmentStrategy(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam  StrategyNames strategyName) {
+        portfolioService.setPortfolioInvestmentStrategy(userID, portfolioID, strategyName.getDisplayName());
     }
 }

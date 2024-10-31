@@ -4,9 +4,12 @@ import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.models.Investment;
 import com.cryptomanager.models.InvestmentStrategy;
 import com.cryptomanager.models.Portfolio;
+import com.cryptomanager.repositories.CryptoRepository;
 import com.cryptomanager.repositories.PortfolioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 @Service
 public class PortfolioService{
@@ -87,7 +90,17 @@ public class PortfolioService{
         }
     }
 
-    public CryptoCurrency suggestCryptoCurrency(Portfolio portfolio) {
-        return portfolio.getInvestmentStrategy().getRandomCrypto();
+    public CryptoCurrency suggestCryptoCurrency(String userID, String portfolioID) throws IOException {
+        CryptoRepository cryptoRepository = new CryptoRepository();
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
+        if (portfolio == null) { throw new IllegalArgumentException("IDs invalidos");}
+        InvestmentStrategy investmentStrategy = portfolioRepository.getInvestmentStrategyByName(portfolio.getInvestmentStrategy());
+        return cryptoRepository.loadCryptoByName(investmentStrategy.getRandomCrypto());
+    }
+
+    public void setPortfolioInvestmentStrategy(String userID, String portfolioID, String strategyName){
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
+        portfolio.setInvestmentStrategy(strategyName);
+        portfolioRepository.savePortfolio(portfolio);
     }
 }

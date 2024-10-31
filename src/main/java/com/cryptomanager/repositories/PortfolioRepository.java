@@ -1,13 +1,12 @@
 package com.cryptomanager.repositories;
 
-import com.cryptomanager.models.CryptoCurrency;
-import com.cryptomanager.models.Investment;
-import com.cryptomanager.models.Portfolio;
+import com.cryptomanager.models.*;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class PortfolioRepository {
@@ -66,16 +65,7 @@ public class PortfolioRepository {
     private void saveAllPortfolios(List<Portfolio> portfolios) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Portfolio portfolio : portfolios) {
-                writer.write(portfolio.getId() + "," + portfolio.getUserId() + "\n");
-                for (Investment investment : portfolio.getInvestments()) {
-                    writer.write(investment.getCryptoCurrency().getName() + "," +
-                            investment.getCryptoCurrency().getPrice() + "," +
-                            investment.getCryptoCurrency().getGrowthRate() + "," +
-                            investment.getCryptoCurrency().getMarketCap() + "," +
-                            investment.getCryptoCurrency().getVolume24h() + "," +
-                            investment.getCryptoInvestedQuantity() + "," +
-                            investment.getPurchasePrice() + "\n");
-                }
+                writer.write(portfolio.toString());
             }
         } catch (IOException e) {
             System.err.println("Erro ao salvar portfólios: " + e.getMessage());
@@ -93,10 +83,10 @@ public class PortfolioRepository {
                 if (line.isEmpty()) continue;
 
                 String[] parts = line.split(",");
-                if (parts.length == 2) {
-                    currentPortfolio = new Portfolio(parts[0], parts[1], new ArrayList<>());
+                if (parts.length == 3) {
+                    currentPortfolio = new Portfolio(parts[0], parts[1], new ArrayList<>(), parts[2]);
                     portfolioList.add(currentPortfolio);
-                } else if (parts.length >= 7 && currentPortfolio != null) {
+                } else if (parts.length >= 8 && currentPortfolio != null) {
                     Investment investment = createInvestmentFromParts(parts);
                     currentPortfolio.getInvestments().add(investment);
                 }
@@ -114,10 +104,11 @@ public class PortfolioRepository {
         double growthRate = Double.parseDouble(parts[2]);
         double marketCap = Double.parseDouble(parts[3]);
         double volume24h = Double.parseDouble(parts[4]);
-        double quantity = Double.parseDouble(parts[5]);
-        double purchasePrice = Double.parseDouble(parts[6]);
+        int riskFactor = Integer.parseInt(parts[5]);
+        double quantity = Double.parseDouble(parts[6]);
+        double purchasePrice = Double.parseDouble(parts[7]);
 
-        CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, price, growthRate, marketCap, volume24h);
+        CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, price, growthRate, marketCap, volume24h, riskFactor);
         return new Investment(cryptoCurrency, purchasePrice, quantity);
     }
 
@@ -149,6 +140,7 @@ public class PortfolioRepository {
             } else {
                 existingPortfolio.getInvestments().add(newInvestment);
             }
+            existingPortfolio.setInvestmentStrategy(newPortfolio.getInvestmentStrategy());
         }
     }
 
@@ -168,5 +160,23 @@ public class PortfolioRepository {
             return false;
         }
         return true;
+    }
+
+    public InvestmentStrategy getInvestmentStrategyByName(String strategyName) throws IOException {
+        ConservativeStrategy conservativeStrategy = new ConservativeStrategy();
+        AggressiveStrategy aggressiveStrategy = new AggressiveStrategy();
+        ModerateStrategy moderateStrategy = new ModerateStrategy();
+        if(strategyName.equals(conservativeStrategy.getInvestmentStrategyName())){
+            return conservativeStrategy;
+        }
+        else if(strategyName.equals(aggressiveStrategy.getInvestmentStrategyName())){
+            return aggressiveStrategy;
+        }
+        else if(strategyName.equals(moderateStrategy.getInvestmentStrategyName())){
+            return moderateStrategy;
+        }
+        else{
+            throw new IllegalArgumentException("Estratégia de investimento inválida");
+        }
     }
 }

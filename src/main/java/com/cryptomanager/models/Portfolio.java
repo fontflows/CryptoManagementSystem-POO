@@ -2,8 +2,10 @@ package com.cryptomanager.models;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Schema(description = "Modelo que representa um portfólio de investimentos")
 public class Portfolio {
@@ -16,9 +18,10 @@ public class Portfolio {
     @Schema(description = "Lista de investimentos no portfólio")
     private List<Investment> investments; // Lista de investimentos
 
-    private InvestmentStrategy investmentStrategy;
+    @Schema(description = "Estratégia de investimento do portfólio")
+    private String investmentStrategy;
 
-    public Portfolio(String id, String userId, List<Investment> investments, InvestmentStrategy investmentStrategy) {
+    public Portfolio(String id, String userId, List<Investment> investments, String investmentStrategy) {
         if (id == null || id.isEmpty())
             throw new IllegalArgumentException("portfolioId não pode ser nulo ou vazio.");
 
@@ -28,7 +31,11 @@ public class Portfolio {
         this.id = id;
         this.userId = userId;
         this.investments = investments != null ? investments : new ArrayList<>(); // Inicializa com a lista recebida
-        this.investmentStrategy = investmentStrategy;
+        if(Objects.equals(investmentStrategy, "Aggressive") || Objects.equals(investmentStrategy, "Moderate") || Objects.equals(investmentStrategy, "Conservative"))
+            this.investmentStrategy = investmentStrategy;
+        else{
+            this.investmentStrategy = "Conservative"; //estrategia padrao
+        }
     }
 
     public String getId() {
@@ -43,7 +50,7 @@ public class Portfolio {
         return investments;
     }
 
-    public InvestmentStrategy getInvestmentStrategy() { return investmentStrategy; }
+    public String getInvestmentStrategy() { return investmentStrategy; }
 
     public void setId(String id) { this.id = id; }
 
@@ -51,7 +58,7 @@ public class Portfolio {
 
     public void setInvestments(List<Investment> investments) { this.investments = investments; }
 
-    public void setInvestmentStrategy(InvestmentStrategy investmentStrategy) { this.investmentStrategy = investmentStrategy; }
+    public void setInvestmentStrategy(String investmentStrategy) { this.investmentStrategy = investmentStrategy; }
 
     public Double getAssetAmount(String assetName) {
         for (Investment investment : investments) {
@@ -73,12 +80,15 @@ public class Portfolio {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Portfolio ID: ").append(id).append(", User ID: ").append(userId).append("\n");
+        sb.append(id).append(",").append(userId).append(",").append(investmentStrategy).append("\n");
         for (Investment investment : investments) {
-            sb.append(investment.getCryptoCurrency().getName())
-                    .append(", Quantidade: ")
-                    .append(investment.getCryptoInvestedQuantity())
-                    .append(", Preço: ")
+            sb.append(investment.getCryptoCurrency().getName()).append(",")
+                    .append(investment.getCryptoCurrency().getPrice()).append(",")
+                    .append(investment.getCryptoCurrency().getGrowthRate()).append(",")
+                    .append(investment.getCryptoCurrency().getMarketCap()).append(",")
+                    .append(investment.getCryptoCurrency().getVolume24h()).append(",")
+                    .append(investment.getCryptoCurrency().getRiskFactor()).append(",")
+                    .append(investment.getCryptoInvestedQuantity()).append(",")
                     .append(investment.getPurchasePrice())
                     .append("\n");
         }

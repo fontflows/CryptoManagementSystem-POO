@@ -19,12 +19,16 @@ public class CryptoCurrency {
     @Schema(description = "Volume negociado nas últimas 24 horas", example = "20000000.0")
     private double volume24h;
 
-    public CryptoCurrency(String name, double price,double growthRate, double marketCap, double volume24h) {
+    @Schema(description = "Fator de risco da criptomoeda (1-3)", example = "3")
+    private int riskFactor;
+
+    public CryptoCurrency(String name, double price,double growthRate, double marketCap, double volume24h, int riskFactor) {
         this.name = name;
         this.price = price;
         this.growthRate = growthRate;
         this.marketCap = marketCap;
         this.volume24h = volume24h;
+        this.riskFactor = riskFactor;
     }
 
     public String getName() {
@@ -55,8 +59,12 @@ public class CryptoCurrency {
 
     public void setVolume24h(double volume24h) {this.volume24h = volume24h;}
 
+    public int getRiskFactor() {return riskFactor;}
+
+    public void setRiskFactor(int riskFactor) {this.riskFactor = riskFactor;}
+
     @Override
     public String toString() {
-        return name + "," + price + "," + growthRate + "," + marketCap + "," + volume24h;
+        return name + "," + price + "," + growthRate + "," + marketCap + "," + volume24h + "," + riskFactor;
     }
 }

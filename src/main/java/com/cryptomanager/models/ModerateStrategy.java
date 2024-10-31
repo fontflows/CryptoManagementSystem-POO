@@ -1,41 +1,40 @@
 package com.cryptomanager.models;
 
+import com.cryptomanager.repositories.CryptoRepository;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class ModerateStrategy implements InvestmentStrategy{
+    private static final String name = "Moderate";
+    private final List<String> moderateCryptos;
+    private static final int riskQuota = 2;
 
-    private List<CryptoCurrency> moderateCryptos;
-
-    public ModerateStrategy(List<CryptoCurrency> moderateCryptos) {
-        this.moderateCryptos = moderateCryptos != null ? moderateCryptos : new ArrayList<>();
+    public ModerateStrategy() throws IOException {
+        CryptoRepository cryptoRepository = new CryptoRepository();
+        List<CryptoCurrency> cryptos = cryptoRepository.loadCryptos();
+        moderateCryptos = new ArrayList<>();
+        for(CryptoCurrency c : cryptos){
+            if(c.getRiskFactor() == riskQuota) {
+                moderateCryptos.add(c.getName());
+            }
+        }
     }
 
     @Override
-    public void setCryptos(List<CryptoCurrency> moderateCryptos) {
-        this.moderateCryptos = moderateCryptos;
+    public String getInvestmentStrategyName() {
+        return name;
     }
 
     @Override
-    public List<CryptoCurrency> getCryptos() {
+    public List<String> getCryptos() {
         return moderateCryptos;
     }
 
     @Override
-    public void addCryptoCurrency(CryptoCurrency crypto) {
-        if(crypto == null) { throw new IllegalArgumentException("Crypto não pode ser nula"); }
-        moderateCryptos.add(crypto);
-    }
-
-    @Override
-    public void removeCryptoCurrency(CryptoCurrency crypto) {
-        if(crypto == null) { throw new IllegalArgumentException("Crypto não pode ser nula"); }
-        moderateCryptos.remove(crypto);
-    }
-
-    @Override
-    public CryptoCurrency getRandomCrypto() {
+    public String getRandomCrypto() {
         Random rng = new Random();
         if (moderateCryptos.isEmpty())
             throw new IllegalStateException("A lista de criptomoedas está vazia.");
