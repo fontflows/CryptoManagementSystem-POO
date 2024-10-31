@@ -1,6 +1,6 @@
 package com.cryptomanager.services;
 
-import com.cryptomanager.exceptions.InvestmentReportExceptions;
+import com.cryptomanager.exceptions.CryptoServiceException;
 import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.repositories.CryptoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class CryptoService {
             return cryptoRepository.loadCryptos();
         } catch (IOException e) {
             logger.error("Erro ao carregar criptomoedas", e);
-            throw new InvestmentReportExceptions("Erro ao carregar criptomoedas", e);
+            throw new CryptoServiceException("Erro ao carregar criptomoedas", e);
         }
     }
 
@@ -36,7 +36,7 @@ public class CryptoService {
             cryptoRepository.saveCrypto(crypto);
         } catch (IOException e) {
             logger.error("Erro ao salvar criptomoeda: {}", crypto.getName(), e);
-            throw new InvestmentReportExceptions("Erro ao salvar criptomoeda: " + crypto.getName(), e);
+            throw new CryptoServiceException("Erro ao salvar criptomoeda: " + crypto.getName(), e);
         }
     }
 
@@ -45,7 +45,7 @@ public class CryptoService {
             cryptoRepository.deleteCryptoByName(name);
         } catch (Exception e) {
             logger.error("Erro ao deletar criptomoeda: {}", name, e);
-            throw new InvestmentReportExceptions("Erro ao deletar criptomoeda", e);
+            throw new CryptoServiceException("Erro ao deletar criptomoeda", e);
         }
     }
 }
