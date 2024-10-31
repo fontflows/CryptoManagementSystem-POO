@@ -23,6 +23,22 @@ public class CryptoCurrency {
     private int riskFactor;
 
     public CryptoCurrency(String name, double price,double growthRate, double marketCap, double volume24h, int riskFactor) {
+        if (price <= 0) {
+            throw new IllegalArgumentException("O preço deve ser maior que zero.");
+        }
+        if (growthRate <= -1) {
+            throw new IllegalArgumentException("A taxa de crescimento deve ser maior que -1");
+        }
+        if (marketCap <= 0) {
+            throw new IllegalArgumentException("O valor de market cap deve ser maior que zero.");
+        }
+        if (volume24h < 0) {
+            throw new IllegalArgumentException("O volume em 24h não pode ser negativo.");
+        }
+        if (riskFactor < 1 || riskFactor > 3) {
+            throw new IllegalArgumentException("O fator de risco deve estar entre 1 e 3.");
+        }
+
         this.name = name;
         this.price = price;
         this.growthRate = growthRate;

@@ -37,7 +37,11 @@ public class CryptoService {
         } catch (IOException e) {
             logger.error("Erro ao salvar criptomoeda: {}", crypto.getName(), e);
             throw new CryptoServiceException("Erro ao salvar criptomoeda: " + crypto.getName(), e);
+        } catch (IllegalArgumentException e) {
+            logger.error("Valores inválidos ao cadastrar criptomoeda: {}", crypto.getName());
+            throw new CryptoServiceException("Valores inválidos ao cadastrar criptomoeda" + crypto.getName(), e);
         }
+
     }
 
     public void deleteCryptoByName(String name) {
