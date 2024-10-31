@@ -23,15 +23,28 @@ public class CryptoController {
         return cryptoService.getAllCryptos();
     }
 
+    @GetMapping("/search-by-name")
+    public CryptoCurrency getCryptoByName(String name) {
+        return cryptoService.getCryptoByName(name);
+    }
+
     @PostMapping("/add")
     public String addCrypto(@RequestBody CryptoCurrency crypto) {
-        cryptoService.addCrypto(crypto);
-        return "Criptomoeda adicionada com sucesso!";
+        try {
+            cryptoService.addCrypto(crypto);
+            return "Criptomoeda adicionada com sucesso!";
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 
     @DeleteMapping("/delete")
     public String deleteCrypto(@RequestParam String name) {
-        cryptoService.deleteCryptoByName(name);
-        return "Criptomoeda removida com sucesso!";
+        try {
+            cryptoService.deleteCryptoByName(name);
+            return "Criptomoeda removida com sucesso!";
+        } catch (Exception e) {
+            return e.getMessage();
+        }
     }
 }

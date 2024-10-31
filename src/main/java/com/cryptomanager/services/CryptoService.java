@@ -31,12 +31,24 @@ public class CryptoService {
         }
     }
 
+    public CryptoCurrency getCryptoByName(String name) {
+        try {
+            return cryptoRepository.loadCryptoByName(name);
+        } catch (IOException e) {
+            logger.error("Erro ao carregar criptomoeda", e);
+            throw new CryptoServiceException("Erro ao carregar criptomoeda", e);
+        }
+    }
+
     public void addCrypto(CryptoCurrency crypto) {
         try {
             cryptoRepository.saveCrypto(crypto);
         } catch (IOException e) {
             logger.error("Erro ao salvar criptomoeda: {}", crypto.getName(), e);
             throw new CryptoServiceException("Erro ao salvar criptomoeda: " + crypto.getName(), e);
+        } catch (IllegalArgumentException e) {
+            logger.error("Valores inválidos ao cadastrar criptomoeda: {}", crypto.getName());
+            throw new CryptoServiceException("Valores inválidos ao cadastrar criptomoeda" + crypto.getName(), e);
         }
     }
 

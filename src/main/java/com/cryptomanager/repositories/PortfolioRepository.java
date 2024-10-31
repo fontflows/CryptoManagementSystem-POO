@@ -163,17 +163,14 @@ public class PortfolioRepository {
     }
 
     public InvestmentStrategy getInvestmentStrategyByName(String strategyName) throws IOException {
-        ConservativeStrategy conservativeStrategy = new ConservativeStrategy();
-        AggressiveStrategy aggressiveStrategy = new AggressiveStrategy();
-        ModerateStrategy moderateStrategy = new ModerateStrategy();
-        if(strategyName.equals(conservativeStrategy.getInvestmentStrategyName())){
-            return conservativeStrategy;
+        if(strategyName.equals("Conservative")){
+            return new ConservativeStrategy();
         }
-        else if(strategyName.equals(aggressiveStrategy.getInvestmentStrategyName())){
-            return aggressiveStrategy;
+        else if(strategyName.equals("Aggressive")){
+            return new AggressiveStrategy();
         }
-        else if(strategyName.equals(moderateStrategy.getInvestmentStrategyName())){
-            return moderateStrategy;
+        else if(strategyName.equals("Moderate")){
+            return new ModerateStrategy();
         }
         else{
             throw new IllegalArgumentException("Estratégia de investimento inválida");

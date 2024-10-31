@@ -8,33 +8,33 @@ import java.util.List;
 import java.util.Random;
 
 public class ModerateStrategy implements InvestmentStrategy{
-    private static final String name = "Moderate";
-    private final List<String> moderateCryptos;
+    private static final String strategyName = "Moderate";
+    private final List<CryptoCurrency> moderateCryptos;
     private static final int riskQuota = 2;
 
     public ModerateStrategy() throws IOException {
         CryptoRepository cryptoRepository = new CryptoRepository();
         List<CryptoCurrency> cryptos = cryptoRepository.loadCryptos();
         moderateCryptos = new ArrayList<>();
-        for(CryptoCurrency c : cryptos){
-            if(c.getRiskFactor() == riskQuota) {
-                moderateCryptos.add(c.getName());
+        for(CryptoCurrency crypto : cryptos){
+            if(crypto.getRiskFactor() == riskQuota) {
+                moderateCryptos.add(crypto);
             }
         }
     }
 
     @Override
     public String getInvestmentStrategyName() {
-        return name;
+        return strategyName;
     }
 
     @Override
-    public List<String> getCryptos() {
+    public List<CryptoCurrency> getCryptos() {
         return moderateCryptos;
     }
 
     @Override
-    public String getRandomCrypto() {
+    public CryptoCurrency getRandomCrypto() {
         Random rng = new Random();
         if (moderateCryptos.isEmpty())
             throw new IllegalStateException("A lista de criptomoedas está vazia.");

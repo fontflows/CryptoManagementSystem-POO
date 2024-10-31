@@ -91,11 +91,10 @@ public class PortfolioService{
     }
 
     public CryptoCurrency suggestCryptoCurrency(String userID, String portfolioID) throws IOException {
-        CryptoRepository cryptoRepository = new CryptoRepository();
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
         if (portfolio == null) { throw new IllegalArgumentException("IDs invalidos");}
         InvestmentStrategy investmentStrategy = portfolioRepository.getInvestmentStrategyByName(portfolio.getInvestmentStrategy());
-        return cryptoRepository.loadCryptoByName(investmentStrategy.getRandomCrypto());
+        return investmentStrategy.getRandomCrypto();
     }
 
     public void setPortfolioInvestmentStrategy(String userID, String portfolioID, String strategyName){
