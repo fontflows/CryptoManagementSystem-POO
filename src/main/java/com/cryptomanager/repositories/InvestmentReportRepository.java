@@ -5,10 +5,13 @@ import com.cryptomanager.models.Investment;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.services.InvestmentProjectionService;
 import java.io.*;
+import org.springframework.stereotype.Repository;
+
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Repository
 public class InvestmentReportRepository{
     private int id = 0;
     public void generateCurrentPortfolioReport(Portfolio portfolio) throws IOException {
