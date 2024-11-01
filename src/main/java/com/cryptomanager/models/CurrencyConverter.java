@@ -38,10 +38,10 @@ public class CurrencyConverter {
         double taxConversionPrice = fromCrypto.getPrice()/toCrypto.getPrice();
         double quantityOriginalCryptoQuantityInvested = investmentListFromCrypto.getCryptoInvestedQuantity();
 
-        if (balance == 0)
-            throw new IllegalArgumentException("Saldo nao pode ser nulo.");
+        if (balance <= 0)
+            throw new IllegalArgumentException("Saldo deve ser positivo.");
 
-        else if (balance <= quantityOriginalCryptoQuantityInvested && balance > 0)
+        else if (balance <= quantityOriginalCryptoQuantityInvested)
             return balance*taxConversionPrice;
 
         else
@@ -51,7 +51,7 @@ public class CurrencyConverter {
 
     public CryptoCurrency findCryptoByName(String cryptoName) {
         for (CryptoCurrency crypto : cryptoList) {
-            if (crypto.getName().equalsIgnoreCase(cryptoName))
+            if (crypto.getName().equals(cryptoName))
                 return crypto;
         }
         return null;
