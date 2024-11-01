@@ -5,10 +5,7 @@ import com.cryptomanager.repositories.PortfolioRepository;
 import com.cryptomanager.services.InvestmentReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/report")
@@ -22,14 +19,14 @@ public class ReportController{
     }
 
     @PostMapping("/create-portifolio-report")
-    public ResponseEntity<String> CreatePortifolioRepository(@RequestBody String portfolioid,@RequestBody String userid) {
-        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(portfolioid,userid);
+    public ResponseEntity<String> CreatePortifolioRepository(@RequestParam String portfolioid,@RequestParam String userid) {
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userid,portfolioid);
         investmentReportService.CreatePortifolioRepository(portfolio);
         return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
     }
     @PostMapping("/create-projected-portifolio-report")
-    public ResponseEntity<String> CreateProjectedPortifolioRepository(@RequestBody String portfolioid,@RequestBody String userid,@RequestBody int meses) {
-        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(portfolioid,userid);
+    public ResponseEntity<String> CreateProjectedPortifolioRepository(@RequestParam String portfolioid, @RequestParam String userid, @RequestParam int meses) {
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userid,portfolioid);
         investmentReportService.CreateProjectedPortifolioRepository(portfolio,meses);
         return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
 
