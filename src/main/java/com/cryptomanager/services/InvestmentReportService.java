@@ -21,7 +21,7 @@ public class InvestmentReportService{
         this.investmentReportRepository = investmentReportRepository;
     }
 
-    public void CreatePortifolioRepository(Portfolio portfolio){
+    public void CreatePortifolioReport(Portfolio portfolio){
         try {
             investmentReportRepository.generateCurrentPortfolioReport(portfolio);
         } catch (IOException e) {
@@ -29,7 +29,7 @@ public class InvestmentReportService{
             throw new InvestmentReportExceptions("Erro ao criar relatorio: " + portfolio.getId(), e);
         }
     }
-    public void CreateProjectedPortifolioRepository(Portfolio portfolio, int meses){
+    public void CreateProjectedPortifolioReport(Portfolio portfolio, int meses){
         try {
             investmentReportRepository.generateProjectionReport(portfolio,meses);
         } catch (IOException e) {
