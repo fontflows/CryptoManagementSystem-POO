@@ -22,13 +22,13 @@ public class ReportController{
     public ResponseEntity<String> CreatePortifolioRepository(@RequestParam String portfolioid,@RequestParam String userid) {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userid,portfolioid);
         investmentReportService.CreatePortifolioRepository(portfolio);
-        return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
+        return ResponseEntity.ok("Relatório criado com sucesso!");
     }
     @PostMapping("/create-projected-portifolio-report")
     public ResponseEntity<String> CreateProjectedPortifolioRepository(@RequestParam String portfolioid, @RequestParam String userid, @RequestParam int meses) {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userid,portfolioid);
         investmentReportService.CreateProjectedPortifolioRepository(portfolio,meses);
-        return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
+        return ResponseEntity.ok("Relatório criado com sucesso!");
 
     }
 }
