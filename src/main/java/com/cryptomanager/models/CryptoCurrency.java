@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Modelo que representa uma criptomoeda")
 public class CryptoCurrency {
     @Schema(description = "Nome da criptomoeda", example = "Bitcoin")
-    private String name;
+    private final String name;
 
     @Schema(description = "Preço atual da criptomoeda", example = "50000.0")
     private double price;
@@ -29,10 +29,6 @@ public class CryptoCurrency {
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public double getPrice() {

@@ -94,7 +94,8 @@ public class PortfolioRepository {
 
                 String[] parts = line.split(",");
                 if (parts.length == 2) {
-                    currentPortfolio = new Portfolio(parts[0], parts[1], new ArrayList<>());
+                    currentPortfolio = new Portfolio(parts[0], parts[1], new ArrayList<>(),
+                            currentPortfolio != null ? currentPortfolio.getInvestmentStrategy() : null);
                     portfolioList.add(currentPortfolio);
                 } else if (parts.length >= 7 && currentPortfolio != null) {
                     Investment investment = createInvestmentFromParts(parts);

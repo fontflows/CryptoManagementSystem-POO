@@ -42,4 +42,22 @@ public class CryptoRepository {
             }
         }
     }
+
+    public void updateCrypto(CryptoCurrency crypto) throws IOException {
+        List<CryptoCurrency> cryptos = loadCryptos();
+        boolean found = false;
+        for (CryptoCurrency cryptocurrency : cryptos) {
+            if (cryptocurrency.getName().equals(crypto.getName())) {
+                found = true;
+                break;
+            }
+        }
+        if(found){
+            deleteCryptoByName(crypto.getName());
+            saveCrypto(crypto);
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
+    }
 }
