@@ -29,12 +29,12 @@ public class InvestmentReportService{
             throw new InvestmentReportExceptions("Erro ao criar relatorio: " + portfolio.getId(), e);
         }
     }
-    public void CreateProjectedPortifolioReport(Portfolio portfolio, int meses){
+    public void CreateProjectedPortifolioReport(Portfolio portfolio, int months){
         try {
-            investmentReportRepository.generateProjectionReport(portfolio,meses);
+            investmentReportRepository.generateProjectionReport(portfolio,months);
         } catch (IOException e) {
-            logger.error("Erro ao criar relatorio projecao: {}", portfolio.getId() + " " + meses, e);
-            throw new InvestmentReportExceptions("Erro ao criar relatorio de projecao: " + portfolio.getId() + " " + meses, e);
+            logger.error("Erro ao criar relatorio projecao: {}", portfolio.getId() + " " + months, e);
+            throw new InvestmentReportExceptions("Erro ao criar relatorio de projecao: " + portfolio.getId() + " " + months, e);
         }
     }
 
