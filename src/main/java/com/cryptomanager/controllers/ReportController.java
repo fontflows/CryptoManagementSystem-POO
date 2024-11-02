@@ -25,9 +25,9 @@ public class ReportController{
         return ResponseEntity.ok("Relatório criado com sucesso!");
     }
     @PostMapping("/create-projected-portifolio-report")
-    public ResponseEntity<String> CreateProjectedPortifolioRepository(@RequestParam String portfolioid, @RequestParam String userid, @RequestParam int meses) {
+    public ResponseEntity<String> CreateProjectedPortifolioRepository(@RequestParam String portfolioid, @RequestParam String userid, @RequestParam int months) {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userid,portfolioid);
-        investmentReportService.CreateProjectedPortifolioReport(portfolio,meses);
+        investmentReportService.CreateProjectedPortifolioReport(portfolio,months);
         return ResponseEntity.ok("Relatório criado com sucesso!");
 
     }
