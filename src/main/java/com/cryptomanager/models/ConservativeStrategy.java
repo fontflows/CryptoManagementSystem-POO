@@ -9,16 +9,16 @@ import java.util.Random;
 
 public class ConservativeStrategy implements InvestmentStrategy{
     private static final String name = "Conservative";
-    private  final List<String> conservativeCryptos;
+    private  final List<CryptoCurrency> conservativeCryptos;
     private static final int riskQuota = 1;
 
     public ConservativeStrategy() throws IOException {
         CryptoRepository cryptoRepository = new CryptoRepository();
         List<CryptoCurrency> cryptos = cryptoRepository.loadCryptos();
         conservativeCryptos = new ArrayList<>();
-        for(CryptoCurrency c : cryptos){
-            if(c.getRiskFactor() == riskQuota) {
-                conservativeCryptos.add(c.getName());
+        for(CryptoCurrency crypto : cryptos){
+            if(crypto.getRiskFactor() == riskQuota) {
+                conservativeCryptos.add(crypto);
             }
         }
     }
@@ -29,12 +29,12 @@ public class ConservativeStrategy implements InvestmentStrategy{
     }
 
     @Override
-    public List<String> getCryptos() {
+    public List<CryptoCurrency> getCryptos() {
         return conservativeCryptos;
     }
 
     @Override
-    public String getRandomCrypto() {
+    public CryptoCurrency getRandomCrypto() {
         Random rng = new Random();
         if (conservativeCryptos.isEmpty())
             throw new IllegalStateException("A lista de criptomoedas está vazia.");

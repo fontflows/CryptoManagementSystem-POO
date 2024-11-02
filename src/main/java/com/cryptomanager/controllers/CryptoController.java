@@ -23,6 +23,11 @@ public class CryptoController {
         return cryptoService.getAllCryptos();
     }
 
+    @GetMapping("/search-by-name")
+    public CryptoCurrency getCryptoByName(String name) {
+        return cryptoService.getCryptoByName(name);
+    }
+
     @PostMapping("/add")
     public String addCrypto(@RequestBody CryptoCurrency crypto) {
         try {

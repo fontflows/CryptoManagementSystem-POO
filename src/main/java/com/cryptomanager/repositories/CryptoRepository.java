@@ -38,10 +38,8 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 6) {
-                    if(cryptoName.equals(parts[0])) {
-                        crypto = new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]),Double.parseDouble(parts[3]),Double.parseDouble(parts[4]), Integer.parseInt(parts[5]));
-                    }
+                if (parts.length == 6 && parts[0].equals(cryptoName)) {
+                    crypto = new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]),Double.parseDouble(parts[3]),Double.parseDouble(parts[4]), Integer.parseInt(parts[5]));
                 }
             }
         }

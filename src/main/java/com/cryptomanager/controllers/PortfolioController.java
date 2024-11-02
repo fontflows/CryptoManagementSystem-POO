@@ -1,8 +1,6 @@
 package com.cryptomanager.controllers;
 
-import com.cryptomanager.models.CryptoCurrency;
-import com.cryptomanager.models.Portfolio;
-import com.cryptomanager.models.StrategyNames;
+import com.cryptomanager.models.*;
 import com.cryptomanager.services.PortfolioService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +49,8 @@ public class PortfolioController {
     }
 
     @PostMapping("/set-Investment-Strategy")
-    public void setPortfolioInvestmentStrategy(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam  StrategyNames strategyName) {
+    public ResponseEntity<String> setPortfolioInvestmentStrategy(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam StrategyNames strategyName) {
         portfolioService.setPortfolioInvestmentStrategy(userID, portfolioID, strategyName.getDisplayName());
+        return ResponseEntity.ok("Estratégia de investimento atualizada com sucesso!");
     }
 }

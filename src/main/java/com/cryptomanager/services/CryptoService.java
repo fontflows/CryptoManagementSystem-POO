@@ -31,6 +31,15 @@ public class CryptoService {
         }
     }
 
+    public CryptoCurrency getCryptoByName(String name) {
+        try {
+            return cryptoRepository.loadCryptoByName(name);
+        } catch (IOException e) {
+            logger.error("Erro ao carregar criptomoeda", e);
+            throw new CryptoServiceException("Erro ao carregar criptomoeda", e);
+        }
+    }
+
     public void addCrypto(CryptoCurrency crypto) {
         try {
             cryptoRepository.saveCrypto(crypto);
