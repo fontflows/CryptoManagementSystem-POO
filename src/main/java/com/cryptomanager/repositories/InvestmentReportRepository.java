@@ -66,14 +66,14 @@ public class InvestmentReportRepository{
             throw new IOException(e);
         }
     }
-    public void generateProjectionReport(Portfolio portfolio,int meses) throws IOException {
+    public void generateProjectionReport(Portfolio portfolio,int months) throws IOException {
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
         // RELATÓRIO DE PROJEÇÃO = reportdate,meses
         report.append(reportDate.format(formatter)).append(",")
-                .append(meses).append("\n");
+                .append(months).append("\n");
 
         double totalProjectedValue = 0.0;
         double totalCurrentValue = 0.0;
@@ -83,11 +83,11 @@ public class InvestmentReportRepository{
             double currentValue = investedQuantity * crypto.getPrice();
 
             // Utiliza o InvestmentProjectionService para calcular a projeção
-            double projectedvalue = InvestmentProjectionService.calculateInvestmentProjection(investedQuantity, crypto, meses);
+            double projectedvalue = InvestmentProjectionService.calculateInvestmentProjection(investedQuantity, crypto, months);
             // Conteúdo = cryptoname, valoratualcrypto, meses , valorprojetado, crescimento mensal%,
             report.append(crypto.getName()).append(",")
                     .append(currentValue).append(",")
-                    .append(meses).append(",")
+                    .append(months).append(",")
                     .append(projectedvalue).append(",")
                     .append(crypto.getGrowthRate() * 100).append(",\n");
 
