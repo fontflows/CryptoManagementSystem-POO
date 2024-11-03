@@ -1,14 +1,14 @@
 package com.cryptomanager.services;
 
-import com.cryptomanager.models.CryptoCurrency;
-import com.cryptomanager.models.Investment;
-import com.cryptomanager.models.Portfolio;
-import com.cryptomanager.repositories.CryptoRepository;
+import com.cryptomanager.models.*;
 import com.cryptomanager.repositories.PortfolioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+
+import static com.cryptomanager.services.InvestmentStrategyService.getInvestmentStrategyByName;
+import static com.cryptomanager.services.InvestmentStrategyService.getRandomCrypto;
 
 @Service
 public class PortfolioService{
@@ -89,16 +89,26 @@ public class PortfolioService{
         }
     }
 
+    // Verifica se um portfólio contém um ativo específico
+    public static boolean hasAsset(String assetName, Portfolio portfolio) {
+        for (Investment investment : portfolio.getInvestments()) {
+            if (investment.getCryptoCurrency().getName().equals(assetName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public CryptoCurrency suggestCryptoCurrency(String userID, String portfolioID) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
         if (portfolio == null) { throw new IllegalArgumentException("IDs invalidos");}
-        InvestmentStrategy investmentStrategy = portfolioRepository.getInvestmentStrategyByName(portfolio.getInvestmentStrategy());
-        return investmentStrategy.getRandomCrypto();
+        InvestmentStrategy investmentStrategy = portfolio.getInvestmentStrategy();
+        return getRandomCrypto(investmentStrategy);
     }
 
-    public void setPortfolioInvestmentStrategy(String userID, String portfolioID, String strategyName){
+    public void setPortfolioInvestmentStrategy(String userID, String portfolioID, String strategyName) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-        portfolio.setInvestmentStrategy(strategyName);
+        portfolio.setInvestmentStrategy(getInvestmentStrategyByName(strategyName));
         portfolioRepository.savePortfolio(portfolio);
     }
 }

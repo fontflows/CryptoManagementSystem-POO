@@ -1,11 +1,17 @@
 package com.cryptomanager.models;
 
+import com.cryptomanager.repositories.PortfolioRepository;
+import com.cryptomanager.services.PortfolioService;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.cryptomanager.services.InvestmentStrategyService.getInvestmentStrategyByName;
+import static com.cryptomanager.services.InvestmentStrategyService.updateCryptoList;
+
 
 @Schema(description = "Modelo que representa um portfólio de investimentos")
 public class Portfolio {
@@ -19,23 +25,23 @@ public class Portfolio {
     private List<Investment> investments; // Lista de investimentos
 
     @Schema(description = "Estratégia de investimento do portfólio")
-    private String investmentStrategy;
+    private InvestmentStrategy investmentStrategy;
 
-    public Portfolio(String id, String userId, List<Investment> investments, String investmentStrategy) {
+    public Portfolio(String id, String userId, List<Investment> investments, String investmentStrategy) throws IOException {
         if (id == null || id.isEmpty())
-            throw new IllegalArgumentException("portfolioId não pode ser nulo ou vazio.");
+            throw new IllegalArgumentException("PortfolioID não pode ser nulo ou vazio.");
 
         if (userId == null || userId.isEmpty())
-            throw new IllegalArgumentException("userId não pode ser nulo ou vazio.");
+            throw new IllegalArgumentException("UserID não pode ser nulo ou vazio.");
+
+        if(!Objects.equals(investmentStrategy, "Aggressive") && Objects.equals(investmentStrategy, "Moderate") && Objects.equals(investmentStrategy, "Conservative"))
+            throw new IllegalArgumentException("Estratégia de investimento inválida");
 
         this.id = id;
         this.userId = userId;
         this.investments = investments != null ? investments : new ArrayList<>(); // Inicializa com a lista recebida
-        if(Objects.equals(investmentStrategy, "Aggressive") || Objects.equals(investmentStrategy, "Moderate") || Objects.equals(investmentStrategy, "Conservative"))
-            this.investmentStrategy = investmentStrategy;
-        else{
-            this.investmentStrategy = "Conservative"; //estrategia padrao
-        }
+        this.investmentStrategy = getInvestmentStrategyByName(investmentStrategy);
+        updateCryptoList(this.investmentStrategy);
     }
 
     public String getId() {
@@ -50,7 +56,7 @@ public class Portfolio {
         return investments;
     }
 
-    public String getInvestmentStrategy() { return investmentStrategy; }
+    public InvestmentStrategy getInvestmentStrategy() { return investmentStrategy; }
 
     public void setId(String id) { this.id = id; }
 
@@ -58,7 +64,7 @@ public class Portfolio {
 
     public void setInvestments(List<Investment> investments) { this.investments = investments; }
 
-    public void setInvestmentStrategy(String investmentStrategy) { this.investmentStrategy = investmentStrategy; }
+    public void setInvestmentStrategy(InvestmentStrategy investmentStrategy) { this.investmentStrategy = investmentStrategy; }
 
     public Double getAssetAmount(String assetName) {
         for (Investment investment : investments) {
@@ -71,7 +77,6 @@ public class Portfolio {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-
         if (!(obj instanceof Portfolio other)) return false;
 
         return id.equals(other.id) && userId.equals(other.userId);
@@ -80,7 +85,7 @@ public class Portfolio {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(id).append(",").append(userId).append(",").append(investmentStrategy).append("\n");
+        sb.append(id).append(",").append(userId).append(",").append(investmentStrategy.getInvestmentStrategyName()).append("\n");
         for (Investment investment : investments) {
             sb.append(investment.getCryptoCurrency().getName()).append(",")
                     .append(investment.getCryptoCurrency().getPrice()).append(",")

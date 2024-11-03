@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
+import static com.cryptomanager.services.InvestmentStrategyService.updateAllStrategiesList;
+
 @Service
 public class CryptoService {
 
@@ -43,6 +45,7 @@ public class CryptoService {
     public void addCrypto(CryptoCurrency crypto) {
         try {
             cryptoRepository.saveCrypto(crypto);
+            updateAllStrategiesList();
         } catch (IOException e) {
             logger.error("Erro ao salvar criptomoeda: {}", crypto.getName(), e);
             throw new CryptoServiceException("Erro ao salvar criptomoeda: " + crypto.getName(), e);
@@ -56,6 +59,7 @@ public class CryptoService {
     public void deleteCryptoByName(String name) {
         try {
             cryptoRepository.deleteCryptoByName(name);
+            updateAllStrategiesList();
         } catch (Exception e) {
             logger.error("Erro ao deletar criptomoeda: {}", name, e);
             throw new CryptoServiceException("Erro ao deletar criptomoeda", e);
@@ -65,6 +69,7 @@ public class CryptoService {
     public void updateCrypto(CryptoCurrency crypto) {
         try {
             cryptoRepository.updateCrypto(crypto);
+            updateAllStrategiesList();
         } catch (Exception e) {
             logger.error("Erro ao editar criptomoeda: {}", crypto.getName(), e);
             throw new CryptoServiceException("Erro ao editar criptomoeda", e);

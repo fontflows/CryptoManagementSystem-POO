@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface InvestmentStrategy {
     String getInvestmentStrategyName();
+    int getRiskQuota();
     List<CryptoCurrency> getCryptos();
-    CryptoCurrency getRandomCrypto();
 }

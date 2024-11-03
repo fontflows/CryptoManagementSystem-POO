@@ -6,7 +6,8 @@ import org.springframework.stereotype.Repository;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import static com.cryptomanager.services.PortfolioService.hasAsset;
 
 @Repository
 public class PortfolioRepository {
@@ -53,12 +54,6 @@ public class PortfolioRepository {
         } else {
             System.err.println("Erro: Ativo não encontrado ou portfólio inválido.");
         }
-    }
-
-    // Verifica se um portfólio contém um ativo específico
-    public boolean hasAsset(String assetName, Portfolio portfolio) {
-        return portfolio.getInvestments().stream()
-                .anyMatch(investment -> investment.getCryptoCurrency().getName().equals(assetName));
     }
 
     // Salvar todos os portfólios no arquivo
@@ -160,20 +155,5 @@ public class PortfolioRepository {
             return false;
         }
         return true;
-    }
-
-    public InvestmentStrategy getInvestmentStrategyByName(String strategyName) throws IOException {
-        if(strategyName.equals("Conservative")){
-            return new ConservativeStrategy();
-        }
-        else if(strategyName.equals("Aggressive")){
-            return new AggressiveStrategy();
-        }
-        else if(strategyName.equals("Moderate")){
-            return new ModerateStrategy();
-        }
-        else{
-            throw new IllegalArgumentException("Estratégia de investimento inválida");
-        }
     }
 }
