@@ -34,7 +34,7 @@ public class Portfolio {
         if (userId == null || userId.isEmpty())
             throw new IllegalArgumentException("UserID não pode ser nulo ou vazio.");
 
-        if(!Objects.equals(investmentStrategy, "Aggressive") && Objects.equals(investmentStrategy, "Moderate") && Objects.equals(investmentStrategy, "Conservative"))
+        if(!(Objects.equals(investmentStrategy, "Aggressive")) && !(Objects.equals(investmentStrategy, "Moderate")) && !(Objects.equals(investmentStrategy, "Conservative")))
             throw new IllegalArgumentException("Estratégia de investimento inválida");
 
         this.id = id;
