@@ -1,43 +1,35 @@
 package com.cryptomanager.models;
 
+import com.cryptomanager.repositories.CryptoRepository;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ConservativeStrategy implements InvestmentStrategy{
-    private List<CryptoCurrency> conservativeCryptos;
+import static com.cryptomanager.services.InvestmentStrategyService.updateCryptoList;
 
-    public ConservativeStrategy(List<CryptoCurrency> conservativeCryptos) {
-        this.conservativeCryptos = conservativeCryptos != null ? conservativeCryptos : new ArrayList<>();
+public class ConservativeStrategy implements InvestmentStrategy{
+    private static final String name = "Conservative";
+    private static List<CryptoCurrency> conservativeCryptos;
+    private static final int riskQuota = 1;
+
+    public ConservativeStrategy() throws IOException {
+        conservativeCryptos = new ArrayList<>();
     }
 
     @Override
-    public void setCryptos(List<CryptoCurrency> conservativeCryptos) {
-        this.conservativeCryptos = conservativeCryptos;
+    public String getInvestmentStrategyName() {
+        return name;
+    }
+
+    @Override
+    public int getRiskQuota() {
+        return riskQuota;
     }
 
     @Override
     public List<CryptoCurrency> getCryptos() {
         return conservativeCryptos;
-    }
-
-    @Override
-    public void addCryptoCurrency(CryptoCurrency crypto) {
-        if(crypto == null) { throw new IllegalArgumentException("Crypto não pode ser nula"); }
-        conservativeCryptos.add(crypto);
-    }
-
-    @Override
-    public void removeCryptoCurrency(CryptoCurrency crypto) {
-        if(crypto == null) { throw new IllegalArgumentException("Crypto não pode ser nula"); }
-        conservativeCryptos.remove(crypto);
-    }
-
-    @Override
-    public CryptoCurrency getRandomCrypto() {
-        Random rng = new Random();
-        if (conservativeCryptos.isEmpty())
-            throw new IllegalStateException("A lista de criptomoedas está vazia.");
-        return conservativeCryptos.get(rng.nextInt(conservativeCryptos.size()));
     }
 }

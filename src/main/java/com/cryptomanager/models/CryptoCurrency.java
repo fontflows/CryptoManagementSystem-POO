@@ -19,12 +19,32 @@ public class CryptoCurrency {
     @Schema(description = "Volume negociado nas últimas 24 horas", example = "20000000.0")
     private double volume24h;
 
-    public CryptoCurrency(String name, double price,double growthRate, double marketCap, double volume24h) {
+    @Schema(description = "Fator de risco da criptomoeda (1-3)", example = "3")
+    private int riskFactor;
+
+    public CryptoCurrency(String name, double price,double growthRate, double marketCap, double volume24h, int riskFactor) {
+        if (price <= 0) {
+            throw new IllegalArgumentException("O preço deve ser maior que zero.");
+        }
+        if (growthRate <= -1) {
+            throw new IllegalArgumentException("A taxa de crescimento deve ser maior que -1");
+        }
+        if (marketCap <= 0) {
+            throw new IllegalArgumentException("O valor de market cap deve ser maior que zero.");
+        }
+        if (volume24h < 0) {
+            throw new IllegalArgumentException("O volume em 24h não pode ser negativo.");
+        }
+        if (riskFactor < 1 || riskFactor > 3) {
+            throw new IllegalArgumentException("O fator de risco deve estar entre 1 e 3.");
+        }
+
         this.name = name;
         this.price = price;
         this.growthRate = growthRate;
         this.marketCap = marketCap;
         this.volume24h = volume24h;
+        this.riskFactor = riskFactor;
     }
 
     public String getName() {
@@ -51,8 +71,12 @@ public class CryptoCurrency {
 
     public void setVolume24h(double volume24h) {this.volume24h = volume24h;}
 
+    public int getRiskFactor() {return riskFactor;}
+
+    public void setRiskFactor(int riskFactor) {this.riskFactor = riskFactor;}
+
     @Override
     public String toString() {
-        return name + "," + price + "," + growthRate + "," + marketCap + "," + volume24h;
+        return name + "," + price + "," + growthRate + "," + marketCap + "," + volume24h + "," + riskFactor;
     }
 }

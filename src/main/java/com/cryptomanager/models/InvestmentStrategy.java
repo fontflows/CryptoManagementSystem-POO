@@ -3,9 +3,7 @@ package com.cryptomanager.models;
 import java.util.List;
 
 public interface InvestmentStrategy {
-    void setCryptos(List<CryptoCurrency> investments);
-    void addCryptoCurrency(CryptoCurrency crypto);
-    void removeCryptoCurrency(CryptoCurrency crypto);
+    String getInvestmentStrategyName();
+    int getRiskQuota();
     List<CryptoCurrency> getCryptos();
-    CryptoCurrency getRandomCrypto();
 }

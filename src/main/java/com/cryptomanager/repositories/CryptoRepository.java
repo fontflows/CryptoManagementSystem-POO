@@ -24,12 +24,27 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 5) {
-                    cryptos.add(new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]),Double.parseDouble(parts[3]),Double.parseDouble(parts[4])));
+                if (parts.length == 6) {
+                    cryptos.add(new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]),Double.parseDouble(parts[3]),Double.parseDouble(parts[4]), Integer.parseInt(parts[5])));
                 }
             }
         }
         return cryptos;
+    }
+
+    public CryptoCurrency loadCryptoByName(String  cryptoName) throws IOException {
+        CryptoCurrency crypto = null;
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 6 && parts[0].equals(cryptoName)) {
+                    crypto = new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]),Double.parseDouble(parts[3]),Double.parseDouble(parts[4]), Integer.parseInt(parts[5]));
+                }
+            }
+        }
+        if (crypto == null) { throw new IllegalArgumentException("Crypto not found"); }
+        return crypto;
     }
 
     public void deleteCryptoByName(String name) throws IOException {
