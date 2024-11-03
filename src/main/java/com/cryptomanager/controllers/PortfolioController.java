@@ -31,6 +31,13 @@ public class PortfolioController {
         }
     }
 
+    @PostMapping("/crypto-conversion-by-portfolioId")
+    public ResponseEntity<String> convertCrypto(@RequestParam String portfolioId, @RequestParam String fromCryptoName,
+                                                @RequestParam String toCryptoName, @RequestParam double balance) {
+        portfolioService.convertCrypto(portfolioId, fromCryptoName, toCryptoName, balance);
+        return ResponseEntity.ok("Portfólio associado alterado e atualizado com sucesso, conversao efetivada!");
+    }
+
     @PostMapping("/add")
     public ResponseEntity<String> addPortfolio(@RequestBody Portfolio portfolio) {
         portfolioService.addPortfolio(portfolio);

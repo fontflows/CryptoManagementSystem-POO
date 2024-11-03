@@ -8,13 +8,13 @@ import java.util.List;
 @Schema(description = "Modelo que representa um portfólio de investimentos")
 public class Portfolio {
     @Schema(description = "ID do portfólio", example = "PORTFOLIO-1")
-    private String id; // ID do portfolio
+    private String id;
 
     @Schema(description = "ID do usuário que possui o portfólio", example = "USER-1")
-    private String userId; // ID do usuário
+    private String userId;
 
     @Schema(description = "Lista de investimentos no portfólio")
-    private List<Investment> investments; // Lista de investimentos
+    private List<Investment> investments;
 
     private InvestmentStrategy investmentStrategy;
 
@@ -55,8 +55,9 @@ public class Portfolio {
 
     public Double getAssetAmount(String assetName) {
         for (Investment investment : investments) {
-            if (investment.getCryptoCurrency().getName().equals(assetName))
-                return investment.getCryptoInvestedQuantity(); // Retorna a quantidade
+            if (investment.getCryptoCurrency().getName().equals(assetName)) {
+                return investment.getCryptoInvestedQuantity();
+            }
         }
         return null; // Retorna null se o ativo não for encontrado
     }

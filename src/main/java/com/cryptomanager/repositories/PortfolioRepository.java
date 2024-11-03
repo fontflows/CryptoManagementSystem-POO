@@ -1,6 +1,7 @@
 package com.cryptomanager.repositories;
 
 import com.cryptomanager.models.CryptoCurrency;
+import com.cryptomanager.models.CurrencyConverter;
 import com.cryptomanager.models.Investment;
 import com.cryptomanager.models.Portfolio;
 import org.springframework.stereotype.Repository;
@@ -29,11 +30,10 @@ public class PortfolioRepository {
 
         Portfolio existingPortfolio = findPortfolio(allPortfolios, portfolio.getId(), portfolio.getUserId());
 
-        if (existingPortfolio != null) {
+        if (existingPortfolio != null)
             updatePortfolio(existingPortfolio, portfolio);
-        } else {
+        else
             allPortfolios.add(portfolio);
-        }
 
         saveAllPortfolios(allPortfolios);
     }
@@ -51,9 +51,11 @@ public class PortfolioRepository {
         if (portfolio != null && hasAsset(assetName, portfolio)) {
             portfolio.getInvestments().removeIf(inv -> inv.getCryptoCurrency().getName().equals(assetName));
             savePortfolio(portfolio);  // Salva as mudanças
-        } else {
-            System.err.println("Erro: Ativo não encontrado ou portfólio inválido.");
         }
+
+        else
+            System.err.println("Erro: Ativo não encontrado ou portfólio inválido.");
+
     }
 
     // Verifica se um portfólio contém um ativo específico
@@ -62,7 +64,7 @@ public class PortfolioRepository {
                 .anyMatch(investment -> investment.getCryptoCurrency().getName().equals(assetName));
     }
 
-    // Salvar todos os portfólios no arquivo
+    // Salva todos os portfólios no arquivo
     private void saveAllPortfolios(List<Portfolio> portfolios) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Portfolio portfolio : portfolios) {
@@ -82,7 +84,7 @@ public class PortfolioRepository {
         }
     }
 
-    // Carregar todos os portfólios do arquivo
+    // Carrega todos os portfólios do arquivo
     private List<Portfolio> loadAllPortfolios() {
         List<Portfolio> portfolioList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
@@ -122,7 +124,7 @@ public class PortfolioRepository {
         return new Investment(cryptoCurrency, purchasePrice, quantity);
     }
 
-    // Encontrar portfólio por ID e userId
+    // Encontra portfólio por ID e userId
     private Portfolio findPortfolio(List<Portfolio> portfolios, String portfolioId, String userId) {
         return portfolios.stream()
                 .filter(p -> p.getId().equals(portfolioId) && p.getUserId().equals(userId))
@@ -130,7 +132,7 @@ public class PortfolioRepository {
                 .orElse(null);
     }
 
-    // Atualizar portfólio existente com novos investimentos
+    // Atualiza o portfólio existente com novos investimentos
     private void updatePortfolio(Portfolio existingPortfolio, Portfolio newPortfolio) {
         for (Investment newInvestment : newPortfolio.getInvestments()) {
             Investment existingInvestment = existingPortfolio.getInvestments().stream()
@@ -147,13 +149,13 @@ public class PortfolioRepository {
 
                 existingInvestment.setCryptoInvestedQuantity(totalQuantity);
                 existingInvestment.setPurchasePrice(averagePrice);
-            } else {
-                existingPortfolio.getInvestments().add(newInvestment);
             }
+
+            else
+                existingPortfolio.getInvestments().add(newInvestment);
         }
     }
 
-    // Validação de portfólio
     public boolean isValidPortfolio(Portfolio portfolio) {
         if (portfolio == null) return false;
         if (portfolio.getUserId() == null || portfolio.getUserId().isEmpty()) {
@@ -169,5 +171,76 @@ public class PortfolioRepository {
             return false;
         }
         return true;
+    }
+
+    public void editOriginalPortfolio(Portfolio portfolio, String fromCryptoName, String toCryptoName, double balance){
+        if (!isValidPortfolio(portfolio)) {
+            System.err.println("Erro: Portfólio inválido ou não encontrado.");
+            return;
+        }
+
+        double newCryptoConvertedQuantity = CurrencyConverter.cryptoConverter(fromCryptoName, toCryptoName, balance);
+        appendConversionToFile(portfolio.getId(), fromCryptoName, toCryptoName, balance, newCryptoConvertedQuantity);
+    }
+
+    public void appendConversionToFile(String portfolioId, String fromCryptoName, String toCryptoName, double balance, double convertedPrice) {
+        List<Portfolio> allPortfolios = loadAllPortfolios();
+
+        Portfolio targetPortfolio = null;
+        for (Portfolio portfolio : allPortfolios) {
+            if (portfolio.getId().equals(portfolioId)) {
+                targetPortfolio = portfolio;
+                break;
+            }
+        }
+
+        if (targetPortfolio == null) {
+            System.err.println("Erro: Portfólio não encontrado.");
+            return;
+        }
+
+        CryptoCurrency fromCrypto = CurrencyConverter.findCryptoByName(fromCryptoName);
+        double originalPrice = fromCrypto != null ? fromCrypto.getPrice() : 0;
+        double priceDifference;
+
+        if (originalPrice == 0 || originalPrice < balance){
+            System.err.println("Erro: Operação de conversão inválida.");
+            return;
+        }
+
+        priceDifference = originalPrice - balance;
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (Portfolio portfolio : allPortfolios) {
+                writer.write(portfolio.getId() + "," + portfolio.getUserId() + "\n");
+
+                if (portfolio.getId().equals(portfolioId)) {
+                    for (Investment investment : targetPortfolio.getInvestments()) {
+                        writer.write(investment.getCryptoCurrency().getName() + priceDifference + "," +
+                                toCryptoName + convertedPrice + "," +
+                                investment.getCryptoCurrency().getGrowthRate() + "," +
+                                investment.getCryptoCurrency().getMarketCap() + "," +
+                                investment.getCryptoCurrency().getVolume24h() + "," +
+                                investment.getCryptoInvestedQuantity() + "," +
+                                investment.getPurchasePrice() + "\n");
+                    }
+                }
+
+                else {
+                    // Mantém os investimentos dos outros portfólios inalterados
+                    for (Investment investment : portfolio.getInvestments()) {
+                        writer.write(investment.getCryptoCurrency().getName() + "," +
+                                investment.getCryptoCurrency().getPrice() + "," +
+                                investment.getCryptoCurrency().getGrowthRate() + "," +
+                                investment.getCryptoCurrency().getMarketCap() + "," +
+                                investment.getCryptoCurrency().getVolume24h() + "," +
+                                investment.getCryptoInvestedQuantity() + "," +
+                                investment.getPurchasePrice() + "\n");
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao reescrever conversão no arquivo: " + e.getMessage());
+        }
     }
 }

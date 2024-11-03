@@ -2,19 +2,25 @@ package com.cryptomanager.services;
 
 import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.models.Investment;
+import com.cryptomanager.models.InvestmentStrategy;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.repositories.PortfolioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PortfolioService{
 
     private final PortfolioRepository portfolioRepository;
+    private final List<Portfolio> portfolioList;
 
     @Autowired
-    public PortfolioService(PortfolioRepository portfolioRepository) {
+    public PortfolioService(PortfolioRepository portfolioRepository, List<Portfolio> portfolioList) {
         this.portfolioRepository = portfolioRepository;
+        this.portfolioList = portfolioList;
     }
 
     public double calculateTotalValue(String userId, String portfolioId) {
@@ -46,7 +52,7 @@ public class PortfolioService{
     // Método para adicionar ou atualizar um portfólio
     public void addPortfolio(Portfolio portfolio) {
         System.out.println("Adicionando portfólio: " + portfolio); // Log para verificar o portfólio
-        if (!portfolioRepository.isValidPortfolio(portfolio)) {
+        if (portfolioRepository.isValidPortfolio(portfolio)) {
             System.err.println("Erro: Portfólio inválido.");
             return;
         }
@@ -88,5 +94,58 @@ public class PortfolioService{
 
     public CryptoCurrency suggestCryptoCurrency(Portfolio portfolio) {
         return portfolio.getInvestmentStrategy().getRandomCrypto();
+    }
+
+    public void cryptoConverterInPortfolio(String fromCryptoName, String toCryptoName, double balance, String userId, String IDPortfolio,
+                                           InvestmentStrategy originalInvestmentStrategy, List<Investment> originalInvestmentList){
+
+        Portfolio originalPortfolio = new Portfolio(IDPortfolio, userId, originalInvestmentList, originalInvestmentStrategy);
+        PortfolioRepository portfolioRepository = new PortfolioRepository();
+        portfolioRepository.editOriginalPortfolio(originalPortfolio, fromCryptoName, toCryptoName, balance);
+    }
+
+    public String findUserIdByCryptoName(String cryptoName){
+        for (Portfolio portfolio : portfolioList) {
+            for (Investment investment : portfolio.getInvestments()) {
+                if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName))
+                    return portfolio.getUserId();
+            }
+        }
+        return null;
+    }
+
+    public List<Investment> findInvestmentListByCryptoName(String cryptoName){
+        for (Portfolio portfolio : portfolioList) {
+            for (Investment investment : portfolio.getInvestments()) {
+                if (investment.getCryptoCurrency().getName().equals(cryptoName))
+                    return portfolio.getInvestments();
+            }
+        }
+        return null;
+    }
+
+    public InvestmentStrategy findInvestmentStrategyByCryptoName(String cryptoName){
+        for (Portfolio portfolio : portfolioList) {
+            for (Investment investment : portfolio.getInvestments()) {
+                if (investment.getCryptoCurrency().getName().equals(cryptoName))
+                    return portfolio.getInvestmentStrategy();
+            }
+        }
+        return null;
+    }
+
+
+    public void convertCrypto(String PortfolioId, String fromCryptoName, String toCryptoName, double balance) {
+        if (fromCryptoName == null || toCryptoName == null)
+            throw new IllegalArgumentException("Parâmetros não podem ser nulos.");
+
+        String userId = findUserIdByCryptoName(fromCryptoName);
+        List<Investment> originalInvestmentList = findInvestmentListByCryptoName(fromCryptoName);
+        InvestmentStrategy originalInvestmentStrategy = findInvestmentStrategyByCryptoName(fromCryptoName);
+
+        if (userId == null || PortfolioId == null || originalInvestmentList == null || originalInvestmentStrategy == null)
+            throw new IllegalArgumentException("Portfolio associado não localizado. Conversao não realizada");
+
+        cryptoConverterInPortfolio(fromCryptoName, toCryptoName, balance, userId, PortfolioId, originalInvestmentStrategy, originalInvestmentList);
     }
 }
