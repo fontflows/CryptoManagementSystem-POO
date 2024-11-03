@@ -61,4 +61,13 @@ public class CryptoService {
             throw new CryptoServiceException("Erro ao deletar criptomoeda", e);
         }
     }
+
+    public void updateCrypto(CryptoCurrency crypto) {
+        try {
+            cryptoRepository.updateCrypto(crypto);
+        } catch (Exception e) {
+            logger.error("Erro ao editar criptomoeda: {}", crypto.getName(), e);
+            throw new CryptoServiceException("Erro ao editar criptomoeda", e);
+        }
+    }
 }

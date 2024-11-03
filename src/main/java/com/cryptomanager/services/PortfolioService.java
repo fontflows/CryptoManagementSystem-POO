@@ -2,7 +2,6 @@ package com.cryptomanager.services;
 
 import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.models.Investment;
-import com.cryptomanager.models.InvestmentStrategy;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.repositories.CryptoRepository;
 import com.cryptomanager.repositories.PortfolioRepository;

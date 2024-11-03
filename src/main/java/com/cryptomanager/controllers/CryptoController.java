@@ -47,4 +47,10 @@ public class CryptoController {
             return e.getMessage();
         }
     }
+
+    @PostMapping("/edit")
+    public String updateCrypto(@RequestBody CryptoCurrency crypto) {
+        cryptoService.updateCrypto(crypto);
+        return "Criptomoeda editada com sucesso!";
+    }
 }
