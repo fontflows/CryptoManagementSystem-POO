@@ -18,7 +18,6 @@ public class PortfolioService{
     private final CryptoRepository cryptoRepository;
 
     @Autowired
-    public PortfolioService(PortfolioRepository portfolioRepository) {
     public PortfolioService(PortfolioRepository portfolioRepository, CryptoRepository cryptoRepository) {
         this.portfolioRepository = portfolioRepository;
         this.cryptoRepository = cryptoRepository;
@@ -71,11 +70,9 @@ public class PortfolioService{
                 for (Investment existingInvestment : existingPortfolio.getInvestments()) {
                     if (existingInvestment.getCryptoCurrency().getName().equals(newInvestment.getCryptoCurrency().getName())) {
                         // Atualiza a quantidade investida e o preço de compra
-                        existingInvestment.setPurchasePrice(((newInvestment.getPurchasePrice() * newInvestment.getCryptoInvestedQuantity()) + 
-                            (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity())) / 
                         existingInvestment.setPurchasePrice(((newInvestment.getPurchasePrice() * newInvestment.getCryptoInvestedQuantity()) +
-                            (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity())) /
-                            (existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity())); // calcula preço médio
+                                (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity())) /
+                                (existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity())); // calcula preço médio
                         existingInvestment.setCryptoInvestedQuantity(existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity());
                         investmentExists = true;
                         break;
