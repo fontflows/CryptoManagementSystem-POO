@@ -87,7 +87,7 @@ public class PortfolioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao resgatar saldo: " + e.getMessage());
         }
     }
-
+  
     @PostMapping("/buy-crypto")
     public ResponseEntity<String> buyCrypto(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String cryptoName, @RequestParam double amount){
         try{

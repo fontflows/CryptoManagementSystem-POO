@@ -45,7 +45,6 @@ public class PortfolioService{
             // Adiciona o valor do investimento ao valor total
             totalValue += actualPrice * quantity;
         }
-        
         return totalValue;
     }
 
@@ -130,6 +129,3 @@ public class PortfolioService{
         }
         portfolioRepository.updatePortfolio(portfolio);
     }
-
-    }
-}
