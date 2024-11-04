@@ -1,6 +1,7 @@
 package com.cryptomanager.services;
 
 import com.cryptomanager.models.*;
+import com.cryptomanager.repositories.CryptoRepository;
 import com.cryptomanager.repositories.PortfolioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +15,13 @@ import static com.cryptomanager.services.InvestmentStrategyService.getRandomCryp
 public class PortfolioService{
 
     private final PortfolioRepository portfolioRepository;
+    private final CryptoRepository cryptoRepository;
 
     @Autowired
     public PortfolioService(PortfolioRepository portfolioRepository) {
+    public PortfolioService(PortfolioRepository portfolioRepository, CryptoRepository cryptoRepository) {
         this.portfolioRepository = portfolioRepository;
+        this.cryptoRepository = cryptoRepository;
     }
 
     public double calculateTotalValue(String userId, String portfolioId) {
@@ -69,6 +73,8 @@ public class PortfolioService{
                         // Atualiza a quantidade investida e o preço de compra
                         existingInvestment.setPurchasePrice(((newInvestment.getPurchasePrice() * newInvestment.getCryptoInvestedQuantity()) + 
                             (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity())) / 
+                        existingInvestment.setPurchasePrice(((newInvestment.getPurchasePrice() * newInvestment.getCryptoInvestedQuantity()) +
+                            (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity())) /
                             (existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity())); // calcula preço médio
                         existingInvestment.setCryptoInvestedQuantity(existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity());
                         investmentExists = true;
@@ -109,6 +115,24 @@ public class PortfolioService{
     public void setPortfolioInvestmentStrategy(String userID, String portfolioID, String strategyName) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
         portfolio.setInvestmentStrategy(getInvestmentStrategyByName(strategyName));
+        portfolioRepository.savePortfolio(portfolio);
+    }
+
+    public void addBalance(String userID, String portfolioID, double amount){
+        if(amount <= 0)
+            throw new IllegalArgumentException("Valor inserido para adicionar saldo deve ser maior que zero");
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
+        portfolio.setBalance(portfolio.getBalance() + amount);
+        portfolioRepository.savePortfolio(portfolio);
+    }
+
+    public void redeemBalance(String userID, String portfolioID, double amount){
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
+        if(amount > portfolio.getBalance())
+            throw new IllegalArgumentException("Valor inserido para resgate é maior que o saldo disponível");
+        if(amount <= 0)
+            throw new IllegalArgumentException("Valor inserido para resgate deve ser maior que zero");
+        portfolio.setBalance(portfolio.getBalance() - amount);
         portfolioRepository.savePortfolio(portfolio);
     }
 }
