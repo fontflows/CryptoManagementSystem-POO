@@ -36,12 +36,10 @@ public class PortfolioController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addPortfolio(@RequestParam String userId, @RequestParam String portfolioId, @RequestBody Investment investment, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
+    public ResponseEntity<String> addPortfolio(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
         Portfolio portfolio = null;
-        List<Investment> investments = new ArrayList<>();
-        investments.add(investment);
         try {
-            portfolio = new Portfolio(userId, portfolioId, investments, strategyNames.getDisplayName(), balance);
+            portfolio = new Portfolio(userId, portfolioId, strategyNames.getDisplayName(), balance);
             portfolioService.addPortfolio(portfolio);
             return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
         } catch (IOException e) {
@@ -90,4 +88,13 @@ public class PortfolioController {
         }
     }
 
+    @PostMapping("/buy-crypto")
+    public ResponseEntity<String> buyCrypto(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String cryptoName, @RequestParam double amount){
+        try{
+            portfolioService.buyCrypto(userID, portfolioID, cryptoName, amount);
+            return ResponseEntity.ok("Criptomoeda comprada com sucesso!");
+        } catch (IOException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao comprar criptomoeda: " + e.getMessage());
+        }
+    }
 }

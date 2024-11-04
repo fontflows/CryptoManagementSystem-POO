@@ -23,7 +23,7 @@ public class Portfolio {
     private final String userId; // ID do usuário
 
     @Schema(description = "Lista de investimentos no portfólio")
-    private List<Investment> investments; // Lista de investimentos
+    private List<Investment> investments = new ArrayList<>(); // Lista de investimentos
 
     @Schema(description = "Estratégia de investimento do portfólio")
     private InvestmentStrategy investmentStrategy;
@@ -31,7 +31,7 @@ public class Portfolio {
     @Schema(description = "Saldo disponível no portfólio")
     private double balance;
 
-    public Portfolio(String id, String userId, List<Investment> investments, String investmentStrategy, double balance) throws IOException {
+    public Portfolio(String id, String userId, String investmentStrategy, double balance) throws IOException {
         if (id == null || id.isEmpty())
             throw new IllegalArgumentException("PortfolioID não pode ser nulo ou vazio.");
 
@@ -46,7 +46,6 @@ public class Portfolio {
 
         this.id = id;
         this.userId = userId;
-        this.investments = investments != null ? investments : new ArrayList<>(); // Inicializa com a lista recebida
         this.investmentStrategy = getInvestmentStrategyByName(investmentStrategy);
         updateCryptoList(this.investmentStrategy);
         this.balance = balance;

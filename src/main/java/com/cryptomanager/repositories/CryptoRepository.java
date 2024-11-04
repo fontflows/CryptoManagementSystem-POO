@@ -43,7 +43,7 @@ public class CryptoRepository {
                 }
             }
         }
-        if (crypto == null) { throw new IllegalArgumentException("Crypto not found"); }
+        if (crypto == null) { throw new IllegalArgumentException("Criptomoeda não encontrada"); }
         return crypto;
     }
 
