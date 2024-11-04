@@ -36,16 +36,18 @@ public class PortfolioController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addPortfolio(@RequestParam String userId, @RequestParam String portfolioId, @RequestBody Investment investment, @RequestParam StrategyNames strategyNames){
+    public ResponseEntity<String> addPortfolio(@RequestParam String userId, @RequestParam String portfolioId, @RequestBody Investment investment, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
         Portfolio portfolio = null;
         List<Investment> investments = new ArrayList<>();
         investments.add(investment);
         try {
-            portfolio = new Portfolio(userId, portfolioId, investments, strategyNames.getDisplayName());
+            portfolio = new Portfolio(userId, portfolioId, investments, strategyNames.getDisplayName(), balance);
             portfolioService.addPortfolio(portfolio);
             return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor ao adicionar Portfolio: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada inválida: " + e.getMessage());
         }
     }
 
@@ -67,4 +69,25 @@ public class PortfolioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor ao atualizar estratégia: " + e.getMessage());
         }
     }
+
+    @PostMapping("/add-balance")
+    public ResponseEntity<String> addBalance(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam double amount){
+        try{
+            portfolioService.addBalance(userID, portfolioID, amount);
+            return ResponseEntity.ok("Saldo adicionado com sucesso!");
+        } catch(IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao adicionar saldo: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/redeem-balance")
+    public ResponseEntity<String> redeemBalance(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam double amount){
+        try{
+            portfolioService.redeemBalance(userID, portfolioID, amount);
+            return ResponseEntity.ok("Saldo resgatado com sucesso!");
+        } catch(IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao resgatar saldo: " + e.getMessage());
+        }
+    }
+
 }

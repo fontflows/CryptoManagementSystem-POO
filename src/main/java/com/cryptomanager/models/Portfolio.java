@@ -15,11 +15,12 @@ import static com.cryptomanager.services.InvestmentStrategyService.updateCryptoL
 
 @Schema(description = "Modelo que representa um portfólio de investimentos")
 public class Portfolio {
+
     @Schema(description = "ID do portfólio", example = "PORTFOLIO-1")
-    private String id; // ID do portfolio
+    private final String id; // ID do portfolio
 
     @Schema(description = "ID do usuário que possui o portfólio", example = "USER-1")
-    private String userId; // ID do usuário
+    private final String userId; // ID do usuário
 
     @Schema(description = "Lista de investimentos no portfólio")
     private List<Investment> investments; // Lista de investimentos
@@ -27,7 +28,10 @@ public class Portfolio {
     @Schema(description = "Estratégia de investimento do portfólio")
     private InvestmentStrategy investmentStrategy;
 
-    public Portfolio(String id, String userId, List<Investment> investments, String investmentStrategy) throws IOException {
+    @Schema(description = "Saldo disponível no portfólio")
+    private double balance;
+
+    public Portfolio(String id, String userId, List<Investment> investments, String investmentStrategy, double balance) throws IOException {
         if (id == null || id.isEmpty())
             throw new IllegalArgumentException("PortfolioID não pode ser nulo ou vazio.");
 
@@ -37,11 +41,15 @@ public class Portfolio {
         if(!(Objects.equals(investmentStrategy, "Aggressive")) && !(Objects.equals(investmentStrategy, "Moderate")) && !(Objects.equals(investmentStrategy, "Conservative")))
             throw new IllegalArgumentException("Estratégia de investimento inválida");
 
+        if(balance < 0)
+            throw new IllegalArgumentException("Saldo não pode ser negativo");
+
         this.id = id;
         this.userId = userId;
         this.investments = investments != null ? investments : new ArrayList<>(); // Inicializa com a lista recebida
         this.investmentStrategy = getInvestmentStrategyByName(investmentStrategy);
         updateCryptoList(this.investmentStrategy);
+        this.balance = balance;
     }
 
     public String getId() {
@@ -56,11 +64,17 @@ public class Portfolio {
         return investments;
     }
 
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        if(balance < 0)
+            throw new IllegalArgumentException("Saldo não pode ser negativo");
+        this.balance = balance;
+    }
+
     public InvestmentStrategy getInvestmentStrategy() { return investmentStrategy; }
-
-    public void setId(String id) { this.id = id; }
-
-    public void setUserId(String userId) { this.userId = userId; }
 
     public void setInvestments(List<Investment> investments) { this.investments = investments; }
 
@@ -85,7 +99,7 @@ public class Portfolio {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(id).append(",").append(userId).append(",").append(investmentStrategy.getInvestmentStrategyName()).append("\n");
+        sb.append(id).append(",").append(userId).append(",").append(investmentStrategy.getInvestmentStrategyName()).append(",").append(balance).append("\n");
         for (Investment investment : investments) {
             sb.append(investment.getCryptoCurrency().getName()).append(",")
                     .append(investment.getCryptoCurrency().getPrice()).append(",")

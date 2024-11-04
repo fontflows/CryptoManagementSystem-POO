@@ -78,8 +78,8 @@ public class PortfolioRepository {
                 if (line.isEmpty()) continue;
 
                 String[] parts = line.split(",");
-                if (parts.length == 3) {
-                    currentPortfolio = new Portfolio(parts[0], parts[1], new ArrayList<>(), parts[2]);
+                if (parts.length == 4) {
+                    currentPortfolio = new Portfolio(parts[0], parts[1], new ArrayList<>(), parts[2], Double.parseDouble(parts[3]));
                     portfolioList.add(currentPortfolio);
                 } else if (parts.length >= 8 && currentPortfolio != null) {
                     Investment investment = createInvestmentFromParts(parts);
@@ -136,6 +136,7 @@ public class PortfolioRepository {
                 existingPortfolio.getInvestments().add(newInvestment);
             }
             existingPortfolio.setInvestmentStrategy(newPortfolio.getInvestmentStrategy());
+            existingPortfolio.setBalance(newPortfolio.getBalance());
         }
     }
 
