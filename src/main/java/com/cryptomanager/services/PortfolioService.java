@@ -45,52 +45,24 @@ public class PortfolioService{
             // Adiciona o valor do investimento ao valor total
             totalValue += actualPrice * quantity;
         }
-        
         return totalValue;
     }
 
-    // Método para adicionar ou atualizar um portfólio
-    public void addPortfolio(Portfolio portfolio) {
-        System.out.println("Adicionando portfólio: " + portfolio); // Log para verificar o portfólio
-        if (!portfolioRepository.isValidPortfolio(portfolio)) {
-            System.err.println("Erro: Portfólio inválido.");
-            return;
-        }
-
-        // Carregamento do portfólio existente
-        Portfolio existingPortfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(portfolio.getUserId(), portfolio.getId());
-
-        // Se o portfólio já existe, atualiza os investimentos
-        if (existingPortfolio != null) {
-            // Atualiza os investimentos existentes
-            for (Investment newInvestment : portfolio.getInvestments()) {
-                boolean investmentExists = false;
-
-                // Verifica se o investimento já existe
-                for (Investment existingInvestment : existingPortfolio.getInvestments()) {
-                    if (existingInvestment.getCryptoCurrency().getName().equals(newInvestment.getCryptoCurrency().getName())) {
-                        // Atualiza a quantidade investida e o preço de compra
-                        existingInvestment.setPurchasePrice(((newInvestment.getPurchasePrice() * newInvestment.getCryptoInvestedQuantity()) +
-                                (existingInvestment.getPurchasePrice() * existingInvestment.getCryptoInvestedQuantity())) /
-                                (existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity())); // calcula preço médio
-                        existingInvestment.setCryptoInvestedQuantity(existingInvestment.getCryptoInvestedQuantity() + newInvestment.getCryptoInvestedQuantity());
-                        investmentExists = true;
-                        break;
-                    }
-                }
-
-                // Se o investimento não existe, adiciona um novo
-                if (!investmentExists) {
-                    existingPortfolio.getInvestments().add(newInvestment);
-                }
-            }
-            // Salva o portfólio atualizado
-            portfolioRepository.savePortfolio(existingPortfolio);
-        } else {
-            // Se o portfólio não existe, cria um novo
-            portfolioRepository.savePortfolio(portfolio);
-        }
+    //Adicionar um portfólio no arquivo
+    public void addPortfolio(Portfolio portfolio) throws IOException {
+            portfolioRepository.addPortfolio(portfolio);
     }
+
+    //Retorna investimento pelo nome da crypto
+    public static Investment findInvestment(Portfolio portfolio, String cryptoName){
+        for(Investment investment: portfolio.getInvestments()){
+            if(investment.getCryptoCurrency().getName().equals(cryptoName)){
+                return investment;
+            }
+        }
+        throw new IllegalArgumentException("Investimento não encontrado");
+    }
+
 
     // Verifica se um portfólio contém um ativo específico
     public static boolean hasAsset(String assetName, Portfolio portfolio) {
@@ -112,7 +84,7 @@ public class PortfolioService{
     public void setPortfolioInvestmentStrategy(String userID, String portfolioID, String strategyName) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
         portfolio.setInvestmentStrategy(getInvestmentStrategyByName(strategyName));
-        portfolioRepository.savePortfolio(portfolio);
+        portfolioRepository.updatePortfolio(portfolio);
     }
 
     public void addBalance(String userID, String portfolioID, double amount){
@@ -120,7 +92,7 @@ public class PortfolioService{
             throw new IllegalArgumentException("Valor inserido para adicionar saldo deve ser maior que zero");
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
         portfolio.setBalance(portfolio.getBalance() + amount);
-        portfolioRepository.savePortfolio(portfolio);
+        portfolioRepository.updatePortfolio(portfolio);
     }
 
     public void redeemBalance(String userID, String portfolioID, double amount){
@@ -130,6 +102,30 @@ public class PortfolioService{
         if(amount <= 0)
             throw new IllegalArgumentException("Valor inserido para resgate deve ser maior que zero");
         portfolio.setBalance(portfolio.getBalance() - amount);
-        portfolioRepository.savePortfolio(portfolio);
+        portfolioRepository.updatePortfolio(portfolio);
     }
-}
+
+    public void buyCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
+        if(portfolio == null)
+            throw new IllegalArgumentException("IDs invalidos");
+
+        CryptoCurrency crypto = cryptoRepository.loadCryptoByName(cryptoName);
+        if(crypto == null)
+            throw new IllegalArgumentException("Nome da Criptomoeda não encontrado: " + cryptoName);
+
+        if(portfolio.getBalance() < amount*crypto.getPrice())
+            throw new IllegalArgumentException("Saldo disponível não é suficiente para essa compra");
+
+        portfolio.setBalance(portfolio.getBalance() - amount*crypto.getPrice());
+        if(hasAsset(cryptoName, portfolio)){
+            Investment updatedInvestment = findInvestment(portfolio, cryptoName);
+            updatedInvestment.setPurchasePrice(crypto.getPrice());
+            updatedInvestment.setCryptoInvestedQuantity(updatedInvestment.getCryptoInvestedQuantity() + amount);
+        }
+        else{
+            Investment newInvestment = new Investment(crypto, crypto.getPrice(), amount);
+            portfolio.getInvestments().add(newInvestment);
+        }
+        portfolioRepository.updatePortfolio(portfolio);
+    }
