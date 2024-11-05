@@ -68,7 +68,7 @@ public class PortfolioRepository {
         }
     }
 
-    // Carregar todos os portfólios do arquivo
+    // Carrega todos os portfólios do arquivo
     private List<Portfolio> loadAllPortfolios() {
         List<Portfolio> portfolioList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
