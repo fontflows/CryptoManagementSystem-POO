@@ -21,7 +21,7 @@ public class Portfolio {
     private final String userId; // ID do usuário
 
     @Schema(description = "Lista de investimentos no portfólio")
-    private List<Investment> investments = new ArrayList<>(); // Lista de investimentos
+    private List<Investment> investments = new ArrayList<>();// Lista de investimentos
 
     @Schema(description = "Estratégia de investimento do portfólio")
     private InvestmentStrategy investmentStrategy;

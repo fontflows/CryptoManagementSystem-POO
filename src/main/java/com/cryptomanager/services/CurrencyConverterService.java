@@ -1,7 +1,6 @@
 package com.cryptomanager.services;
 
 import com.cryptomanager.models.CryptoCurrency;
-import com.cryptomanager.models.CurrencyConverter;
 import com.cryptomanager.models.Investment;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.repositories.CryptoRepository;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 import static com.cryptomanager.services.PortfolioService.findInvestmentIndex;
+import static com.cryptomanager.services.PortfolioService.hasAsset;
 
 @Service
 public class CurrencyConverterService {
@@ -24,66 +24,44 @@ public class CurrencyConverterService {
         this.cryptoRepository = cryptoRepository;
     }
 
-/*    public void convertCrypto(String portfolioId, String fromCryptoName, String toCryptoName, double balance) throws IOException {
-        if (fromCryptoName == null || toCryptoName == null)
-            throw new IllegalArgumentException("Parâmetros não podem ser nulos.");
+    public void currencyConverter(String portfolioId, String userId, String fromCrypto, String toCrypto, double cryptoAmount) throws IOException {
+        if(cryptoAmount <= 0)
+            throw new IllegalArgumentException("Quantidade de criptomoedas a serem convertidas deve ser maior que zero");
 
-        // Carregar todos os portfólios e encontrar o portfólio específico pelo ID
-        List<Portfolio> allPortfolios = portfolioRepository.loadAllPortfolios();
-        Portfolio targetPortfolio = null;
-
-        for (Portfolio portfolio : allPortfolios) {
-            if (portfolio.getId().equals(portfolioId)) {
-                targetPortfolio = portfolio;
-                break;
-            }
-        }
-
-        if (targetPortfolio == null)
-            throw new IllegalArgumentException("Portfólio não encontrado.");
-
-        // Encontra o investimento na criptomoeda de origem e verificar se o saldo é suficiente
-        Investment fromInvestment = findInvestment(targetPortfolio, fromCryptoName);
-        if (fromInvestment.getCryptoInvestedQuantity() < balance) {
-            throw new IllegalArgumentException("Saldo insuficiente ou investimento não encontrado.");
-        }
-
-        // Realiza a conversão de criptomoedas
-        CurrencyConverter currencyConverter = new CurrencyConverter(cryptoRepository, findInvestmentListByCryptoName(toCryptoName));
-        double convertedQuantity = currencyConverter.cryptoConverter(fromCryptoName, toCryptoName, balance);
-
-        // Atualiza o portfólio: diminuir a quantidade de 'fromCrypto' e adicionar 'toCrypto'
-        fromInvestment.setCryptoInvestedQuantity(fromInvestment.getCryptoInvestedQuantity() - balance);
-
-        // Verifica se já existe investimento em 'toCrypto', caso contrário, criar um novo investimento
-        Investment toInvestment = findInvestment(targetPortfolio, toCryptoName);
-        toInvestment.setCryptoInvestedQuantity(toInvestment.getCryptoInvestedQuantity() + convertedQuantity);
-
-        // Atualiza o arquivo com as novas informações
-        portfolioRepository.appendConversionToFile(targetPortfolio, fromCryptoName, toCryptoName, balance, convertedQuantity);
-    }
-*/
-    public void currencyConverter(String portfolioId, String userId, String fromCrypto, String toCrypto, double amount) throws IOException {
         CryptoCurrency crypto1 = cryptoRepository.loadCryptoByName(fromCrypto);
         CryptoCurrency crypto2 = cryptoRepository.loadCryptoByName(toCrypto);
+        if(crypto1 == null || crypto2 == null)
+            throw new IllegalArgumentException("Criptomoedas não encontradas");
+
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
+        if(!hasAsset(fromCrypto, portfolio))
+            throw new IllegalArgumentException("Criptomoeda " + fromCrypto + " não encontrada no portfólio");
+
+        if(portfolio.getAssetAmount(fromCrypto) < cryptoAmount)
+            throw new IllegalArgumentException("Quantidade da criptomoeda " + fromCrypto + " insuficiente no portfólio");
 
         int fromInvestmentIndex = findInvestmentIndex(portfolio, fromCrypto);
         int toInvestmentIndex = findInvestmentIndex(portfolio, toCrypto);
-        double newAmount = crypto1.getPrice()*amount/crypto2.getPrice();
+        double newAmount = crypto1.getPrice()*cryptoAmount/crypto2.getPrice();
 
-        //atualiza a crypto from
-        portfolio.getInvestments().get(fromInvestmentIndex).setCryptoInvestedQuantity(portfolio.getInvestments().get(fromInvestmentIndex).getCryptoInvestedQuantity() - amount);
+        //Atualiza a crypto "From"
+        if(portfolio.getInvestments().get(fromInvestmentIndex).getCryptoInvestedQuantity() - cryptoAmount == 0)
+            portfolio.getInvestments().remove(fromInvestmentIndex);
+        else
+            portfolio.getInvestments().get(fromInvestmentIndex).setCryptoInvestedQuantity(portfolio.getInvestments().get(fromInvestmentIndex).getCryptoInvestedQuantity() - cryptoAmount);
 
-        Investment newInvestment;
-        if(toInvestmentIndex == -1){ //Ou seja, o investimento "To" ainda nao existe na carteira
-            newInvestment = new Investment(crypto2, crypto2.getPrice(), newAmount);
+        //Se a crypto "To" não existe no portfolio
+        if(toInvestmentIndex == -1){
+            Investment newInvestment = new Investment(crypto2, crypto2.getPrice(), newAmount);
             portfolio.getInvestments().add(newInvestment);
         }
-
-        else //atualiza a crypto to existente
-            portfolio.getInvestments().get(toInvestmentIndex).setCryptoInvestedQuantity(portfolio.getInvestments().get(fromInvestmentIndex).getCryptoInvestedQuantity() + newAmount);
-
+        //atualiza a crypto "To" existente
+        else {
+            double oldQuantity = portfolio.getInvestments().get(toInvestmentIndex).getCryptoInvestedQuantity();
+            double avaragePrice = (portfolio.getInvestments().get(toInvestmentIndex).getPurchasePrice()*oldQuantity + crypto2.getPrice()*newAmount)/(oldQuantity+newAmount);
+            portfolio.getInvestments().get(toInvestmentIndex).setPurchasePrice(avaragePrice);
+            portfolio.getInvestments().get(toInvestmentIndex).setCryptoInvestedQuantity(portfolio.getInvestments().get(toInvestmentIndex).getCryptoInvestedQuantity() + newAmount);
+        }
         portfolioRepository.updatePortfolio(portfolio);
     }
 }

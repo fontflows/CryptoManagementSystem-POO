@@ -144,7 +144,6 @@ public class PortfolioService {
             if (portfolio.getInvestments().get(i).getCryptoCurrency().getName().equalsIgnoreCase(cryptoName)){
                 return i;
         }
-
         return -1;
     }
 }
