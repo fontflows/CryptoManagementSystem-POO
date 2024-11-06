@@ -70,7 +70,7 @@ public class PortfolioRepository {
     }
 
     // Carrega todos os portfólios do arquivo
-    public List<Portfolio> loadAllPortfolios() {
+    private List<Portfolio> loadAllPortfolios() {
         List<Portfolio> portfolioList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             Portfolio currentPortfolio = null;

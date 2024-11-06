@@ -45,6 +45,7 @@ public class PortfolioService {
             // Adiciona o valor do investimento ao valor total
             totalValue += actualPrice * quantity;
         }
+        
         return totalValue;
     }
 
@@ -128,7 +129,8 @@ public class PortfolioService {
 
         if (hasAsset(cryptoName, portfolio)) {
             Investment updatedInvestment = findInvestment(portfolio, cryptoName);
-            updatedInvestment.setPurchasePrice(crypto.getPrice());
+            updatedInvestment.setPurchasePrice(
+                    (crypto.getPrice()*amount + updatedInvestment.getCryptoInvestedQuantity()*updatedInvestment.getPurchasePrice())/(updatedInvestment.getCryptoInvestedQuantity() + amount)); //Calcula o preço médio
             updatedInvestment.setCryptoInvestedQuantity(updatedInvestment.getCryptoInvestedQuantity() + amount);
         }
 
@@ -139,11 +141,40 @@ public class PortfolioService {
         portfolioRepository.updatePortfolio(portfolio);
     }
 
+    //Encontra o índice de um investimento na lista de um portfólio
     public static int findInvestmentIndex(Portfolio portfolio, String cryptoName){
-        for (int i = 0; i < portfolio.getInvestments().size(); i++)
-            if (portfolio.getInvestments().get(i).getCryptoCurrency().getName().equalsIgnoreCase(cryptoName)){
+        for (int i = 0; i < portfolio.getInvestments().size(); i++){
+            if (portfolio.getInvestments().get(i).getCryptoCurrency().getName().equalsIgnoreCase(cryptoName))
                 return i;
         }
         return -1;
+    }
+  
+    public void sellCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
+        if (portfolio == null)
+            throw new IllegalArgumentException("IDs invalidos");
+
+        CryptoCurrency crypto = cryptoRepository.loadCryptoByName(cryptoName);
+        if (crypto == null)
+            throw new IllegalArgumentException("Nome da Criptomoeda não encontrado: " + cryptoName);
+
+        if (!hasAsset(cryptoName, portfolio))
+            throw new IllegalArgumentException("Criptomoeda não encontrada no portfólio: " + cryptoName);
+
+        if (amount <= 0)
+            throw new IllegalArgumentException("Quantidade para venda deve ser maior que zero");
+
+        if (portfolio.getAssetAmount(cryptoName) < amount)
+            throw new IllegalArgumentException("Quantidade da criptomoeda no portfólio é insuficiente");
+
+        portfolio.setBalance(portfolio.getBalance() + amount * crypto.getPrice());
+        Investment updatedInvestment = findInvestment(portfolio, cryptoName);
+        if (updatedInvestment.getCryptoInvestedQuantity() - amount == 0) {
+            portfolio.getInvestments().remove(updatedInvestment);
+        } else {
+            updatedInvestment.setCryptoInvestedQuantity(updatedInvestment.getCryptoInvestedQuantity() - amount);
+        }
+        portfolioRepository.updatePortfolio(portfolio);
     }
 }

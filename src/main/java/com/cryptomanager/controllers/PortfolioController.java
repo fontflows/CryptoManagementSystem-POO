@@ -110,4 +110,14 @@ public class PortfolioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao comprar criptomoeda: " + e.getMessage());
         }
     }
+
+    @PostMapping("/sell-crypto")
+    public ResponseEntity<String> sellCrypto(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String cryptoName, @RequestParam double amount){
+        try{
+            portfolioService.sellCrypto(userID, portfolioID, cryptoName, amount);
+            return ResponseEntity.ok("Criptomoeda vendida com sucesso!");
+        } catch (IOException | IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao vender criptomoeda: " + e.getMessage());
+        }
+    }
 }
