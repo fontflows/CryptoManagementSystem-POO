@@ -43,12 +43,13 @@ public class CurrencyConverterService {
         int fromInvestmentIndex = findInvestmentIndex(portfolio, fromCrypto);
         int toInvestmentIndex = findInvestmentIndex(portfolio, toCrypto);
         double newAmount = crypto1.getPrice()*cryptoAmount/crypto2.getPrice();
+        double fromOldAmount = portfolio.getInvestments().get(fromInvestmentIndex).getCryptoInvestedQuantity();
 
         //Atualiza a crypto "From"
-        if(portfolio.getInvestments().get(fromInvestmentIndex).getCryptoInvestedQuantity() - cryptoAmount == 0)
+        if(fromOldAmount - cryptoAmount == 0)
             portfolio.getInvestments().remove(fromInvestmentIndex);
         else
-            portfolio.getInvestments().get(fromInvestmentIndex).setCryptoInvestedQuantity(portfolio.getInvestments().get(fromInvestmentIndex).getCryptoInvestedQuantity() - cryptoAmount);
+            portfolio.getInvestments().get(fromInvestmentIndex).setCryptoInvestedQuantity(fromOldAmount - cryptoAmount);
 
         //Se a crypto "To" não existe no portfolio
         if(toInvestmentIndex == -1){
@@ -57,10 +58,10 @@ public class CurrencyConverterService {
         }
         //atualiza a crypto "To" existente
         else {
-            double oldQuantity = portfolio.getInvestments().get(toInvestmentIndex).getCryptoInvestedQuantity();
-            double avaragePrice = (portfolio.getInvestments().get(toInvestmentIndex).getPurchasePrice()*oldQuantity + crypto2.getPrice()*newAmount)/(oldQuantity+newAmount);
+            double toOldAmount = portfolio.getInvestments().get(toInvestmentIndex).getCryptoInvestedQuantity();
+            double avaragePrice = (portfolio.getInvestments().get(toInvestmentIndex).getPurchasePrice()*toOldAmount + crypto2.getPrice()*newAmount)/(toOldAmount+newAmount);
             portfolio.getInvestments().get(toInvestmentIndex).setPurchasePrice(avaragePrice);
-            portfolio.getInvestments().get(toInvestmentIndex).setCryptoInvestedQuantity(portfolio.getInvestments().get(toInvestmentIndex).getCryptoInvestedQuantity() + newAmount);
+            portfolio.getInvestments().get(toInvestmentIndex).setCryptoInvestedQuantity(toOldAmount + newAmount);
         }
         portfolioRepository.updatePortfolio(portfolio);
     }
