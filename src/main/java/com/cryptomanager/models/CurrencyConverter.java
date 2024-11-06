@@ -1,13 +1,20 @@
 package com.cryptomanager.models;
 
+import com.cryptomanager.repositories.CryptoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 import java.util.List;
 
+@Component
 public class CurrencyConverter {
     private List<CryptoCurrency> cryptoList;
     private List<Investment> investmentList;
 
-    public CurrencyConverter(List<CryptoCurrency> cryptoList, List<Investment> investmentList) {
-        this.cryptoList = cryptoList;
+    @Autowired
+    public CurrencyConverter(CryptoRepository cryptoRepository, List<Investment> investmentList) throws IOException {
+        this.cryptoList = cryptoRepository.loadCryptos();
         this.investmentList = investmentList;
     }
 
@@ -40,18 +47,15 @@ public class CurrencyConverter {
 
         if (balance <= 0)
             throw new IllegalArgumentException("Saldo deve ser positivo.");
-
         else if (balance <= quantityOriginalCryptoQuantityInvested)
             return balance*taxConversionPrice;
-
         else
-            throw new IllegalArgumentException("Saldo excede o total investido, previamente, informado.");
-
+            throw new IllegalArgumentException("Saldo excede o total investido, previamente informado.");
     }
 
     public CryptoCurrency findCryptoByName(String cryptoName) {
         for (CryptoCurrency crypto : cryptoList) {
-            if (crypto.getName().equals(cryptoName))
+            if (crypto.getName().equalsIgnoreCase(cryptoName))
                 return crypto;
         }
         return null;

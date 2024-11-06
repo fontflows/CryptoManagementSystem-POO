@@ -12,7 +12,7 @@ import static com.cryptomanager.services.InvestmentStrategyService.getInvestment
 import static com.cryptomanager.services.InvestmentStrategyService.getRandomCrypto;
 
 @Service
-public class PortfolioService{
+public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
     private final CryptoRepository cryptoRepository;
@@ -26,7 +26,7 @@ public class PortfolioService{
     public double calculateTotalValue(String userId, String portfolioId) {
         double totalValue = 0.0;
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
-        
+
         if (portfolio == null) {
             throw new IllegalArgumentException("Portfólio não encontrado.");
         }
@@ -48,15 +48,15 @@ public class PortfolioService{
         return totalValue;
     }
 
-    //Adicionar um portfólio no arquivo
+    //Adiciona um portfólio no arquivo
     public void addPortfolio(Portfolio portfolio) throws IOException {
-            portfolioRepository.addPortfolio(portfolio);
+        portfolioRepository.addPortfolio(portfolio);
     }
 
     //Retorna investimento pelo nome da crypto
-    public static Investment findInvestment(Portfolio portfolio, String cryptoName){
-        for(Investment investment: portfolio.getInvestments()){
-            if(investment.getCryptoCurrency().getName().equals(cryptoName)){
+    public static Investment findInvestment(Portfolio portfolio, String cryptoName) {
+        for (Investment investment : portfolio.getInvestments()) {
+            if (investment.getCryptoCurrency().getName().equals(cryptoName)) {
                 return investment;
             }
         }
@@ -76,8 +76,15 @@ public class PortfolioService{
 
     public CryptoCurrency suggestCryptoCurrency(String userID, String portfolioID) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-        if (portfolio == null) { throw new IllegalArgumentException("IDs invalidos");}
+
+        if (portfolio == null)
+            throw new IllegalArgumentException("IDs invalidos");
+
         InvestmentStrategy investmentStrategy = portfolio.getInvestmentStrategy();
+
+        if (investmentStrategy == null)
+            throw new IllegalArgumentException("Estratégia de investimento não definida");
+
         return getRandomCrypto(investmentStrategy);
     }
 
@@ -87,19 +94,19 @@ public class PortfolioService{
         portfolioRepository.updatePortfolio(portfolio);
     }
 
-    public void addBalance(String userID, String portfolioID, double amount){
-        if(amount <= 0)
+    public void addBalance(String userID, String portfolioID, double amount) {
+        if (amount <= 0)
             throw new IllegalArgumentException("Valor inserido para adicionar saldo deve ser maior que zero");
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
         portfolio.setBalance(portfolio.getBalance() + amount);
         portfolioRepository.updatePortfolio(portfolio);
     }
 
-    public void redeemBalance(String userID, String portfolioID, double amount){
+    public void redeemBalance(String userID, String portfolioID, double amount) {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-        if(amount > portfolio.getBalance())
+        if (amount > portfolio.getBalance())
             throw new IllegalArgumentException("Valor inserido para resgate é maior que o saldo disponível");
-        if(amount <= 0)
+        if (amount <= 0)
             throw new IllegalArgumentException("Valor inserido para resgate deve ser maior que zero");
         portfolio.setBalance(portfolio.getBalance() - amount);
         portfolioRepository.updatePortfolio(portfolio);
@@ -107,25 +114,37 @@ public class PortfolioService{
 
     public void buyCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-        if(portfolio == null)
+        if (portfolio == null)
             throw new IllegalArgumentException("IDs invalidos");
 
         CryptoCurrency crypto = cryptoRepository.loadCryptoByName(cryptoName);
-        if(crypto == null)
+        if (crypto == null)
             throw new IllegalArgumentException("Nome da Criptomoeda não encontrado: " + cryptoName);
 
-        if(portfolio.getBalance() < amount*crypto.getPrice())
+        if (portfolio.getBalance() < amount * crypto.getPrice())
             throw new IllegalArgumentException("Saldo disponível não é suficiente para essa compra");
 
-        portfolio.setBalance(portfolio.getBalance() - amount*crypto.getPrice());
-        if(hasAsset(cryptoName, portfolio)){
+        portfolio.setBalance(portfolio.getBalance() - amount * crypto.getPrice());
+
+        if (hasAsset(cryptoName, portfolio)) {
             Investment updatedInvestment = findInvestment(portfolio, cryptoName);
             updatedInvestment.setPurchasePrice(crypto.getPrice());
             updatedInvestment.setCryptoInvestedQuantity(updatedInvestment.getCryptoInvestedQuantity() + amount);
         }
-        else{
+
+        else {
             Investment newInvestment = new Investment(crypto, crypto.getPrice(), amount);
             portfolio.getInvestments().add(newInvestment);
         }
         portfolioRepository.updatePortfolio(portfolio);
     }
+
+    public static int findInvestmentIndex(Portfolio portfolio, String cryptoName){
+        for (int i = 0; i < portfolio.getInvestments().size(); i++)
+            if (portfolio.getInvestments().get(i).getCryptoCurrency().getName().equalsIgnoreCase(cryptoName)){
+                return i;
+        }
+
+        return -1;
+    }
+}

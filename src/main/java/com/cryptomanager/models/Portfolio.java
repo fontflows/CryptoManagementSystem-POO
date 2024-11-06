@@ -1,7 +1,5 @@
 package com.cryptomanager.models;
 
-import com.cryptomanager.repositories.PortfolioRepository;
-import com.cryptomanager.services.PortfolioService;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.IOException;
@@ -68,7 +66,7 @@ public class Portfolio {
     }
 
     public void setBalance(double balance) {
-        if(balance < 0)
+        if (balance < 0)
             throw new IllegalArgumentException("Saldo não pode ser negativo");
         this.balance = balance;
     }
