@@ -40,7 +40,7 @@ public class PortfolioController {
     public ResponseEntity<String> convertCrypto(@RequestParam String portfolioId, @RequestParam String userId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) {
         try {
             currencyConverterService.currencyConverter(portfolioId, userId, fromCryptoName, toCryptoName, balance);
-            return ResponseEntity.ok("Portfólio associado alterado e atualizado com sucesso, conversao efetivada!");
+            return ResponseEntity.ok("Criptomoeda convertida com sucesso !");
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao converter criptomoeda com o saldo informado: " + e.getMessage());
         } catch (Exception e) {
@@ -52,7 +52,7 @@ public class PortfolioController {
     public ResponseEntity<String> addPortfolio(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
         Portfolio portfolio;
         try {
-            portfolio = new Portfolio(userId, portfolioId, strategyNames.getDisplayName(), balance);
+            portfolio = new Portfolio(portfolioId, userId, strategyNames.getDisplayName(), balance);
             portfolioService.addPortfolio(portfolio);
             return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
         } catch (IOException e) {

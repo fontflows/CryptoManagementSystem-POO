@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
-import static com.cryptomanager.services.PortfolioService.findInvestmentIndex;
+import static com.cryptomanager.services.PortfolioService.findInvestment;
 import static com.cryptomanager.services.PortfolioService.hasAsset;
 
 @Service
@@ -28,9 +28,9 @@ public class CurrencyConverterService {
         if(cryptoAmount <= 0)
             throw new IllegalArgumentException("Quantidade de criptomoedas a serem convertidas deve ser maior que zero");
 
-        CryptoCurrency crypto1 = cryptoRepository.loadCryptoByName(fromCrypto);
-        CryptoCurrency crypto2 = cryptoRepository.loadCryptoByName(toCrypto);
-        if(crypto1 == null || crypto2 == null)
+        CryptoCurrency cryptoFrom = cryptoRepository.loadCryptoByName(fromCrypto);
+        CryptoCurrency cryptoTo = cryptoRepository.loadCryptoByName(toCrypto);
+        if(cryptoFrom == null || cryptoTo == null)
             throw new IllegalArgumentException("Criptomoedas não encontradas");
 
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
@@ -40,28 +40,28 @@ public class CurrencyConverterService {
         if(portfolio.getAssetAmount(fromCrypto) < cryptoAmount)
             throw new IllegalArgumentException("Quantidade da criptomoeda " + fromCrypto + " insuficiente no portfólio");
 
-        int fromInvestmentIndex = findInvestmentIndex(portfolio, fromCrypto);
-        int toInvestmentIndex = findInvestmentIndex(portfolio, toCrypto);
-        double newAmount = crypto1.getPrice()*cryptoAmount/crypto2.getPrice();
-        double fromOldAmount = portfolio.getInvestments().get(fromInvestmentIndex).getCryptoInvestedQuantity();
+        Investment fromInvestment = findInvestment(portfolio, cryptoFrom.getName());
+        double newAmount = (cryptoFrom.getPrice()*cryptoAmount)/cryptoTo.getPrice();
+        double fromOldAmount = fromInvestment.getCryptoInvestedQuantity();
 
-        //Atualiza a crypto "From"
+        //Atualiza o investimento "From"
         if(fromOldAmount - cryptoAmount == 0)
-            portfolio.getInvestments().remove(fromInvestmentIndex);
+            portfolio.getInvestments().remove(fromInvestment);
         else
-            portfolio.getInvestments().get(fromInvestmentIndex).setCryptoInvestedQuantity(fromOldAmount - cryptoAmount);
+            fromInvestment.setCryptoInvestedQuantity(fromOldAmount - cryptoAmount);
 
         //Se a crypto "To" não existe no portfolio
-        if(toInvestmentIndex == -1){
-            Investment newInvestment = new Investment(crypto2, crypto2.getPrice(), newAmount);
+        if(!hasAsset(toCrypto, portfolio)){
+            Investment newInvestment = new Investment(cryptoTo, cryptoTo.getPrice(), newAmount);
             portfolio.getInvestments().add(newInvestment);
         }
         //atualiza a crypto "To" existente
         else {
-            double toOldAmount = portfolio.getInvestments().get(toInvestmentIndex).getCryptoInvestedQuantity();
-            double avaragePrice = (portfolio.getInvestments().get(toInvestmentIndex).getPurchasePrice()*toOldAmount + crypto2.getPrice()*newAmount)/(toOldAmount+newAmount);
-            portfolio.getInvestments().get(toInvestmentIndex).setPurchasePrice(avaragePrice);
-            portfolio.getInvestments().get(toInvestmentIndex).setCryptoInvestedQuantity(toOldAmount + newAmount);
+            Investment toInvestment = findInvestment(portfolio, cryptoTo.getName());
+            double toOldAmount = toInvestment.getCryptoInvestedQuantity();
+            double avaragePrice = (toInvestment.getPurchasePrice()*toOldAmount + cryptoTo.getPrice()*newAmount)/(toOldAmount+newAmount);
+            toInvestment.setCryptoInvestedQuantity(avaragePrice);
+            toInvestment.setCryptoInvestedQuantity(toOldAmount + newAmount);
         }
         portfolioRepository.updatePortfolio(portfolio);
     }

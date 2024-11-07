@@ -140,15 +140,6 @@ public class PortfolioService {
         }
         portfolioRepository.updatePortfolio(portfolio);
     }
-
-    //Encontra o índice de um investimento na lista de um portfólio
-    public static int findInvestmentIndex(Portfolio portfolio, String cryptoName){
-        for (int i = 0; i < portfolio.getInvestments().size(); i++){
-            if (portfolio.getInvestments().get(i).getCryptoCurrency().getName().equalsIgnoreCase(cryptoName))
-                return i;
-        }
-        return -1;
-    }
   
     public void sellCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
