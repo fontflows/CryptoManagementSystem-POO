@@ -1,7 +1,7 @@
 package com.cryptomanager.controllers;
 
 import com.cryptomanager.models.Client;
-import com.cryptomanager.repositories.ClientRepository;
+import com.cryptomanager.repositories.PortfolioRepository;
 import com.cryptomanager.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +12,12 @@ import java.util.List;
 @RequestMapping("/Client")
 public class ClientController{
     private final ClientService clientService;
+    private final PortfolioRepository portfolioRepository;
 
     @Autowired
-    public ClientController(ClientService clientService){
+    public ClientController(ClientService clientService, PortfolioRepository portfolioRepository){
         this.clientService = clientService;
+        this.portfolioRepository = portfolioRepository;
     }
 
     @GetMapping
@@ -24,14 +26,14 @@ public class ClientController{
     }
 
     @GetMapping("/search-by-id")
-    public Client getClientById(String ClientId){
+    public Client getClientById(@RequestParam String ClientId){
         return clientService.getClientByClientID(ClientId);
     }
 
     @PostMapping("/add")
-    public String addClient(@RequestBody Client client){
+    public String addClient(@RequestParam String UserID, @RequestParam String portfolioID, @RequestParam String password){
         try{
-            clientService.addClient(client);
+            clientService.addClient(new Client(UserID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(portfolioID,UserID),password));
             return "Cliente adicionado com sucesso";
         } catch (Exception e) {
             return e.getMessage();
@@ -49,8 +51,8 @@ public class ClientController{
     }
 
     @PostMapping("/edit")
-    public String updateClient(@RequestBody Client client){
-        clientService.updateClient(client);
+    public String updateClient(@RequestParam String UserID, @RequestParam String portfolioID, @RequestParam String password){
+        clientService.updateClient(new Client(UserID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(portfolioID,UserID),password));
         return "Cliente editado com sucesso!";
     }
 

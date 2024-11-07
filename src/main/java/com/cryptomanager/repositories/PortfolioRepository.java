@@ -129,10 +129,7 @@ public class PortfolioRepository {
             System.err.println("Erro: portfolioId não pode ser nulo ou vazio.");
             return false;
         }
-        if (portfolio.getInvestments() == null || portfolio.getInvestments().isEmpty()) {
-            System.err.println("Erro: Portfólio deve conter pelo menos um ativo.");
-            return false;
-        }
+
         return true;
     }
 }

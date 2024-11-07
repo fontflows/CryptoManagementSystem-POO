@@ -52,7 +52,15 @@ public class ClientRepository {
     }
     public void deleteClientByID(String clientID) throws IOException { // Tem que verificar se ta tudo vazio *dps faço
         List<Client> clients = loadClients();
-        clients.removeIf(client -> client.getClientID().equals(clientID));
+        Client removedClient = null;
+        for(Client client: clients){
+            if(client.getClientID().equals(clientID)){
+                removedClient = client;
+                break;
+            }
+        }
+        if (removedClient == null) { throw new IllegalArgumentException("Cliente não encontrado"); }
+        clients.remove(removedClient);
         // Reescreve o arquivo com a lista atualizada
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Client client : clients) {
@@ -74,7 +82,7 @@ public class ClientRepository {
             saveClient(searchClient);
         }
         else{
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Cliente não encontrado");
         }
     }
 }

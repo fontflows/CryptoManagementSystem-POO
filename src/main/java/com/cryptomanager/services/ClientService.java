@@ -17,12 +17,10 @@ public class ClientService{
 
     private static final Logger logger = LoggerFactory.getLogger(ClientService.class);
     private final ClientRepository clientRepository;
-    private final CryptoRepository cryptoRepository;
 
     @Autowired
-    public ClientService(ClientRepository clientRepository, CryptoRepository cryptoRepository){
+    public ClientService(ClientRepository clientRepository){
         this.clientRepository = clientRepository;
-        this.cryptoRepository = cryptoRepository;
     }
 
     public List<Client> getAllClients(){
