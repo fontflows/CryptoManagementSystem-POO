@@ -30,7 +30,7 @@ public class ClientRepository {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (parts.length == 3) {
-                    clients.add(new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0],parts[1]),parts[2]));
+                    clients.add(new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0], parts[1]), parts[2]));
                 }
             }
         }
@@ -60,5 +60,21 @@ public class ClientRepository {
             }
         }
     }
-
+    public void updateClient(Client searchClient)throws IOException {
+        List<Client> clients = loadClients();
+        boolean found = false;
+        for (Client client : clients) {
+            if (client.getClientID().equals(searchClient.getClientID())) {
+                found = true;
+                break;
+            }
+        }
+        if(found){
+            deleteClientByID(searchClient.getClientID());
+            saveClient(searchClient);
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
+    }
 }

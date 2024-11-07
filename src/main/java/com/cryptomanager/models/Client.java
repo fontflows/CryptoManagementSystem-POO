@@ -1,6 +1,6 @@
 package com.cryptomanager.models;
 
-public class Client{
+public class Client {
     private String ClientID;
     private Portfolio portfolio;
     private String password;
