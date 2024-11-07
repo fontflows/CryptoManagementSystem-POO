@@ -20,7 +20,7 @@ public class ClientController{
         this.portfolioRepository = portfolioRepository;
     }
 
-    @GetMapping
+    @GetMapping("/get-all-Clients")
     public List<Client> getAllClients() {
         return clientService.getAllClients();
     }
@@ -33,7 +33,7 @@ public class ClientController{
     @PostMapping("/add")
     public String addClient(@RequestParam String UserID, @RequestParam String portfolioID, @RequestParam String password){
         try{
-            clientService.addClient(new Client(UserID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(portfolioID,UserID),password));
+            clientService.addClient(new Client(UserID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(UserID,portfolioID),password));
             return "Cliente adicionado com sucesso";
         } catch (Exception e) {
             return e.getMessage();
@@ -52,7 +52,7 @@ public class ClientController{
 
     @PostMapping("/edit")
     public String updateClient(@RequestParam String UserID, @RequestParam String portfolioID, @RequestParam String password){
-        clientService.updateClient(new Client(UserID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(portfolioID,UserID),password));
+        clientService.updateClient(new Client(UserID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(UserID,portfolioID),password));
         return "Cliente editado com sucesso!";
     }
 
