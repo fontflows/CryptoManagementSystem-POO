@@ -13,7 +13,25 @@ import java.time.format.DateTimeFormatter;
 
 @Repository
 public class ReportRepository {
-    private int id = 0;
+    private int id = readID();
+
+    public ReportRepository() throws IOException {
+    }
+
+    private int readID() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(new File("reportConfig.txt")))) {
+            String line = reader.readLine();
+            return (line != null) ? Integer.parseInt(line): 0;
+        } catch (IOException e) {
+            return 0; // Em caso de erro, retorna 0
+        }
+    }
+
+    private void saveID() throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("reportConfig.txt"))) {
+            writer.write(Integer.toString(id));
+        }
+    }
     public void generateCurrentPortfolioReport(Portfolio portfolio) throws IOException {
 
         LocalDateTime reportDate = LocalDateTime.now();
@@ -113,10 +131,11 @@ public class ReportRepository {
 
         String PATH =  Integer.toString(id);
         id++;
-        final String FILE_PATH = "Report"+PATH+".txt";
+        final String FILE_PATH = "report"+PATH+".txt";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             writer.write(report);
         }
+        saveID();
     }
 
 }
