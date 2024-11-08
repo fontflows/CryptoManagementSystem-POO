@@ -32,6 +32,14 @@ public class ClientService{
         }
     }
 
+    public List<String> getAllClientsToString(){
+        try{
+            return clientRepository.loadClientsToString();
+        } catch (IOException e) {
+            throw new ClientServiceException("Erro ao carregar clientes",e);
+        }
+    }
+
     public Client getClientByClientID(String ClientID){
         try {
              return clientRepository.loadClientByID(ClientID);

@@ -36,6 +36,14 @@ public class ClientRepository {
         }
         return clients;
     }
+    public List<String> loadClientsToString() throws IOException{
+        List<Client> clients = loadClients();
+        List<String> stringOut = new ArrayList<>();
+        for(Client client: clients){
+            stringOut.add(client.toString());
+        }
+        return stringOut;
+    }
     public Client loadClientByID(String clientID) throws IOException {
         Client client = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
