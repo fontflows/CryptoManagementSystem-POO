@@ -26,8 +26,8 @@ public class ClientController{
     }
 
     @GetMapping("/search-by-id")
-    public Client getClientById(@RequestParam String ClientId){
-        return clientService.getClientByClientID(ClientId);
+    public String getClientById(@RequestParam String ClientId){
+        return clientService.getClientByClientIDToString(ClientId);
     }
 
     @PostMapping("/add")

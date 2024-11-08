@@ -23,15 +23,6 @@ public class ClientService{
         this.clientRepository = clientRepository;
     }
 
-    public List<Client> getAllClients(){
-        try {
-            return clientRepository.loadClients();
-        } catch (IOException e) {
-            logger.error("Erro ao carregar clientes",e);
-            throw new ClientServiceException("Erro ao carregar clientes",e);
-        }
-    }
-
     public List<String> getAllClientsToString(){
         try{
             return clientRepository.loadClientsToString();
@@ -40,9 +31,9 @@ public class ClientService{
         }
     }
 
-    public Client getClientByClientID(String ClientID){
+    public String getClientByClientIDToString(String ClientID){
         try {
-             return clientRepository.loadClientByID(ClientID);
+             return clientRepository.loadClientByIDToString(ClientID);
         } catch (IOException e){
             logger.error("Erro ao carregar cliente", e);
             throw new ClientServiceException("Erro ao carregar cliente", e);

@@ -58,6 +58,12 @@ public class ClientRepository {
         if (client == null) { throw new IllegalArgumentException("Cliente não encontrado"); }
         return client;
     }
+
+    public String loadClientByIDToString(String clientID) throws IOException{
+        Client client = loadClientByID(clientID);
+        return client.toString();
+    }
+
     public void deleteClientByID(String clientID) throws IOException { // Tem que verificar se ta tudo vazio *dps faço
         List<Client> clients = loadClients();
         Client removedClient = null;
