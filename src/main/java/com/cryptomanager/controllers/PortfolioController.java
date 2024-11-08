@@ -1,6 +1,7 @@
 package com.cryptomanager.controllers;
 
 import com.cryptomanager.models.*;
+import com.cryptomanager.services.CurrencyConverterService;
 import com.cryptomanager.services.PortfolioService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,18 +9,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/portfolio")
 public class PortfolioController {
 
     private final PortfolioService portfolioService;
+    private final CurrencyConverterService currencyConverterService;
 
     @Autowired
-    public PortfolioController(PortfolioService portfolioService) {
+    public PortfolioController(PortfolioService portfolioService, CurrencyConverterService currencyConverterService) {
         this.portfolioService = portfolioService;
+        this.currencyConverterService = currencyConverterService;
     }
 
     @GetMapping("/total-value")
@@ -35,11 +36,23 @@ public class PortfolioController {
         }
     }
 
+    @PostMapping("/crypto-conversion-by-portfolioId")
+    public ResponseEntity<String> convertCrypto(@RequestParam String portfolioId, @RequestParam String userId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) {
+        try {
+            currencyConverterService.currencyConverter(portfolioId, userId, fromCryptoName, toCryptoName, balance);
+            return ResponseEntity.ok("Criptomoeda convertida com sucesso !");
+        } catch(IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao converter criptomoeda com o saldo informado: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/add")
     public ResponseEntity<String> addPortfolio(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
-        Portfolio portfolio = null;
+        Portfolio portfolio;
         try {
-            portfolio = new Portfolio(userId, portfolioId, strategyNames.getDisplayName(), balance);
+            portfolio = new Portfolio(portfolioId, userId, strategyNames.getDisplayName(), balance);
             portfolioService.addPortfolio(portfolio);
             return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
         } catch (IOException e) {
