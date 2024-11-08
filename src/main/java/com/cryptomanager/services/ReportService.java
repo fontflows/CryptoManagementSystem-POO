@@ -2,7 +2,7 @@ package com.cryptomanager.services;
 
 import com.cryptomanager.exceptions.InvestmentReportExceptions;
 import com.cryptomanager.models.Portfolio;
-import com.cryptomanager.repositories.InvestmentReportRepository;
+import com.cryptomanager.repositories.ReportRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
@@ -11,19 +11,19 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 @Service
-public class InvestmentReportService{
+public class ReportService {
 
-    private static final Logger logger = LoggerFactory.getLogger(InvestmentReportService.class);
-    private final InvestmentReportRepository investmentReportRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ReportService.class);
+    private final ReportRepository reportRepository;
 
     @Autowired
-    public InvestmentReportService(InvestmentReportRepository investmentReportRepository) {
-        this.investmentReportRepository = investmentReportRepository;
+    public ReportService(ReportRepository reportRepository) {
+        this.reportRepository = reportRepository;
     }
 
     public void CreatePortifolioReport(Portfolio portfolio){
         try {
-            investmentReportRepository.generateCurrentPortfolioReport(portfolio);
+            reportRepository.generateCurrentPortfolioReport(portfolio);
         } catch (IOException e) {
             logger.error("Erro ao criar relatorio: {}", portfolio.getId(), e);
             throw new InvestmentReportExceptions("Erro ao criar relatorio: " + portfolio.getId(), e);
@@ -31,7 +31,7 @@ public class InvestmentReportService{
     }
     public void CreateProjectedPortifolioReport(Portfolio portfolio, int months){
         try {
-            investmentReportRepository.generateProjectionReport(portfolio,months);
+            reportRepository.generateProjectionReport(portfolio,months);
         } catch (IOException e) {
             logger.error("Erro ao criar relatorio projecao: {}", portfolio.getId() + " " + months, e);
             throw new InvestmentReportExceptions("Erro ao criar relatorio de projecao: " + portfolio.getId() + " " + months, e);

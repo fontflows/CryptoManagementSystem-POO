@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Repository
-public class InvestmentReportRepository{
+public class ReportRepository {
     private int id = 0;
     public void generateCurrentPortfolioReport(Portfolio portfolio) throws IOException {
 
