@@ -34,6 +34,9 @@ public class ClientRepository {
                 }
             }
         }
+        if (clients.isEmpty()){
+            throw new IOException("Arquivo está vazio");
+        }
         return clients;
     }
     public List<String> loadClientsToString() throws IOException{
