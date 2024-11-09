@@ -32,6 +32,15 @@ public class CryptoRepository {
         return cryptos;
     }
 
+    public List<String> loadCryptosToString() throws IOException{
+        List<CryptoCurrency> cryptos = loadCryptos();
+        List<String> stringOut = new ArrayList<>();
+        for(CryptoCurrency crypto: cryptos){
+            stringOut.add(crypto.toString());
+        }
+        return stringOut;
+    }
+
     public CryptoCurrency loadCryptoByName(String  cryptoName) throws IOException {
         CryptoCurrency crypto = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {

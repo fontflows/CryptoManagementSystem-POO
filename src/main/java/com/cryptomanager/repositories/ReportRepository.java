@@ -4,12 +4,14 @@ import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.models.Investment;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.services.InvestmentProjectionService;
+
 import java.io.*;
 import org.springframework.stereotype.Repository;
 
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Repository
 public class ReportRepository {
@@ -121,6 +123,20 @@ public class ReportRepository {
                 .append(totalProjectedValue).append(",")
                 .append(projectedGrowth).append(",\n");
 
+        try {
+            saveReport(report.toString());
+        } catch (IOException e) {
+            throw new IOException(e);
+        }
+    }
+    public void generateListReport(List<String> list) throws IOException{
+        LocalDateTime reportDate = LocalDateTime.now();
+        StringBuilder report = new StringBuilder();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        for (String element : list){
+            report.append(element).append("\n");
+        }
         try {
             saveReport(report.toString());
         } catch (IOException e) {
