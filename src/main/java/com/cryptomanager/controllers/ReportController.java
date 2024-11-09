@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,15 +20,13 @@ import java.util.List;
 public class ReportController{
     private final ReportService reportService;
     private final PortfolioRepository portfolioRepository;
-    private final ClientRepository clientRepository;
     private final ClientService clientService;
     private final CryptoService cryptoService;
 
     @Autowired
-    public ReportController(ReportService reportService, PortfolioRepository portfolioRepository, ClientRepository clientRepository, ClientService clientService, CryptoService cryptoService) {
+    public ReportController(ReportService reportService, PortfolioRepository portfolioRepository,  ClientService clientService, CryptoService cryptoService) {
         this.reportService = reportService;
         this.portfolioRepository = portfolioRepository;
-        this.clientRepository = clientRepository;
         this.clientService = clientService;
         this.cryptoService = cryptoService;
     }
@@ -45,8 +44,12 @@ public class ReportController{
         return ResponseEntity.ok("Relatório criado com sucesso!");
     }
     @PostMapping("/create-crypto-or-client-report")
-    public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client"})) @RequestParam String reportType){
-        List<String> list = (reportType.equals("client"))? clientService.getAllClientsToString() : cryptoService.getAllCryptosToString();
+    public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client","ambos"})) @RequestParam String reportType){
+
+        List<String> list = (reportType.equals("client")) ? clientService.getAllClientsToString() : cryptoService.getAllCryptosToString();
+        if (reportType.equals("ambos")) {
+            list.addAll(clientService.getAllClientsToString());
+        }
         reportService.CreateListReport(list);
         return ResponseEntity.ok("Relatório criado com sucesso!");
     }
