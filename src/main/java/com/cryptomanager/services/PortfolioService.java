@@ -82,15 +82,19 @@ public class PortfolioService {
             throw new IllegalArgumentException("IDs invalidos");
 
         InvestmentStrategy investmentStrategy = portfolio.getInvestmentStrategy();
+        InvestmentStrategyService.updateInvestmentStrategyList(investmentStrategy);
 
-        if (investmentStrategy == null)
-            throw new IllegalArgumentException("Estratégia de investimento não definida");
+        if(investmentStrategy.getSuggestedCryptos().isEmpty()){
+            throw new IllegalArgumentException("Nennhuma criptomoeda " + investmentStrategy.getInvestmentStrategyName() + " disponível para sugestão");
+        }
 
         return getRandomCrypto(investmentStrategy);
     }
 
     public void setPortfolioInvestmentStrategy(String userID, String portfolioID, String strategyName) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
+        if(strategyName.equals(portfolio.getInvestmentStrategy().getInvestmentStrategyName())) return; //Caso selecione a mesma estratégia, não é necessario alterar nada
+
         portfolio.setInvestmentStrategy(getInvestmentStrategyByName(strategyName));
         portfolioRepository.updatePortfolio(portfolio);
     }
