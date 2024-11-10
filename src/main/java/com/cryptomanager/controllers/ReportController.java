@@ -44,10 +44,10 @@ public class ReportController{
         return ResponseEntity.ok("Relatório criado com sucesso!");
     }
     @PostMapping("/create-crypto-or-client-report")
-    public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client","ambos"})) @RequestParam String reportType){
+    public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client","all"})) @RequestParam String reportType){
 
         List<String> list = (reportType.equals("client")) ? clientService.getAllClientsToString() : cryptoService.getAllCryptosToString();
-        if (reportType.equals("ambos")) {
+        if (reportType.equals("all")) {
             list.addAll(clientService.getAllClientsToString());
         }
         reportService.CreateListReport(list);
