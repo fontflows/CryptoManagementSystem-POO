@@ -9,25 +9,19 @@ import java.util.Random;
 
 public class InvestmentStrategyService {
 
-    public static void updateCryptoList(InvestmentStrategy investmentStrategy) throws IOException {
-        investmentStrategy.getCryptos().clear();
+    public static void updateInvestmentStrategyList(InvestmentStrategy investmentStrategy) throws IOException {
+        investmentStrategy.getSuggestedCryptos().clear();
         CryptoRepository cryptoRepository = new CryptoRepository();
         List<CryptoCurrency> cryptos = cryptoRepository.loadCryptos();
         for(CryptoCurrency crypto : cryptos){
             if(crypto.getRiskFactor() <= investmentStrategy.getRiskQuota()) {
-                investmentStrategy.getCryptos().add(crypto);
+                investmentStrategy.getSuggestedCryptos().add(crypto);
             }
         }
     }
 
-    public static void updateAllStrategiesList() throws IOException {
-        updateCryptoList(new ConservativeStrategy());
-        updateCryptoList(new AggressiveStrategy());
-        updateCryptoList(new ModerateStrategy());
-    }
-
     public static CryptoCurrency getRandomCrypto(InvestmentStrategy investmentStrategy) {
-        List<CryptoCurrency> cryptos = investmentStrategy.getCryptos();
+        List<CryptoCurrency> cryptos = investmentStrategy.getSuggestedCryptos();
         Random rng = new Random();
         if (cryptos.isEmpty())
             throw new IllegalStateException("A lista de criptomoedas está vazia.");
@@ -35,17 +29,11 @@ public class InvestmentStrategyService {
     }
 
     public static InvestmentStrategy getInvestmentStrategyByName(String strategyName) throws IOException {
-        if(strategyName.equals("Conservative")){
-            return new ConservativeStrategy();
-        }
-        else if(strategyName.equals("Aggressive")){
-            return new AggressiveStrategy();
-        }
-        else if(strategyName.equals("Moderate")){
-            return new ModerateStrategy();
-        }
-        else{
-            throw new IllegalArgumentException("Estratégia de investimento inválida");
+         switch (strategyName) {
+            case "Conservative": return new ConservativeStrategy();
+            case "Aggressive": return new AggressiveStrategy();
+            case "Moderate": return new ModerateStrategy();
+            default: throw new IllegalArgumentException("Estratégia de investimento inválida");
         }
     }
 }

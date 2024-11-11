@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.cryptomanager.services.InvestmentStrategyService.getInvestmentStrategyByName;
-import static com.cryptomanager.services.InvestmentStrategyService.updateCryptoList;
 
 
 @Schema(description = "Modelo que representa um portfólio de investimentos")
@@ -45,7 +44,6 @@ public class Portfolio {
         this.id = id;
         this.userId = userId;
         this.investmentStrategy = getInvestmentStrategyByName(investmentStrategy);
-        updateCryptoList(this.investmentStrategy);
         this.balance = balance;
     }
 

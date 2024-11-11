@@ -63,11 +63,13 @@ public class PortfolioController {
     }
 
     @GetMapping("/get-suggested-crypto")
-    public ResponseEntity<CryptoCurrency> suggestCryptoCurrency(@RequestParam String userID, @RequestParam String portfolioID){
+    public ResponseEntity<?> suggestCryptoCurrency(@RequestParam String userID, @RequestParam String portfolioID){
         try {
             return ResponseEntity.ok(portfolioService.suggestCryptoCurrency(userID, portfolioID));
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor ao sugerir criptomoeda" + e.getMessage());
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao sugerir criptomoeda: " + e.getMessage());
         }
     }
 
