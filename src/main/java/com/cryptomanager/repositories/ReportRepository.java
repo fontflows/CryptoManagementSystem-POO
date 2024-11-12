@@ -4,16 +4,36 @@ import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.models.Investment;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.services.InvestmentProjectionService;
+
 import java.io.*;
 import org.springframework.stereotype.Repository;
 
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Repository
-public class InvestmentReportRepository{
-    private int id = 0;
+public class ReportRepository {
+    private int id = readID();
+
+    public ReportRepository() throws IOException {
+    }
+
+    private int readID() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(new File("reportConfig.txt")))) {
+            String line = reader.readLine();
+            return (line != null) ? Integer.parseInt(line): 0;
+        } catch (IOException e) {
+            return 0; // Em caso de erro, retorna 0
+        }
+    }
+
+    private void saveID() throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("reportConfig.txt"))) {
+            writer.write(Integer.toString(id));
+        }
+    }
     public void generateCurrentPortfolioReport(Portfolio portfolio) throws IOException {
 
         LocalDateTime reportDate = LocalDateTime.now();
@@ -109,14 +129,29 @@ public class InvestmentReportRepository{
             throw new IOException(e);
         }
     }
+    public void generateListReport(List<String> list) throws IOException{
+        LocalDateTime reportDate = LocalDateTime.now();
+        StringBuilder report = new StringBuilder();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        for (String element : list){
+            report.append(element).append("\n");
+        }
+        try {
+            saveReport(report.toString());
+        } catch (IOException e) {
+            throw new IOException(e);
+        }
+    }
     public void saveReport(String report) throws IOException{
 
         String PATH =  Integer.toString(id);
         id++;
-        final String FILE_PATH = "Report"+PATH+".txt";
+        final String FILE_PATH = "report"+PATH+".txt";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             writer.write(report);
         }
+        saveID();
     }
 
 }
