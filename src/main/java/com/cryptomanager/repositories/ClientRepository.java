@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Repository
 public class ClientRepository {
@@ -18,6 +19,7 @@ public class ClientRepository {
     }
 
     public void saveClient(Client client) throws IOException {
+        if(clientExists(client.getClientID())) { throw new IllegalArgumentException("Cliente com esse userID ja está cadastrado"); }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
             writer.write(client.toString() + "\n");
         }
@@ -34,11 +36,10 @@ public class ClientRepository {
                 }
             }
         }
-        if (clients.isEmpty()){
-            throw new IOException("Arquivo está vazio");
-        }
+        if (clients.isEmpty()) { throw new NoSuchElementException("Nenhum cliente encontrado"); }
         return clients;
     }
+
     public List<String> loadClientsToString() throws IOException{
         List<Client> clients = loadClients();
         List<String> stringOut = new ArrayList<>();
@@ -47,6 +48,7 @@ public class ClientRepository {
         }
         return stringOut;
     }
+
     public Client loadClientByID(String clientID) throws IOException {
         Client client = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
@@ -58,7 +60,7 @@ public class ClientRepository {
                 }
             }
         }
-        if (client == null) { throw new IllegalArgumentException("Cliente não encontrado"); }
+        if (client == null) { throw new NoSuchElementException("Cliente não encontrado"); }
         return client;
     }
 
@@ -68,6 +70,7 @@ public class ClientRepository {
     }
 
     public void deleteClientByID(String clientID) throws IOException { // Tem que verificar se ta tudo vazio *dps faço
+        if(!clientExists(clientID)) { throw new NoSuchElementException("Cliente não encontrado"); }
         List<Client> clients = loadClients();
         Client removedClient = null;
         for(Client client: clients){
@@ -76,7 +79,6 @@ public class ClientRepository {
                 break;
             }
         }
-        if (removedClient == null) { throw new IllegalArgumentException("Cliente não encontrado"); }
         clients.remove(removedClient);
         // Reescreve o arquivo com a lista atualizada
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
@@ -85,21 +87,24 @@ public class ClientRepository {
             }
         }
     }
-    public void updateClient(Client searchClient)throws IOException {
-        List<Client> clients = loadClients();
-        boolean found = false;
-        for (Client client : clients) {
-            if (client.getClientID().equals(searchClient.getClientID())) {
-                found = true;
-                break;
+
+    public void updateClient(Client searchClient) throws IOException {
+        if(searchClient == null || searchClient.getClientID() == null ) { throw new IllegalArgumentException("Cliente inválido");}
+        deleteClientByID(searchClient.getClientID());
+        saveClient(searchClient);
+    }
+
+    private boolean clientExists(String clientID) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if ((parts.length == 3) && (parts[0].equalsIgnoreCase(clientID))) {
+                    return true;
+                }
             }
         }
-        if(found){
-            deleteClientByID(searchClient.getClientID());
-            saveClient(searchClient);
-        }
-        else{
-            throw new IllegalArgumentException("Cliente não encontrado");
-        }
+        return false;
     }
+
 }

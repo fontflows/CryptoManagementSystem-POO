@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class CryptoService {
@@ -27,7 +28,10 @@ public class CryptoService {
             return cryptoRepository.loadCryptos();
         } catch (IOException e) {
             logger.error("Erro ao carregar criptomoedas", e);
-            throw new CryptoServiceException("Erro ao carregar criptomoedas", e);
+            throw new CryptoServiceException("Erro interno do servidor ao carregar criptomoedas" , e);
+        } catch (NoSuchElementException e){
+            logger.error("Erro ao carregar criptomoedas", e);
+            throw new CryptoServiceException("Erro ao carregar criptomoedas: " + e.getMessage(), e);
         }
     }
 
@@ -36,38 +40,47 @@ public class CryptoService {
             return cryptoRepository.loadCryptoByName(name);
         } catch (IOException e) {
             logger.error("Erro ao carregar criptomoeda", e);
-            throw new CryptoServiceException("Erro ao carregar criptomoeda", e);
+            throw new CryptoServiceException("Erro interno do servidor ao carregar criptomoeda" , e);
+        } catch (NoSuchElementException e){
+            logger.error("Erro ao carregar criptomoeda", e);
+            throw new CryptoServiceException("Erro ao carregar criptomoeda: " + e.getMessage(), e);
         }
     }
 
-    public void addCrypto(CryptoCurrency crypto) {
+    public void addCrypto(String cryptoName, double price, double growthRate, double marketCap, double volume24h, int riskFactor) {
         try {
-            cryptoRepository.saveCrypto(crypto);
+            CryptoCurrency newCrypto = new CryptoCurrency(cryptoName, price, growthRate, marketCap, volume24h, riskFactor);
+            cryptoRepository.saveCrypto(newCrypto);
         } catch (IOException e) {
-            logger.error("Erro ao salvar criptomoeda: {}", crypto.getName(), e);
-            throw new CryptoServiceException("Erro ao salvar criptomoeda: " + crypto.getName(), e);
-        } catch (IllegalArgumentException e) {
-            logger.error("Valores inválidos ao cadastrar criptomoeda: {}", crypto.getName());
-            throw new CryptoServiceException("Valores inválidos ao cadastrar criptomoeda" + crypto.getName(), e);
+            logger.error("Erro ao salvar criptomoeda", e);
+            throw new CryptoServiceException("Erro interno do servidor ao salvar criptomoeda" , e);
+        } catch (IllegalArgumentException e){
+            logger.error("Erro ao salvar criptomoeda", e);
+            throw new CryptoServiceException("Erro ao salvar criptomoeda: " + e.getMessage(), e);
         }
-
     }
 
     public void deleteCryptoByName(String name) {
         try {
             cryptoRepository.deleteCryptoByName(name);
-        } catch (Exception e) {
-            logger.error("Erro ao deletar criptomoeda: {}", name, e);
-            throw new CryptoServiceException("Erro ao deletar criptomoeda", e);
+        } catch (IOException e) {
+            logger.error("Erro ao remover criptomoeda", e);
+            throw new CryptoServiceException("Erro interno do servidor ao remover criptomoeda" , e);
+        } catch (NoSuchElementException e){
+            logger.error("Erro ao remover criptomoeda", e);
+            throw new CryptoServiceException("Erro ao remover criptomoeda: " + e.getMessage(), e);
         }
     }
 
     public void updateCrypto(CryptoCurrency crypto) {
         try {
             cryptoRepository.updateCrypto(crypto);
-        } catch (Exception e) {
-            logger.error("Erro ao editar criptomoeda: {}", crypto.getName(), e);
-            throw new CryptoServiceException("Erro ao editar criptomoeda", e);
+        } catch (IOException e) {
+            logger.error("Erro ao atualizar criptomoeda", e);
+            throw new CryptoServiceException("Erro interno do servidor ao atualizar criptomoeda" , e);
+        } catch (IllegalArgumentException e){
+            logger.error("Erro ao atualizar criptomoeda", e);
+            throw new CryptoServiceException("Erro ao atualizar criptomoeda: " + e.getMessage(), e);
         }
     }
 }

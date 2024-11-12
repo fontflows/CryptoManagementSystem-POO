@@ -32,7 +32,12 @@ public class PortfolioRepository {
     // Carrega o portfólio especificado por ID e userId
     public Portfolio loadPortfolioByUserIdAndPortfolioId(String userId, String portfolioId) {
         List<Portfolio> allPortfolios = loadAllPortfolios();
-        return findPortfolio(allPortfolios, portfolioId, userId);
+        for(Portfolio portfolio: allPortfolios){
+            if(portfolio.getUserId().equals(userId) && portfolio.getId().equals(portfolioId)){
+                return portfolio;
+            }
+        }
+        throw new IllegalArgumentException("Portfolio não encontrado");
     }
 
     // Remover ativo de um portfólio específico
@@ -112,16 +117,6 @@ public class PortfolioRepository {
 
         CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, price, growthRate, marketCap, volume24h, riskFactor);
         return new Investment(cryptoCurrency, purchasePrice, quantity);
-    }
-
-    // Encontrar portfólio por ID e userId
-    private Portfolio findPortfolio(List<Portfolio> portfolios, String portfolioId, String userId) {
-        for(Portfolio portfolio: portfolios){
-            if(portfolio.getUserId().equals(userId) && portfolio.getId().equals(portfolioId)){
-                return portfolio;
-            }
-        }
-        throw new IllegalArgumentException("Portfolio não encontrado");
     }
 
     // Validação de portfólio
