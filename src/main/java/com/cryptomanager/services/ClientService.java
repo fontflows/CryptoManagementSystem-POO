@@ -56,6 +56,8 @@ public class ClientService{
 
     public void addClient(String userID, String portfolioID, String password){
         try{
+            userID = userID.toUpperCase();
+            portfolioID = portfolioID.toUpperCase();
             clientRepository.saveClient(new Client(userID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID,portfolioID),password));
         } catch (IOException e) {
             throw new ClientServiceException("Erro interno do servidor ao adicionar cliente: " + e.getMessage(), e);
@@ -78,6 +80,8 @@ public class ClientService{
 
     public void updateClient(String userID, String portfolioID, String password){
         try{
+            userID = userID.toUpperCase();
+            portfolioID = portfolioID.toUpperCase();
             Client client = new Client(userID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID,portfolioID),password);
             clientRepository.updateClient(client);
         } catch (IOException e) {
