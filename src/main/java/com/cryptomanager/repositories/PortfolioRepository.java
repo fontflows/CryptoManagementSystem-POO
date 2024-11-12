@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static com.cryptomanager.services.PortfolioService.findInvestment;
 import static com.cryptomanager.services.PortfolioService.hasAsset;
@@ -37,7 +38,7 @@ public class PortfolioRepository {
                 return portfolio;
             }
         }
-        throw new IllegalArgumentException("Portfolio não encontrado");
+        throw new NoSuchElementException("Portfolio não encontrado");
     }
 
     // Remover ativo de um portfólio específico

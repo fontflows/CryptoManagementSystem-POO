@@ -3,15 +3,12 @@ package com.cryptomanager.services;
 import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.exceptions.CryptoServiceException;
 import com.cryptomanager.models.Client;
-import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.repositories.ClientRepository;
-import com.cryptomanager.repositories.CryptoRepository;
 import com.cryptomanager.repositories.PortfolioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,10 +32,10 @@ public class ClientService{
             return clientRepository.loadClientsToString();
         } catch (IOException e) {
             logger.error("Erro ao carregar clientes", e);
-            throw new CryptoServiceException("Erro interno do servidor ao carregar clientes" , e);
+            throw new ClientServiceException("Erro interno do servidor ao carregar clientes" , e);
         } catch (NoSuchElementException e){
             logger.error("Erro ao carregar clientes", e);
-            throw new CryptoServiceException("Erro ao carregar clientes: " + e.getMessage(), e);
+            throw new ClientServiceException("Erro ao carregar clientes: " + e.getMessage(), e);
         }
     }
 
@@ -47,10 +44,10 @@ public class ClientService{
              return clientRepository.loadClientByIDToString(ClientID);
         } catch (IOException e) {
             logger.error("Erro ao carregar cliente", e);
-            throw new CryptoServiceException("Erro interno do servidor ao carregar cliente" , e);
+            throw new ClientServiceException("Erro interno do servidor ao carregar cliente" , e);
         } catch (NoSuchElementException e){
             logger.error("Erro ao carregar cliente", e);
-            throw new CryptoServiceException("Erro ao carregar cliente: " + e.getMessage(), e);
+            throw new ClientServiceException("Erro ao carregar cliente: " + e.getMessage(), e);
         }
     }
 
@@ -61,7 +58,7 @@ public class ClientService{
             clientRepository.saveClient(new Client(userID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID,portfolioID),password));
         } catch (IOException e) {
             throw new ClientServiceException("Erro interno do servidor ao adicionar cliente: " + e.getMessage(), e);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException | NoSuchElementException e){
             throw new ClientServiceException("Erro ao adicionar cliente: " + e.getMessage(), e);
         }
     }
@@ -71,25 +68,25 @@ public class ClientService{
             clientRepository.deleteClientByID(ClientId);
         } catch (IOException e) {
             logger.error("Erro ao remover cliente", e);
-            throw new CryptoServiceException("Erro interno do servidor ao remover cliente" , e);
+            throw new ClientServiceException("Erro interno do servidor ao remover cliente" , e);
         } catch (NoSuchElementException e){
             logger.error("Erro ao remover cliente", e);
-            throw new CryptoServiceException("Erro ao remover cliente: " + e.getMessage(), e);
+            throw new ClientServiceException("Erro ao remover cliente: " + e.getMessage(), e);
         }
     }
 
-    public void updateClient(String userID, String portfolioID, String password){
-        try{
+    public void updateClient(String userID, String portfolioID, String password) {
+        try {
             userID = userID.toUpperCase();
             portfolioID = portfolioID.toUpperCase();
-            Client client = new Client(userID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID,portfolioID),password);
+            Client client = new Client(userID, portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID), password);
             clientRepository.updateClient(client);
         } catch (IOException e) {
             logger.error("Erro ao atualizar cliente", e);
-            throw new CryptoServiceException("Erro interno do servidor ao atualizar cliente" , e);
-        } catch (IllegalArgumentException e){
-            logger.error("Erro ao atualizar criptomoeda", e);
-            throw new CryptoServiceException("Erro ao atualizar cliente: " + e.getMessage(), e);
+            throw new ClientServiceException("Erro interno do servidor ao atualizar cliente", e);
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            logger.error("Erro ao atualizar cliente", e);
+            throw new ClientServiceException("Erro ao atualizar cliente: " + e.getMessage(), e);
         }
     }
 }

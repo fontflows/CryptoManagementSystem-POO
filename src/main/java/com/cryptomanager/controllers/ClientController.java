@@ -1,16 +1,11 @@
 package com.cryptomanager.controllers;
 
 import com.cryptomanager.exceptions.ClientServiceException;
-import com.cryptomanager.models.Client;
-import com.cryptomanager.models.CryptoCurrency;
-import com.cryptomanager.repositories.PortfolioRepository;
 import com.cryptomanager.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/Client")
