@@ -78,7 +78,7 @@ public class CryptoService {
         } catch (IOException e) {
             logger.error("Erro ao atualizar criptomoeda", e);
             throw new CryptoServiceException("Erro interno do servidor ao atualizar criptomoeda" , e);
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException | NoSuchElementException e){
             logger.error("Erro ao atualizar criptomoeda", e);
             throw new CryptoServiceException("Erro ao atualizar criptomoeda: " + e.getMessage(), e);
         }

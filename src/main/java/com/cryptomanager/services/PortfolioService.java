@@ -23,7 +23,7 @@ public class PortfolioService {
         this.cryptoRepository = cryptoRepository;
     }
 
-    public double calculateTotalValue(String userId, String portfolioId) {
+    public double calculateTotalValue(String userId, String portfolioId) throws IOException {
         double totalValue = 0.0;
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
 
@@ -34,14 +34,8 @@ public class PortfolioService {
         for (Investment investment : portfolio.getInvestments()) {
             // Obtém a criptomoeda e seu preço atual
             CryptoCurrency cryptoCurrency = investment.getCryptoCurrency();
-            double actualPrice = cryptoCurrency.getPrice(); // O preço é armazenado na própria classe CryptoCurrency
+            double actualPrice = cryptoCurrency.getPrice();
             double quantity = investment.getCryptoInvestedQuantity();
-
-            // Adiciona logs para depuração
-            System.out.println("Nome da Criptomoeda: " + cryptoCurrency.getName());
-            System.out.println("Preço Atual: " + actualPrice);
-            System.out.println("Quantidade Investida: " + quantity);
-
             // Adiciona o valor do investimento ao valor total
             totalValue += actualPrice * quantity;
         }
@@ -50,25 +44,31 @@ public class PortfolioService {
     }
 
     //Adiciona um portfólio no arquivo
-    public void addPortfolio(Portfolio portfolio) throws IOException {
+    public void addPortfolio(String userID, String portfolioID, String strategyName, double balance) throws IOException {
+        portfolioID = portfolioID.toUpperCase();
+        userID = userID.toUpperCase();
+        Portfolio portfolio = new Portfolio(portfolioID, userID, strategyName, balance);
         portfolioRepository.addPortfolio(portfolio);
+    }
+
+    public void deletePortfolio(String userID, String portfolioID) throws IOException {
+        portfolioRepository.deletePortfolio(userID, portfolioID);
     }
 
     //Retorna investimento pelo nome da crypto
     public static Investment findInvestment(Portfolio portfolio, String cryptoName) {
         for (Investment investment : portfolio.getInvestments()) {
-            if (investment.getCryptoCurrency().getName().equals(cryptoName)) {
+            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName)) {
                 return investment;
             }
         }
         throw new IllegalArgumentException("Investimento não encontrado");
     }
 
-
     // Verifica se um portfólio contém um ativo específico
-    public static boolean hasAsset(String assetName, Portfolio portfolio) {
+    public static boolean hasCrypto(String cryptoName, Portfolio portfolio) {
         for (Investment investment : portfolio.getInvestments()) {
-            if (investment.getCryptoCurrency().getName().equals(assetName)) {
+            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName)) {
                 return true;
             }
         }
@@ -99,7 +99,7 @@ public class PortfolioService {
         portfolioRepository.updatePortfolio(portfolio);
     }
 
-    public void addBalance(String userID, String portfolioID, double amount) {
+    public void addBalance(String userID, String portfolioID, double amount) throws IOException {
         if (amount <= 0)
             throw new IllegalArgumentException("Valor inserido para adicionar saldo deve ser maior que zero");
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
@@ -107,7 +107,7 @@ public class PortfolioService {
         portfolioRepository.updatePortfolio(portfolio);
     }
 
-    public void redeemBalance(String userID, String portfolioID, double amount) {
+    public void redeemBalance(String userID, String portfolioID, double amount) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
         if (amount > portfolio.getBalance())
             throw new IllegalArgumentException("Valor inserido para resgate é maior que o saldo disponível");
@@ -131,7 +131,7 @@ public class PortfolioService {
 
         portfolio.setBalance(portfolio.getBalance() - amount * crypto.getPrice());
 
-        if (hasAsset(cryptoName, portfolio)) {
+        if (hasCrypto(cryptoName, portfolio)) {
             Investment updatedInvestment = findInvestment(portfolio, cryptoName);
             updatedInvestment.setPurchasePrice(
                     (crypto.getPrice()*amount + updatedInvestment.getCryptoInvestedQuantity()*updatedInvestment.getPurchasePrice())/(updatedInvestment.getCryptoInvestedQuantity() + amount)); //Calcula o preço médio
@@ -139,8 +139,10 @@ public class PortfolioService {
         }
 
         else {
+            crypto.setInvestorsAmount(crypto.getInvestorsAmount() + 1);
             Investment newInvestment = new Investment(crypto, crypto.getPrice(), amount);
             portfolio.getInvestments().add(newInvestment);
+            cryptoRepository.updateCrypto(crypto);
         }
         portfolioRepository.updatePortfolio(portfolio);
     }
@@ -154,7 +156,7 @@ public class PortfolioService {
         if (crypto == null)
             throw new IllegalArgumentException("Nome da Criptomoeda não encontrado: " + cryptoName);
 
-        if (!hasAsset(cryptoName, portfolio))
+        if (!hasCrypto(cryptoName, portfolio))
             throw new IllegalArgumentException("Criptomoeda não encontrada no portfólio: " + cryptoName);
 
         if (amount <= 0)
@@ -166,7 +168,9 @@ public class PortfolioService {
         portfolio.setBalance(portfolio.getBalance() + amount * crypto.getPrice());
         Investment updatedInvestment = findInvestment(portfolio, cryptoName);
         if (updatedInvestment.getCryptoInvestedQuantity() - amount == 0) {
+            crypto.setInvestorsAmount(crypto.getInvestorsAmount() - 1);
             portfolio.getInvestments().remove(updatedInvestment);
+            cryptoRepository.updateCrypto(crypto);
         } else {
             updatedInvestment.setCryptoInvestedQuantity(updatedInvestment.getCryptoInvestedQuantity() - amount);
         }

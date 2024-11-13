@@ -2,16 +2,25 @@ package com.cryptomanager.services;
 
 import com.cryptomanager.models.*;
 import com.cryptomanager.repositories.CryptoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
+@Service
 public class InvestmentStrategyService {
+
+    private static CryptoRepository cryptoRepository;
+
+    @Autowired
+    public InvestmentStrategyService(CryptoRepository cryptoRepository) {
+        InvestmentStrategyService.cryptoRepository = cryptoRepository;
+    }
 
     public static void updateInvestmentStrategyList(InvestmentStrategy investmentStrategy) throws IOException {
         investmentStrategy.getSuggestedCryptos().clear();
-        CryptoRepository cryptoRepository = new CryptoRepository();
         List<CryptoCurrency> cryptos = cryptoRepository.loadCryptos();
         for(CryptoCurrency crypto : cryptos){
             if(crypto.getRiskFactor() <= investmentStrategy.getRiskQuota()) {

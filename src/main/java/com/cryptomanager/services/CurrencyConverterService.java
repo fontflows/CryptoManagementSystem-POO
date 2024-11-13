@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 import static com.cryptomanager.services.PortfolioService.findInvestment;
-import static com.cryptomanager.services.PortfolioService.hasAsset;
+import static com.cryptomanager.services.PortfolioService.hasCrypto;
 
 @Service
 public class CurrencyConverterService {
@@ -34,7 +34,7 @@ public class CurrencyConverterService {
             throw new IllegalArgumentException("Criptomoedas não encontradas");
 
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
-        if(!hasAsset(fromCrypto, portfolio))
+        if(!hasCrypto(fromCrypto, portfolio))
             throw new IllegalArgumentException("Criptomoeda " + fromCrypto + " não encontrada no portfólio");
 
         if(portfolio.getAssetAmount(fromCrypto) < cryptoAmount)
@@ -51,7 +51,7 @@ public class CurrencyConverterService {
             fromInvestment.setCryptoInvestedQuantity(fromOldAmount - cryptoAmount);
 
         //Se a crypto "To" não existe no portfolio
-        if(!hasAsset(toCrypto, portfolio)){
+        if(!hasCrypto(toCrypto, portfolio)){
             Investment newInvestment = new Investment(cryptoTo, cryptoTo.getPrice(), newAmount);
             portfolio.getInvestments().add(newInvestment);
         }

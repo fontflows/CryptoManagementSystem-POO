@@ -77,7 +77,7 @@ public class Portfolio {
 
     public Double getAssetAmount(String assetName) {
         for (Investment investment : investments) {
-            if (investment.getCryptoCurrency().getName().equals(assetName))
+            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(assetName))
                 return investment.getCryptoInvestedQuantity(); // Retorna a quantidade
         }
         return null; // Retorna null se o ativo não for encontrado

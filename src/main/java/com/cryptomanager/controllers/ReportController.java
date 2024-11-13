@@ -1,7 +1,5 @@
 package com.cryptomanager.controllers;
 
-import com.cryptomanager.models.Portfolio;
-import com.cryptomanager.repositories.PortfolioRepository;
 import com.cryptomanager.services.InvestmentReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,23 +9,20 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/report")
 public class ReportController{
     private final InvestmentReportService investmentReportService;
-    private final PortfolioRepository portfolioRepository;
+
     @Autowired
-    public ReportController(InvestmentReportService investmentReportService, PortfolioRepository portfolioRepository) {
+    public ReportController(InvestmentReportService investmentReportService) {
         this.investmentReportService = investmentReportService;
-        this.portfolioRepository = portfolioRepository;
     }
 
     @PostMapping("/create-portifolio-report")
-    public ResponseEntity<String> CreatePortifolioRepository(@RequestParam String portfolioid,@RequestParam String userid) {
-        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userid,portfolioid);
-        investmentReportService.CreatePortifolioReport(portfolio);
+    public ResponseEntity<String> CreatePortifolioRepository(@RequestParam String portfolioID,@RequestParam String userID) {
+        investmentReportService.CreatePortifolioReport(userID, portfolioID);
         return ResponseEntity.ok("Relatório criado com sucesso!");
     }
     @PostMapping("/create-projected-portifolio-report")
-    public ResponseEntity<String> CreateProjectedPortifolioRepository(@RequestParam String portfolioid, @RequestParam String userid, @RequestParam int months) {
-        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userid,portfolioid);
-        investmentReportService.CreateProjectedPortifolioReport(portfolio,months);
+    public ResponseEntity<String> CreateProjectedPortifolioRepository(@RequestParam String portfolioID, @RequestParam String userID, @RequestParam int months) {
+        investmentReportService.CreateProjectedPortifolioReport(portfolioID, userID, months);
         return ResponseEntity.ok("Relatório criado com sucesso!");
 
     }

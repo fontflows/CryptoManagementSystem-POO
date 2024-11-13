@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.cryptomanager.services.PortfolioService.findInvestment;
-import static com.cryptomanager.services.PortfolioService.hasAsset;
+import static com.cryptomanager.services.PortfolioService.hasCrypto;
 
 @Repository
 public class PortfolioRepository {
@@ -25,6 +25,7 @@ public class PortfolioRepository {
 
     //Adiciona um portfolio novo no arquivo
     private void savePortfolio(Portfolio portfolio) throws IOException{
+        if(portfolioExists(portfolio.getId(), portfolio.getUserId())) { throw new IllegalArgumentException("Portfolio com esse ID ja existe"); }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
             writer.write(portfolio.toString());
         }
@@ -34,7 +35,7 @@ public class PortfolioRepository {
     public Portfolio loadPortfolioByUserIdAndPortfolioId(String userId, String portfolioId) {
         List<Portfolio> allPortfolios = loadAllPortfolios();
         for(Portfolio portfolio: allPortfolios){
-            if(portfolio.getUserId().equals(userId) && portfolio.getId().equals(portfolioId)){
+            if(portfolio.getUserId().equalsIgnoreCase(userId) && portfolio.getId().equalsIgnoreCase(portfolioId)){
                 return portfolio;
             }
         }
@@ -42,10 +43,10 @@ public class PortfolioRepository {
     }
 
     // Remover ativo de um portfólio específico
-    public void removeAssetFromPortfolio(String portfolioId, String userId, String assetName) {
+    public void removeAssetFromPortfolio(String portfolioId, String userId, String assetName) throws IOException{
         try {
             Portfolio portfolio = loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
-            if (hasAsset(assetName, portfolio)) {
+            if (hasCrypto(assetName, portfolio)) {
                 Investment removedInvestment = findInvestment(portfolio, assetName);
                 portfolio.getInvestments().remove(removedInvestment);
                 updatePortfolio(portfolio);  // Salva as mudanças
@@ -59,24 +60,23 @@ public class PortfolioRepository {
     }
 
     // Atualiza todos os portfólios no arquivo
-    public void updatePortfolio(Portfolio updatedPortfolio) {
+    public void updatePortfolio(Portfolio updatedPortfolio) throws IOException{
+        if(!portfolioExists(updatedPortfolio.getUserId(), updatedPortfolio.getId())) { throw new NoSuchElementException("Portfolio não encontrado"); }
         List<Portfolio> allPortfolios = loadAllPortfolios();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Portfolio portfolio : allPortfolios) {
-                if(updatedPortfolio.getId().equals(portfolio.getId())){
+                if(updatedPortfolio.getId().equalsIgnoreCase(portfolio.getId())){
                     writer.write(updatedPortfolio.toString());
                 }
 
                 else
                     writer.write(portfolio.toString());
             }
-        } catch (IOException e) {
-            System.err.println("Erro ao atualizar portfólios: " + e.getMessage());
         }
     }
 
     // Carrega todos os portfólios do arquivo
-    private List<Portfolio> loadAllPortfolios() {
+    public List<Portfolio> loadAllPortfolios() {
         List<Portfolio> portfolioList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             Portfolio currentPortfolio = null;
@@ -135,5 +135,61 @@ public class PortfolioRepository {
         }
 
         return true;
+    }
+
+    public void deletePortfolio(String userID, String portfolioID) throws IOException {
+        if(!portfolioExists(userID, portfolioID)) { throw new NoSuchElementException("Portfolio não encontrado"); }
+        if(portfolioHasInvestments(userID, portfolioID)) { throw new IllegalArgumentException("Portfolio tem investimentos ativos"); }
+        List<Portfolio> portfolios = loadAllPortfolios();
+        Portfolio removedPortfolio = null;
+        for(Portfolio currentPortfolio: portfolios){
+            if(currentPortfolio.getUserId().equalsIgnoreCase(userID) && currentPortfolio.getId().equalsIgnoreCase(portfolioID)){
+                removedPortfolio = currentPortfolio;
+                break;
+            }
+        }
+        portfolios.remove(removedPortfolio);
+        // Reescreve o arquivo com a lista atualizada
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for(Portfolio currentPortfolio: portfolios){
+                writer.write(currentPortfolio.toString() + "\n");
+            }
+        }
+    }
+
+    private boolean portfolioExists(String userID, String portfolioID) throws IOException{
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.isEmpty()) continue;
+                String[] parts = line.split(",");
+                if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioID) && parts[1].equalsIgnoreCase(userID)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    //Verifica se um portfolio tem investimentos
+    private boolean portfolioHasInvestments(String userID, String portfolioID) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            boolean found = false;
+            while ((line = reader.readLine()) != null) {
+                if (line.isEmpty()) continue;
+                String[] parts = line.split(",");
+                if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioID) && parts[1].equalsIgnoreCase(userID)) {
+                    found = true;
+                }
+                else if(parts.length >= 8 && found){
+                    return true;
+                }
+                else if(parts.length == 4 && found){
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 }

@@ -1,15 +1,13 @@
 package com.cryptomanager.repositories;
 
 import com.cryptomanager.models.CryptoCurrency;
-import com.cryptomanager.models.Portfolio;
-import com.cryptomanager.services.CryptoService;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
-import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 
 @Repository
 public class CryptoRepository {
@@ -29,8 +27,10 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 6) {
-                    cryptos.add(new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]),Double.parseDouble(parts[3]),Double.parseDouble(parts[4]), Integer.parseInt(parts[5])));
+                if (parts.length == 7) {
+                    CryptoCurrency loadedCrypto = new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]),Double.parseDouble(parts[3]),Double.parseDouble(parts[4]), Integer.parseInt(parts[5]));
+                    loadedCrypto.setInvestorsAmount(Integer.parseInt(parts[6]));
+                    cryptos.add(loadedCrypto);
                 }
             }
         }
@@ -44,8 +44,9 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 6 && parts[0].equalsIgnoreCase(cryptoName)) {
+                if (parts.length == 7 && parts[0].equalsIgnoreCase(cryptoName)) {
                     crypto = new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]),Double.parseDouble(parts[3]),Double.parseDouble(parts[4]), Integer.parseInt(parts[5]));
+                    crypto.setInvestorsAmount(Integer.parseInt(parts[6]));
                 }
             }
         }
@@ -60,6 +61,7 @@ public class CryptoRepository {
         for(CryptoCurrency crypto: cryptos) {
             if (crypto.getName().equalsIgnoreCase(cryptoName)) {
                 removedCrypto = crypto;
+                if(removedCrypto.getInvestorsAmount() > 0) { throw new IllegalArgumentException("A criptomoeda tem investidores ativos e não pode ser removida"); }
                 break;
             }
         }
@@ -72,10 +74,19 @@ public class CryptoRepository {
         }
     }
 
-    public void updateCrypto(CryptoCurrency crypto) throws IOException {
-        if(crypto == null || crypto.getName() == null ) { throw new IllegalArgumentException("Criptomoeda inválida");}
-        deleteCryptoByName(crypto.getName());
-        saveCrypto(crypto);
+    public void updateCrypto(CryptoCurrency updatedCrypto) throws IOException {
+        if(updatedCrypto == null || updatedCrypto.getName() == null ) { throw new IllegalArgumentException("Criptomoeda inválida");}
+        if(!cryptoExists(updatedCrypto.getName())) { throw new NoSuchElementException("Criptomoeda não encontrada"); }
+        List<CryptoCurrency> allCryptos = loadCryptos();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (CryptoCurrency crypto : allCryptos) {
+                if(crypto.getName().equalsIgnoreCase(updatedCrypto.getName())){
+                    writer.write(updatedCrypto.toString());
+                }
+                else
+                    writer.write(crypto.toString());
+            }
+        }
     }
 
     private boolean cryptoExists(String cryptoName) throws IOException {
@@ -83,7 +94,7 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 6 && parts[0].equalsIgnoreCase(cryptoName)) {
+                if (parts.length == 7 && parts[0].equalsIgnoreCase(cryptoName)) {
                     return true;
                 }
             }

@@ -22,6 +22,9 @@ public class CryptoCurrency {
     @Schema(description = "Fator de risco da criptomoeda (1-3)", example = "3")
     private int riskFactor;
 
+    @Schema(description = "Quantidade de clientes que possuem esta criptomoeda no portfólio", example = "50")
+    private int investorsAmount = 0;
+
     public CryptoCurrency(String name, double price,double growthRate, double marketCap, double volume24h, int riskFactor) {
         if (price <= 0) {
             throw new IllegalArgumentException("O preço deve ser maior que zero.");
@@ -75,8 +78,16 @@ public class CryptoCurrency {
 
     public void setRiskFactor(int riskFactor) {this.riskFactor = riskFactor;}
 
+    public int getInvestorsAmount() {
+        return investorsAmount;
+    }
+
+    public void setInvestorsAmount(int investorsAmount) {
+        this.investorsAmount = investorsAmount;
+    }
+
     @Override
     public String toString() {
-        return name + "," + price + "," + growthRate + "," + marketCap + "," + volume24h + "," + riskFactor;
+        return name + "," + price + "," + growthRate + "," + marketCap + "," + volume24h + "," + riskFactor + "," + investorsAmount;
     }
 }
