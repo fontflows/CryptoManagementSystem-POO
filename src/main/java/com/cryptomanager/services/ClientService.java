@@ -1,7 +1,6 @@
 package com.cryptomanager.services;
 
 import com.cryptomanager.exceptions.ClientServiceException;
-import com.cryptomanager.exceptions.CryptoServiceException;
 import com.cryptomanager.models.Client;
 import com.cryptomanager.repositories.ClientRepository;
 import com.cryptomanager.repositories.PortfolioRepository;

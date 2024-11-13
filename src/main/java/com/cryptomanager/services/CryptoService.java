@@ -35,6 +35,14 @@ public class CryptoService {
         }
     }
 
+    public List<String> getAllCryptosToString(){
+        try{
+            return cryptoRepository.loadCryptosToString();
+        } catch (IOException e) {
+            throw new CryptoServiceException("Erro ao carregar criptomoedas",e);
+        }
+    }
+
     public CryptoCurrency getCryptoByName(String name) {
         try {
             return cryptoRepository.loadCryptoByName(name);
