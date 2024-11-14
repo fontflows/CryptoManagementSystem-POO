@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 import static com.cryptomanager.services.PortfolioService.findInvestment;
 import static com.cryptomanager.services.PortfolioService.hasCrypto;
@@ -24,18 +25,18 @@ public class CurrencyConverterService {
         this.cryptoRepository = cryptoRepository;
     }
 
-    public void currencyConverter(String portfolioId, String userId, String fromCrypto, String toCrypto, double cryptoAmount) throws IOException {
+    public void currencyConverter(String userId, String portfolioId, String fromCrypto, String toCrypto, double cryptoAmount) throws IOException {
         if(cryptoAmount <= 0)
             throw new IllegalArgumentException("Quantidade de criptomoedas a serem convertidas deve ser maior que zero");
 
         CryptoCurrency cryptoFrom = cryptoRepository.loadCryptoByName(fromCrypto);
         CryptoCurrency cryptoTo = cryptoRepository.loadCryptoByName(toCrypto);
         if(cryptoFrom == null || cryptoTo == null)
-            throw new IllegalArgumentException("Criptomoedas não encontradas");
+            throw new NoSuchElementException("Criptomoedas não encontradas");
 
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
         if(!hasCrypto(fromCrypto, portfolio))
-            throw new IllegalArgumentException("Criptomoeda " + fromCrypto + " não encontrada no portfólio");
+            throw new NoSuchElementException("Criptomoeda " + fromCrypto + " não encontrada no portfólio");
 
         if(portfolio.getAssetAmount(fromCrypto) < cryptoAmount)
             throw new IllegalArgumentException("Quantidade da criptomoeda " + fromCrypto + " insuficiente no portfólio");
@@ -45,8 +46,11 @@ public class CurrencyConverterService {
         double fromOldAmount = fromInvestment.getCryptoInvestedQuantity();
 
         //Atualiza o investimento "From"
-        if(fromOldAmount - cryptoAmount == 0)
+        if(fromOldAmount - cryptoAmount == 0) {
             portfolio.getInvestments().remove(fromInvestment);
+            cryptoFrom.setInvestorsAmount(cryptoFrom.getInvestorsAmount() - 1);
+            cryptoRepository.updateCrypto(cryptoFrom);
+        }
         else
             fromInvestment.setCryptoInvestedQuantity(fromOldAmount - cryptoAmount);
 
@@ -54,6 +58,8 @@ public class CurrencyConverterService {
         if(!hasCrypto(toCrypto, portfolio)){
             Investment newInvestment = new Investment(cryptoTo, cryptoTo.getPrice(), newAmount);
             portfolio.getInvestments().add(newInvestment);
+            cryptoTo.setInvestorsAmount(cryptoTo.getInvestorsAmount() + 1);
+            cryptoRepository.updateCrypto(cryptoTo);
         }
         //atualiza a crypto "To" existente
         else {

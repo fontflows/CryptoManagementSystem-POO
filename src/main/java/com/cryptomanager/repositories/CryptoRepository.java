@@ -38,6 +38,16 @@ public class CryptoRepository {
         return cryptos;
     }
 
+
+    public List<String> loadCryptosToString() throws IOException{
+        List<CryptoCurrency> cryptos = loadCryptos();
+        List<String> stringOut = new ArrayList<>();
+        for(CryptoCurrency crypto: cryptos){
+            stringOut.add(crypto.toString());
+        }
+        return stringOut;
+    }
+
     public CryptoCurrency loadCryptoByName(String cryptoName) throws IOException {
         CryptoCurrency crypto = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
@@ -82,9 +92,12 @@ public class CryptoRepository {
             for (CryptoCurrency crypto : allCryptos) {
                 if(crypto.getName().equalsIgnoreCase(updatedCrypto.getName())){
                     writer.write(updatedCrypto.toString());
+                    writer.newLine();
                 }
-                else
+                else {
                     writer.write(crypto.toString());
+                    writer.newLine();
+                }
             }
         }
     }

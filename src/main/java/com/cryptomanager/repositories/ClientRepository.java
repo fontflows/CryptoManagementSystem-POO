@@ -1,6 +1,7 @@
 package com.cryptomanager.repositories;
 
 import com.cryptomanager.models.Client;
+import com.cryptomanager.models.CryptoCurrency;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -89,10 +90,22 @@ public class ClientRepository {
         }
     }
 
-    public void updateClient(Client searchClient) throws IOException {
-        if(searchClient == null || searchClient.getClientID() == null ) { throw new IllegalArgumentException("Cliente inválido");}
-        deleteClientByID(searchClient.getClientID());
-        saveClient(searchClient);
+    public void updateClient(Client updatedClient) throws IOException {
+        if(updatedClient == null || updatedClient.getClientID() == null ) { throw new IllegalArgumentException("Cliente inválido");}
+        if(!clientExists(updatedClient.getClientID())) { throw new NoSuchElementException("Cliente não encontrado"); }
+        List<Client> allClients = loadClients();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (Client client : allClients) {
+                if(client.getClientID().equalsIgnoreCase(updatedClient.getClientID())) {
+                    writer.write(updatedClient.toString());
+                    writer.newLine();
+                }
+                else {
+                    writer.write(client.toString());
+                    writer.newLine();
+                }
+            }
+        }
     }
 
     private boolean clientExists(String clientID) throws IOException {

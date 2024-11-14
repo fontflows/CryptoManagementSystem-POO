@@ -37,9 +37,9 @@ public class PortfolioController {
     }
 
     @PostMapping("/crypto-conversion-by-portfolioId")
-    public ResponseEntity<String> convertCrypto(@RequestParam String portfolioId, @RequestParam String userId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) {
+    public ResponseEntity<String> convertCrypto(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) throws IOException{
         try {
-            currencyConverterService.currencyConverter(portfolioId, userId, fromCryptoName, toCryptoName, balance);
+            currencyConverterService.currencyConverter(userId, portfolioId, fromCryptoName, toCryptoName, balance);
             return ResponseEntity.ok("Criptomoeda convertida com sucesso !");
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao converter criptomoeda com o saldo informado: " + e.getMessage());
