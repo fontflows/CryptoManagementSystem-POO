@@ -48,20 +48,6 @@ public class PortfolioController {
         }
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<String> addPortfolio(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
-        Portfolio portfolio;
-        try {
-            portfolio = new Portfolio(portfolioId, userId, strategyNames.getDisplayName(), balance);
-            portfolioService.addPortfolio(portfolio);
-            return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor ao adicionar Portfolio: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada inválida: " + e.getMessage());
-        }
-    }
-
     @GetMapping("/get-suggested-crypto")
     public ResponseEntity<?> suggestCryptoCurrency(@RequestParam String userID, @RequestParam String portfolioID){
         try {
