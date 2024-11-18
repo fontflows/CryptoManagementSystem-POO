@@ -37,9 +37,9 @@ public class PortfolioController {
     }
 
     @PostMapping("/crypto-conversion-by-portfolioId")
-    public ResponseEntity<String> convertCrypto(@RequestParam String portfolioId, @RequestParam String userId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) {
+    public ResponseEntity<String> convertCrypto(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) throws IOException{
         try {
-            currencyConverterService.currencyConverter(portfolioId, userId, fromCryptoName, toCryptoName, balance);
+            currencyConverterService.currencyConverter(userId, portfolioId, fromCryptoName, toCryptoName, balance);
             return ResponseEntity.ok("Criptomoeda convertida com sucesso !");
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao converter criptomoeda com o saldo informado: " + e.getMessage());
@@ -49,11 +49,9 @@ public class PortfolioController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addPortfolio(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
-        Portfolio portfolio;
+    public ResponseEntity<String> addPortfolio(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
         try {
-            portfolio = new Portfolio(portfolioId, userId, strategyNames.getDisplayName(), balance);
-            portfolioService.addPortfolio(portfolio);
+            portfolioService.addPortfolio(userID, portfolioID, strategyNames.getDisplayName(), balance);
             return ResponseEntity.ok("Portfólio adicionado ou atualizado com sucesso!");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor ao adicionar Portfolio: " + e.getMessage());
@@ -90,6 +88,8 @@ public class PortfolioController {
             return ResponseEntity.ok("Saldo adicionado com sucesso!");
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao adicionar saldo: " + e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -98,7 +98,7 @@ public class PortfolioController {
         try{
             portfolioService.redeemBalance(userID, portfolioID, amount);
             return ResponseEntity.ok("Saldo resgatado com sucesso!");
-        } catch(IllegalArgumentException e) {
+        } catch(IllegalArgumentException | IOException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao resgatar saldo: " + e.getMessage());
         }
     }

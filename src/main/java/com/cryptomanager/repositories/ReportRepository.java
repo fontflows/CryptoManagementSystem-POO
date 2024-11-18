@@ -3,9 +3,10 @@ package com.cryptomanager.repositories;
 import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.models.Investment;
 import com.cryptomanager.models.Portfolio;
-import com.cryptomanager.services.InvestmentProjectionService;
 
 import java.io.*;
+
+import com.cryptomanager.services.InvestmentProjectionService;
 import org.springframework.stereotype.Repository;
 
 
@@ -17,11 +18,9 @@ import java.util.List;
 public class ReportRepository {
     private int id = readID();
 
-    public ReportRepository() throws IOException {
-    }
 
     private int readID() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(new File("reportConfig.txt")))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("reportConfig.txt"))) {
             String line = reader.readLine();
             return (line != null) ? Integer.parseInt(line): 0;
         } catch (IOException e) {
@@ -143,6 +142,7 @@ public class ReportRepository {
             throw new IOException(e);
         }
     }
+    
     public void saveReport(String report) throws IOException{
 
         String PATH =  Integer.toString(id);
