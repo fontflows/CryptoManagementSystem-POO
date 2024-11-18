@@ -90,8 +90,10 @@ public class ReportRepository {
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        // RELATÓRIO DE PROJEÇÃO = reportdate,meses
+        // RELATÓRIO DE PROJEÇÃO = reportdate,portid,Userid,meses
         report.append(reportDate.format(formatter)).append(",")
+                .append(portfolio.getId()).append(",")
+                .append(portfolio.getUserId()).append(",")
                 .append(months).append("\n");
 
         double totalProjectedValue = 0.0;
