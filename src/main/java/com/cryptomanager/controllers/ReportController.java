@@ -6,6 +6,7 @@ import com.cryptomanager.services.ReportService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,5 +45,14 @@ public class ReportController{
         }
         reportService.CreateListReport(list);
         return ResponseEntity.ok("Relatório criado com sucesso!");
+    }
+
+    @PostMapping("/get-sum-reports")
+    public ResponseEntity<String> GetSumReports(){
+        try {
+            return ResponseEntity.ok(reportService.GetSumReports());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

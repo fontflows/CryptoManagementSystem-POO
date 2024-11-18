@@ -51,5 +51,14 @@ public class ReportService {
             throw new ReportExceptions("Erro ao criar relatorio",e);
         }
     }
+    public String GetSumReports(){
+        try{
+            return reportRepository.getSumReports().toString();
+        } catch (IOException e){
+            throw new ReportExceptions("Erro ao acessar relatorios",e);
+        } catch (IllegalStateException e) {
+            throw new ReportExceptions("Não há relatórios",e);
+        }
+    }
 
 }
