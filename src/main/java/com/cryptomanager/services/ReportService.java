@@ -61,4 +61,12 @@ public class ReportService {
         }
     }
 
+    public String AcessReport(int reportid){
+        try{
+            return reportRepository.acessReport(reportid).toString();
+        } catch (IOException e) {
+            throw new ReportExceptions("Erro ao acessar relatório",e);
+        }
+    }
+
 }

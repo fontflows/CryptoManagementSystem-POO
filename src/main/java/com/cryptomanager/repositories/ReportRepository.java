@@ -165,4 +165,17 @@ public class ReportRepository {
         }
         return out;
     }
+    public StringBuilder acessReport(int idreport) throws IOException{
+        if(readID() <= 0){
+            throw new IllegalStateException("Não há relatórios");
+        }
+        StringBuilder out = new StringBuilder();
+        String Path = "report" + idreport + ".txt";
+        BufferedReader reader = new BufferedReader(new FileReader(Path));
+        String line;
+        while((line = reader.readLine()) != null){
+            out.append(line);
+        }
+        return out;
+    }
 }

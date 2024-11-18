@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/report")
-public class ReportController{
+public class ReportController {
     private final ReportService reportService;
     private final ClientService clientService;
     private final CryptoService cryptoService;
@@ -27,17 +27,19 @@ public class ReportController{
     }
 
     @PostMapping("/create-portifolio-report")
-    public ResponseEntity<String> CreatePortifolioReport(@RequestParam String portfolioID,@RequestParam String userID) {
+    public ResponseEntity<String> CreatePortifolioReport(@RequestParam String portfolioID, @RequestParam String userID) {
         reportService.CreatePortifolioReport(userID, portfolioID);
         return ResponseEntity.ok("Relatório criado com sucesso!");
     }
+
     @PostMapping("/create-projected-portifolio-report")
     public ResponseEntity<String> CreateProjectedPortifolioReport(@RequestParam String portfolioid, @RequestParam String userid, @RequestParam int months) {
         reportService.CreateProjectedPortifolioReport(userid, portfolioid, months);
         return ResponseEntity.ok("Relatório criado com sucesso!");
     }
+
     @PostMapping("/create-crypto-or-client-report")
-    public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client","all"})) @RequestParam String reportType){
+    public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client", "all"})) @RequestParam String reportType) {
 
         List<String> list = (reportType.equals("client")) ? clientService.getAllClientsToString() : cryptoService.getAllCryptosToString();
         if (reportType.equals("all")) {
@@ -48,9 +50,18 @@ public class ReportController{
     }
 
     @PostMapping("/get-sum-reports")
-    public ResponseEntity<String> GetSumReports(){
+    public ResponseEntity<String> GetSumReports() {
         try {
             return ResponseEntity.ok(reportService.GetSumReports());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/acess-report")
+    public ResponseEntity<String> AcessReport(@RequestParam int reportid) {
+        try {
+            return ResponseEntity.ok(reportService.AcessReport(reportid));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
