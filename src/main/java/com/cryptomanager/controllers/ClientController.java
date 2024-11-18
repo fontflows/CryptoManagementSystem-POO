@@ -48,12 +48,9 @@ public class ClientController{
     }
   
     @PostMapping("/add")
-    public ResponseEntity<String> addClient(@RequestParam String UserID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
-        Portfolio portfolio;
+    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
         try{
-            portfolio = new Portfolio(portfolioID, UserID, strategyNames.getDisplayName(), balance);
-            portfolioService.addPortfolio(portfolio);
-            clientService.addClient(userID, portfolioID, password);
+            clientService.addClient(userID, portfolioID, password, strategyNames.getDisplayName(), balance);
             return ResponseEntity.ok("Cliente cadastrado com sucesso");
         } catch (ClientServiceException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
