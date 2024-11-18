@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+import static com.cryptomanager.repositories.TransactionsRepository.saveBuyTransaction;
+import static com.cryptomanager.repositories.TransactionsRepository.saveSellTransaction;
 import static com.cryptomanager.services.InvestmentStrategyService.getInvestmentStrategyByName;
 import static com.cryptomanager.services.InvestmentStrategyService.getRandomCrypto;
 
@@ -64,6 +66,7 @@ public class PortfolioService {
         }
         throw new IllegalArgumentException("Investimento não encontrado");
     }
+
 
     // Verifica se um portfólio contém um ativo específico
     public static boolean hasCrypto(String cryptoName, Portfolio portfolio) {
@@ -136,6 +139,7 @@ public class PortfolioService {
             updatedInvestment.setPurchasePrice(
                     (crypto.getPrice()*amount + updatedInvestment.getCryptoInvestedQuantity()*updatedInvestment.getPurchasePrice())/(updatedInvestment.getCryptoInvestedQuantity() + amount)); //Calcula o preço médio
             updatedInvestment.setCryptoInvestedQuantity(updatedInvestment.getCryptoInvestedQuantity() + amount);
+            saveBuyTransaction(userID, portfolioID, new Investment(crypto, crypto.getPrice(), amount));
         }
 
         else {
@@ -143,6 +147,7 @@ public class PortfolioService {
             Investment newInvestment = new Investment(crypto, crypto.getPrice(), amount);
             portfolio.getInvestments().add(newInvestment);
             cryptoRepository.updateCrypto(crypto);
+            saveBuyTransaction(userID, portfolioID, newInvestment);
         }
         portfolioRepository.updatePortfolio(portfolio);
     }
@@ -174,6 +179,7 @@ public class PortfolioService {
         } else {
             updatedInvestment.setCryptoInvestedQuantity(updatedInvestment.getCryptoInvestedQuantity() - amount);
         }
+        saveSellTransaction(userID, portfolioID, new Investment(crypto, crypto.getPrice(), amount));
         portfolioRepository.updatePortfolio(portfolio);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
+import static com.cryptomanager.repositories.TransactionsRepository.saveConversionTransaction;
 import static com.cryptomanager.services.PortfolioService.findInvestment;
 import static com.cryptomanager.services.PortfolioService.hasCrypto;
 
@@ -42,7 +43,8 @@ public class CurrencyConverterService {
             throw new IllegalArgumentException("Quantidade da criptomoeda " + fromCrypto + " insuficiente no portfólio");
 
         Investment fromInvestment = findInvestment(portfolio, cryptoFrom.getName());
-        double newAmount = (cryptoFrom.getPrice()*cryptoAmount)/cryptoTo.getPrice();
+        double convertionRate = getConversionRate(cryptoFrom, cryptoTo);
+        double newAmount = convertionRate*cryptoAmount;
         double fromOldAmount = fromInvestment.getCryptoInvestedQuantity();
 
         //Atualiza o investimento "From"
@@ -69,6 +71,11 @@ public class CurrencyConverterService {
             toInvestment.setCryptoInvestedQuantity(avaragePrice);
             toInvestment.setCryptoInvestedQuantity(toOldAmount + newAmount);
         }
+        saveConversionTransaction(userId, portfolioId, fromCrypto, toCrypto, cryptoAmount, convertionRate, cryptoAmount*cryptoFrom.getPrice());
         portfolioRepository.updatePortfolio(portfolio);
+    }
+
+    public static double getConversionRate(CryptoCurrency fromCrypto, CryptoCurrency toCrypto) {
+        return fromCrypto.getPrice()/toCrypto.getPrice();
     }
 }
