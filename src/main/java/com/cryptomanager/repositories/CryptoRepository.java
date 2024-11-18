@@ -17,7 +17,7 @@ public class CryptoRepository {
     public void saveCrypto(CryptoCurrency crypto) throws IOException {
         if(cryptoExists(crypto.getName())) { throw new IllegalArgumentException("Criptomoeda ja foi cadastrada"); }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
-            writer.write(crypto.toString() + "\n");
+            writer.write(crypto + "\n");
         }
     }
 

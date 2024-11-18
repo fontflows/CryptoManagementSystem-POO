@@ -1,7 +1,6 @@
 package com.cryptomanager.repositories;
 
 import com.cryptomanager.models.Client;
-import com.cryptomanager.models.CryptoCurrency;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -22,7 +21,7 @@ public class ClientRepository {
     public void saveClient(Client client) throws IOException {
         if(clientExists(client.getClientID())) { throw new IllegalArgumentException("Cliente com esse userID ja está cadastrado"); }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
-            writer.write(client.toString() + "\n");
+            writer.write(client + "\n");
         }
     }
 
@@ -80,6 +79,7 @@ public class ClientRepository {
                 break;
             }
         }
+        assert removedClient != null;
         portfolioRepository.deletePortfolio(clientID, removedClient.getPortfolio().getId()); //Esta pedindo para garantir que ".getPortfolio" nao seja null, vai ser resolvido quando os portfolio forem criados junto com cliente, issue#49
         clients.remove(removedClient);
         // Reescreve o arquivo com a lista atualizada

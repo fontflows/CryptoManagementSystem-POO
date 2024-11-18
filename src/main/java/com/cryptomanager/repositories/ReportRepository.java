@@ -20,7 +20,7 @@ public class ReportRepository {
 
 
     private int readID() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(new File("reportConfig.txt")))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("reportConfig.txt"))) {
             String line = reader.readLine();
             return (line != null) ? Integer.parseInt(line): 0;
         } catch (IOException e) {

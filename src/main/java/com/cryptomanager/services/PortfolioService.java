@@ -23,7 +23,7 @@ public class PortfolioService {
         this.cryptoRepository = cryptoRepository;
     }
 
-    public double calculateTotalValue(String userId, String portfolioId) throws IOException {
+    public double calculateTotalValue(String userId, String portfolioId) {
         double totalValue = 0.0;
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
 
