@@ -37,9 +37,9 @@ public class PortfolioController {
     }
 
     @PostMapping("/crypto-conversion-by-portfolioId")
-    public ResponseEntity<String> convertCrypto(@RequestParam String portfolioId, @RequestParam String userId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) {
+    public ResponseEntity<String> convertCrypto(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) throws IOException{
         try {
-            currencyConverterService.currencyConverter(portfolioId, userId, fromCryptoName, toCryptoName, balance);
+            currencyConverterService.currencyConverter(userId, portfolioId, fromCryptoName, toCryptoName, balance);
             return ResponseEntity.ok("Criptomoeda convertida com sucesso !");
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao converter criptomoeda com o saldo informado: " + e.getMessage());
@@ -47,7 +47,7 @@ public class PortfolioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor: " + e.getMessage());
         }
     }
-
+  
     @GetMapping("/get-suggested-crypto")
     public ResponseEntity<?> suggestCryptoCurrency(@RequestParam String userID, @RequestParam String portfolioID){
         try {
@@ -76,6 +76,8 @@ public class PortfolioController {
             return ResponseEntity.ok("Saldo adicionado com sucesso!");
         } catch(IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao adicionar saldo: " + e.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -84,7 +86,7 @@ public class PortfolioController {
         try{
             portfolioService.redeemBalance(userID, portfolioID, amount);
             return ResponseEntity.ok("Saldo resgatado com sucesso!");
-        } catch(IllegalArgumentException e) {
+        } catch(IllegalArgumentException | IOException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao resgatar saldo: " + e.getMessage());
         }
     }

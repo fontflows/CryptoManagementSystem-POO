@@ -4,6 +4,7 @@ import com.cryptomanager.models.Client;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.models.StrategyNames;
 import com.cryptomanager.repositories.PortfolioRepository;
+import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.services.ClientService;
 import com.cryptomanager.services.PortfolioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,53 +23,60 @@ public class ClientController{
     private final PortfolioService portfolioService;
 
     @Autowired
-    public ClientController(ClientService clientService, PortfolioRepository portfolioRepository, PortfolioController portfolioController, PortfolioService portfolioService){
+    public ClientController(ClientService clientService, PortfolioRepository portfolioRepository, PortfolioService portfolioService){
         this.clientService = clientService;
         this.portfolioRepository = portfolioRepository;
         this.portfolioService = portfolioService;
     }
 
     @GetMapping("/get-all-Clients")
-    public List<String> getAllClients() {
-        return clientService.getAllClientsToString();
+    public ResponseEntity<?> getAllClients() {
+        try {
+            return ResponseEntity.ok(clientService.getAllClientsToString());
+        } catch (ClientServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @GetMapping("/search-by-id")
-    public String getClientById(@RequestParam String ClientId){
-        return clientService.getClientByClientIDToString(ClientId);
-    }
-
-    @PostMapping("/add")
-    public String addClient(@RequestParam String UserID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
-        Portfolio portfolio;
-
+    public ResponseEntity<?> getClientByID(String userID) {
         try {
+            return ResponseEntity.ok(clientService.getClientByClientIDToString(userID));
+        } catch (ClientServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+  
+    @PostMapping("/add")
+    public ResponseEntity<String> addClient(@RequestParam String UserID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
+        Portfolio portfolio;
+        try{
             portfolio = new Portfolio(portfolioID, UserID, strategyNames.getDisplayName(), balance);
             portfolioService.addPortfolio(portfolio);
-            clientService.addClient(new Client(UserID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(UserID,portfolioID),password));
-            return "Cliente adicionado com sucesso";
-        }
-        catch (IOException e) {
-            return String.valueOf(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor ao adicionar Portfolio: " + e.getMessage()));
-
-        } catch (IllegalArgumentException e) {
-            return String.valueOf(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Entrada inválida: " + e.getMessage()));
+            clientService.addClient(userID, portfolioID, password);
+            return ResponseEntity.ok("Cliente cadastrado com sucesso");
+        } catch (ClientServiceException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
     @DeleteMapping("/delete")
-    public String deleteClient(@RequestParam String ClientId){
-        try{
-            clientService.deleteClientByClientID(ClientId);
-            return "Cliente removido com sucesso";
-        } catch (Exception e) {
-            return e.getMessage();
+    public ResponseEntity<String> deleteClient(@RequestParam String userID) {
+        try {
+            clientService.deleteClientByClientID(userID);
+            return ResponseEntity.ok("Cliente removido com sucesso!");
+        } catch (ClientServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
     @PostMapping("/edit")
-    public String updateClient(@RequestParam String UserID, @RequestParam String portfolioID, @RequestParam String password){
-        clientService.updateClient(new Client(UserID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(UserID,portfolioID),password));
-        return "Cliente editado com sucesso!";
+    public ResponseEntity<String> updateClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password){
+        try {
+            clientService.updateClient(userID, portfolioID, password);
+            return ResponseEntity.ok("Cliente atualizado com sucesso!");
+        } catch (ClientServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

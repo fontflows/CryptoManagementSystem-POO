@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Repository
 public class ClientRepository {
@@ -18,8 +19,9 @@ public class ClientRepository {
     }
 
     public void saveClient(Client client) throws IOException {
+        if(clientExists(client.getClientID())) { throw new IllegalArgumentException("Cliente com esse userID ja está cadastrado"); }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
-            writer.write(client.toString() + "\n");
+            writer.write(client + "\n");
         }
     }
 
@@ -34,11 +36,10 @@ public class ClientRepository {
                 }
             }
         }
-        if (clients.isEmpty()){
-            throw new IOException("Arquivo está vazio");
-        }
+        if (clients.isEmpty()) { throw new NoSuchElementException("Nenhum cliente encontrado"); }
         return clients;
     }
+
     public List<String> loadClientsToString() throws IOException{
         List<Client> clients = loadClients();
         List<String> stringOut = new ArrayList<>();
@@ -47,18 +48,19 @@ public class ClientRepository {
         }
         return stringOut;
     }
+
     public Client loadClientByID(String clientID) throws IOException {
         Client client = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if ((parts.length == 3)&&(parts[0].equals(clientID))) {
+                if ((parts.length == 3)&&(parts[0].equalsIgnoreCase(clientID))) {
                     client = (new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0],parts[1]),parts[2]));
                 }
             }
         }
-        if (client == null) { throw new IllegalArgumentException("Cliente não encontrado"); }
+        if (client == null) { throw new NoSuchElementException("Cliente não encontrado"); }
         return client;
     }
 
@@ -68,15 +70,17 @@ public class ClientRepository {
     }
 
     public void deleteClientByID(String clientID) throws IOException { // Tem que verificar se ta tudo vazio *dps faço
+        if(!clientExists(clientID)) { throw new NoSuchElementException("Cliente não encontrado"); }
         List<Client> clients = loadClients();
         Client removedClient = null;
         for(Client client: clients){
-            if(client.getClientID().equals(clientID)){
+            if(client.getClientID().equalsIgnoreCase(clientID)){
                 removedClient = client;
                 break;
             }
         }
-        if (removedClient == null) { throw new IllegalArgumentException("Cliente não encontrado"); }
+        assert removedClient != null;
+        portfolioRepository.deletePortfolio(clientID, removedClient.getPortfolio().getId()); //Esta pedindo para garantir que ".getPortfolio" nao seja null, vai ser resolvido quando os portfolio forem criados junto com cliente, issue#49
         clients.remove(removedClient);
         // Reescreve o arquivo com a lista atualizada
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
@@ -85,21 +89,36 @@ public class ClientRepository {
             }
         }
     }
-    public void updateClient(Client searchClient)throws IOException {
-        List<Client> clients = loadClients();
-        boolean found = false;
-        for (Client client : clients) {
-            if (client.getClientID().equals(searchClient.getClientID())) {
-                found = true;
-                break;
+
+    public void updateClient(Client updatedClient) throws IOException {
+        if(updatedClient == null || updatedClient.getClientID() == null ) { throw new IllegalArgumentException("Cliente inválido");}
+        if(!clientExists(updatedClient.getClientID())) { throw new NoSuchElementException("Cliente não encontrado"); }
+        List<Client> allClients = loadClients();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
+            for (Client client : allClients) {
+                if(client.getClientID().equalsIgnoreCase(updatedClient.getClientID())) {
+                    writer.write(updatedClient.toString());
+                    writer.newLine();
+                }
+                else {
+                    writer.write(client.toString());
+                    writer.newLine();
+                }
             }
         }
-        if(found){
-            deleteClientByID(searchClient.getClientID());
-            saveClient(searchClient);
-        }
-        else{
-            throw new IllegalArgumentException("Cliente não encontrado");
-        }
     }
+
+    private boolean clientExists(String clientID) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if ((parts.length == 3) && (parts[0].equalsIgnoreCase(clientID))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
