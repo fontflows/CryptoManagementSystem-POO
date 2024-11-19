@@ -8,9 +8,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Repository
 public class TransactionsRepository {
@@ -51,12 +49,11 @@ public class TransactionsRepository {
             String[] parts;
             while ((line = reader.readLine()) != null) {
                 parts = line.split(",");
-                if(parts[3].equalsIgnoreCase(transactionType)) {
+                if (parts[3].equalsIgnoreCase(transactionType)) {
                     transactions.add(line);
                 }
             }
         }
-        if(transactions.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
         return transactions;
     }
 
@@ -67,39 +64,38 @@ public class TransactionsRepository {
             String[] parts;
             while ((line = reader.readLine()) != null) {
                 parts = line.split(",");
-                if(parts[1].equalsIgnoreCase(userID) && (parts[3].equalsIgnoreCase("ALL") || parts[3].equalsIgnoreCase(transactionType))) {
+                if (parts[1].equalsIgnoreCase(userID) && parts[3].equalsIgnoreCase(transactionType)) {
                     transactions.add(line);
                 }
             }
         }
-        if(transactions.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
         return transactions;
     }
 
     public String listToString(List<String> transactions, String transactionType) throws IOException {
         StringBuilder history = new StringBuilder();
         if(transactionType.equalsIgnoreCase("BUY") || transactionType.equalsIgnoreCase("SELL")) {
-            history.append("DATE | USER-ID | PORTFOLIO-ID | TRANSACTION-TYPE | CRYPTOCURRENCY | AMOUNT | PRICE |\n\n");
-            for (String transaction : transactions) {
-                String[] parts = transaction.split(",");
-                for(String part : parts) {
-                    history.append(part);
-                    history.append(" | ");
-                }
-                history.append("\n");
-            }
+            history.append("DATE | USER-ID | PORTFOLIO-ID | TRANSACTION-TYPE | CRYPTOCURRENCY | AMOUNT | PRICE |\n");
         }
-        else if (transactionType.equalsIgnoreCase("CONVERSION")) {
-            history.append("DATE | USER-ID | PORTFOLIO-ID | TRANSACTION-TYPE | FROM-CRYPTOCURRENCY | TO-CRYPTOCURRENCY | AMOUNT | CONVERSION-RATE | VALUE |\n\n");
-            for (String transaction : transactions) {
-                String[] parts = transaction.split(",");
-                for(String part : parts) {
-                    history.append(part);
-                    history.append(" | ");
-                }
-                history.append("\n");
+        else if(transactionType.equalsIgnoreCase("CONVERSION")) {
+            history.append("DATE | USER-ID | PORTFOLIO-ID | TRANSACTION-TYPE | FROM-CRYPTOCURRENCY | TO-CRYPTOCURRENCY | AMOUNT | CONVERSION-RATE | VALUE |\n");
+        }
+        for (String transaction : transactions) {
+            String[] parts = transaction.split(",");
+            for (String part : parts) {
+                history.append(part);
+                history.append(" | ");
             }
+            history.append("\n");
         }
         return history.toString();
+    }
+
+    public String allListsToString() throws IOException {
+        return listToString(loadTransactions("BUY"), "BUY") + "\n" + listToString(loadTransactions("SELL"), "SELL") + "\n" + listToString(loadTransactions("CONVERSION"), "CONVERSION");
+    }
+
+    public String allListsToStringByID(String userID) throws IOException {
+        return listToString(loadTransactionsByID("BUY", userID), "BUY") + "\n" + listToString(loadTransactionsByID("SELL", userID), "SELL") + "\n" + listToString(loadTransactionsByID("CONVERSION", userID), "CONVERSION");
     }
 }

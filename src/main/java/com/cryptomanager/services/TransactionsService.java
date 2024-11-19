@@ -23,11 +23,17 @@ public class TransactionsService {
 
     public String getTransactionHistory(String transactionType){
         try {
-            return transactionsRepository.listToString(transactionsRepository.loadTransactions(transactionType), transactionType);
+            if (transactionType.equals("BUY") || transactionType.equals("SELL") || transactionType.equals("CONVERSION")) {
+                return transactionsRepository.listToString(transactionsRepository.loadTransactions(transactionType), transactionType);
+            }
+            else if (transactionType.equals("ALL")) {
+                return transactionsRepository.allListsToString();
+            }
+            throw new IllegalArgumentException("Tipo de transação inválido");
         } catch (IOException e) {
             logger.error("Erro interno do servidor ao carregar histórico de transações", e);
             throw new TransactionServiceException("Erro interno do servidor ao carregar histórico de transações", e);
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException | IllegalArgumentException e) {
             logger.error("Erro ao carregar histórico de transações", e);
             throw new TransactionServiceException("Erro ao carregar histórico de transações: " + e.getMessage(), e);
         }
@@ -35,17 +41,17 @@ public class TransactionsService {
 
     public String getTransactionHistoryByID(String transactionType, String userID){
         try {
-            switch (transactionType){
-                case "BUY", "SELL", "CONVERSION":
-                    return transactionsRepository.listToString(transactionsRepository.loadTransactionsByID(transactionType, userID), transactionType);
-                case "ALL":
-                    return transactionsRepository.listToString(transactionsRepository.loadTransactions("BUY"), "BUY") + transactionsRepository.listToString(transactionsRepository.loadTransactions("SELL"), "SELL") + transactionsRepository.listToString(transactionsRepository.loadTransactions("CONVERSION"), "CONVERSION");
-                default: throw new IllegalArgumentException("Tipo de transação inválido");
+            if (transactionType.equals("BUY") || transactionType.equals("SELL") || transactionType.equals("CONVERSION")) {
+                return transactionsRepository.listToString(transactionsRepository.loadTransactionsByID(transactionType, userID), transactionType);
             }
+            else if (transactionType.equals("ALL")) {
+                return transactionsRepository.allListsToStringByID(userID);
+            }
+            throw new IllegalArgumentException("Tipo de transação inválido");
         } catch (IOException e) {
             logger.error("Erro interno do servidor ao carregar histórico de transações", e);
             throw new TransactionServiceException("Erro interno do servidor ao carregar histórico de transações", e);
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException | IllegalArgumentException e) {
             logger.error("Erro ao carregar histórico de transações", e);
             throw new TransactionServiceException("Erro ao carregar histórico de transações: " + e.getMessage(), e);
         }
