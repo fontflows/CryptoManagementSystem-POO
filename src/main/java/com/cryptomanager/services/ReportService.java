@@ -26,27 +26,27 @@ public class ReportService {
         this.portfolioRepository = portfolioRepository;
     }
 
-    public void CreatePortifolioReport(String userID, String portfolioID){
+    public int CreatePortifolioReport(String userID, String portfolioID){
         try {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID,portfolioID);
-            reportRepository.generateCurrentPortfolioReport(portfolio);
+            return reportRepository.generateCurrentPortfolioReport(portfolio);
         } catch (IOException e) {
             logger.error("Erro ao criar relatorio: {}", portfolioID, e);
             throw new ReportExceptions("Erro ao criar relatorio: " + portfolioID, e);
         }
     }
-    public void CreateProjectedPortifolioReport(String userID, String portfolioID, int months){
+    public int CreateProjectedPortifolioReport(String userID, String portfolioID, int months){
         try {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID,portfolioID);
-            reportRepository.generateProjectionReport(portfolio,months);
+            return reportRepository.generateProjectionReport(portfolio,months);
         } catch (IOException e) {
             logger.error("Erro ao criar relatorio projecao: {}", portfolioID + " " + months, e);
             throw new ReportExceptions("Erro ao criar relatorio de projecao: " + portfolioID + " " + months, e);
         }
     }
-    public void CreateListReport(List <String> list){
+    public int CreateListReport(List <String> list){
         try{
-            reportRepository.generateListReport(list);
+            return reportRepository.generateListReport(list);
         } catch (IOException e) {
             throw new ReportExceptions("Erro ao criar relatorio",e);
         }

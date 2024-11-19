@@ -33,7 +33,7 @@ public class ReportRepository {
             writer.write(Integer.toString(id));
         }
     }
-    public void generateCurrentPortfolioReport(Portfolio portfolio) throws IOException {
+    public int generateCurrentPortfolioReport(Portfolio portfolio) throws IOException {
 
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
@@ -84,11 +84,12 @@ public class ReportRepository {
 
         try {
             saveReport(report.toString());
+            return id-1;
         } catch (IOException e) {
             throw new IOException(e);
         }
     }
-    public void generateProjectionReport(Portfolio portfolio,int months) throws IOException {
+    public int generateProjectionReport(Portfolio portfolio,int months) throws IOException {
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -129,11 +130,12 @@ public class ReportRepository {
 
         try {
             saveReport(report.toString());
+            return id-1;
         } catch (IOException e) {
             throw new IOException(e);
         }
     }
-    public void generateListReport(List<String> list) throws IOException{
+    public int generateListReport(List<String> list) throws IOException{
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -143,6 +145,7 @@ public class ReportRepository {
         }
         try {
             saveReport(report.toString());
+            return id-1;
         } catch (IOException e) {
             throw new IOException(e);
         }

@@ -28,14 +28,14 @@ public class ReportController {
 
     @PostMapping("/create-portifolio-report")
     public ResponseEntity<String> CreatePortifolioReport(@RequestParam String portfolioID, @RequestParam String userID) {
-        reportService.CreatePortifolioReport(userID, portfolioID);
-        return ResponseEntity.ok("Relatório criado com sucesso!");
+        int id = reportService.CreatePortifolioReport(userID, portfolioID);
+        return ResponseEntity.ok(reportService.AcessReport(id));
     }
 
     @PostMapping("/create-projected-portifolio-report")
     public ResponseEntity<String> CreateProjectedPortifolioReport(@RequestParam String portfolioid, @RequestParam String userid, @RequestParam int months) {
-        reportService.CreateProjectedPortifolioReport(userid, portfolioid, months);
-        return ResponseEntity.ok("Relatório criado com sucesso!");
+        int id = reportService.CreateProjectedPortifolioReport(userid, portfolioid, months);
+        return ResponseEntity.ok(reportService.AcessReport(id));
     }
 
     @PostMapping("/create-crypto-or-client-report")
@@ -45,8 +45,8 @@ public class ReportController {
         if (reportType.equals("all")) {
             list.addAll(clientService.getAllClientsToString());
         }
-        reportService.CreateListReport(list);
-        return ResponseEntity.ok("Relatório criado com sucesso!");
+        int id = reportService.CreateListReport(list);
+        return ResponseEntity.ok(reportService.AcessReport(id));
     }
 
     @PostMapping("/get-sum-reports")
