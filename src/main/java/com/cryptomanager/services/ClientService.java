@@ -2,6 +2,7 @@ package com.cryptomanager.services;
 
 import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.models.Client;
+import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.repositories.ClientRepository;
 import com.cryptomanager.repositories.PortfolioRepository;
 import org.slf4j.Logger;
@@ -50,11 +51,13 @@ public class ClientService{
         }
     }
 
-    public void addClient(String userID, String portfolioID, String password){
+    public void addClient(String userID, String portfolioID, String password, String strategyName, double balance){
         try{
             userID = userID.toUpperCase();
             portfolioID = portfolioID.toUpperCase();
-            clientRepository.saveClient(new Client(userID,portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID,portfolioID),password));
+            Portfolio portfolio = new Portfolio(portfolioID, userID, strategyName, balance);
+            portfolioRepository.addPortfolio(portfolio);
+            clientRepository.saveClient(new Client(userID, portfolio, password));
         } catch (IOException e) {
             throw new ClientServiceException("Erro interno do servidor ao adicionar cliente: " + e.getMessage(), e);
         } catch (IllegalArgumentException | NoSuchElementException e){
