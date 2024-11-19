@@ -31,8 +31,8 @@ public class ClientRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 3) {
-                    clients.add(new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0], parts[1]), parts[2]));
+                if (parts.length == 4) {
+                    clients.add(new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0],parts[1]),parts[2], parts[3]));
                 }
             }
         }
@@ -55,8 +55,8 @@ public class ClientRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if ((parts.length == 3)&&(parts[0].equalsIgnoreCase(clientID))) {
-                    client = (new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0],parts[1]),parts[2]));
+                if ((parts.length == 4)&&(parts[0].equalsIgnoreCase(clientID))) {
+                    client = (new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0],parts[1]),parts[2], parts[3]));
                 }
             }
         }
@@ -113,7 +113,7 @@ public class ClientRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if ((parts.length == 3) && (parts[0].equalsIgnoreCase(clientID))) {
+                if ((parts.length == 4) && (parts[0].equalsIgnoreCase(clientID))) {
                     return true;
                 }
             }

@@ -1,19 +1,40 @@
 package com.cryptomanager.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Configuration
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("Crypto Manager API")
-                        .version("1.0")
-                        .description("API para gerenciamento de criptomoedas"));
+    public OpenApiCustomizer customOpenAPI() {
+        return openApi -> {
+            // Remove endpoints para usuários não autorizados
+            openApi.getPaths().entrySet().removeIf(entry -> {
+                String path = entry.getKey(); // O endpoint
+                return isRestrictedEndpoint(path) && !hasPermissionForPath(path);
+            });
+        };
+    }
+
+    private boolean isRestrictedEndpoint(String path) {
+        String[] restricted = {"/cryptos/add", "/cryptos/edit", "/cryptos/delete", "/client/get-all-Clients", "/client/add", "/client/delete", "/report/create-crypto-or-client-report"};
+        for(String check: restricted) {
+            if(path.startsWith(check)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasPermissionForPath(String path) {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getAuthorities() == null) {
+            return false;
+        }
+        return auth.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
     }
 }

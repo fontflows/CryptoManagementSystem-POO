@@ -57,7 +57,7 @@ public class ClientService{
             portfolioID = portfolioID.toUpperCase();
             Portfolio portfolio = new Portfolio(portfolioID, userID, strategyName, balance);
             portfolioRepository.addPortfolio(portfolio);
-            clientRepository.saveClient(new Client(userID, portfolio, password));
+            clientRepository.saveClient(new Client(userID, portfolio, password, "CLIENT"));
         } catch (IOException e) {
             throw new ClientServiceException("Erro interno do servidor ao adicionar cliente: " + e.getMessage(), e);
         } catch (IllegalArgumentException | NoSuchElementException e){
@@ -81,7 +81,7 @@ public class ClientService{
         try {
             userID = userID.toUpperCase();
             portfolioID = portfolioID.toUpperCase();
-            Client client = new Client(userID, portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID), password);
+            Client client = new Client(userID, portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID), password, "CLIENT");
             clientRepository.updateClient(client);
         } catch (IOException e) {
             logger.error("Erro ao atualizar cliente", e);

@@ -4,12 +4,14 @@ public class Client {
     private final String ClientID;
     private Portfolio portfolio;
     private String password;
+    private final String role;
 
 
-    public Client(String ClientID, Portfolio portfolio, String password) {
+    public Client(String ClientID, Portfolio portfolio, String password, String role) {
         this.ClientID = ClientID;
         this.portfolio = portfolio;
         this.password = password;
+        this.role = role;
     }
 
     public Portfolio getPortfolio() {
@@ -27,9 +29,10 @@ public class Client {
     public String getClientID() {
         return ClientID;
     }
+    public String getRole() { return role; }
 
     @Override
     public String toString() {
-        return ClientID + "," + portfolio.getId() + "," + password ;
+        return ClientID + "," + portfolio.getId() + "," + password + "," + role ;
     }
 }
