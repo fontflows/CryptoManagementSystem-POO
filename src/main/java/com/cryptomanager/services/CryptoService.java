@@ -21,10 +21,12 @@ public class CryptoService {
 
     private static final Logger logger = LoggerFactory.getLogger(CryptoService.class);
     private final CryptoRepository cryptoRepository;
+    private final TransactionsRepository transactionsRepository;
 
     @Autowired
-    public CryptoService(CryptoRepository cryptoRepository) {
+    public CryptoService(CryptoRepository cryptoRepository, TransactionsRepository transactionsRepository) {
         this.cryptoRepository = cryptoRepository;
+        this.transactionsRepository = transactionsRepository;
     }
 
     public List<CryptoCurrency> getAllCryptos() {
@@ -127,7 +129,7 @@ public class CryptoService {
     }
 
     public static double calculateVolume24h(String cryptoName){
-        List<String> history = transactionService.loadTransactions();
+        List<String> history = transactionsRepository.loadTransactions("ALL");
         LocalDateTime localDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String date = localDateTime.format(formatter);
