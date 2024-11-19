@@ -163,8 +163,9 @@ public class ReportRepository {
         }
         StringBuilder out = new StringBuilder();
         for(int i = 0;i<id;i++){
-            BufferedReader reader = new BufferedReader(new FileReader("report"+i+".txt"));
-            out.append("report ").append(i).append(" :").append(reader.readLine()).append("\n");
+            try(BufferedReader reader = new BufferedReader(new FileReader("report"+i+".txt"))) {
+                out.append("report ").append(i).append(" :").append(reader.readLine()).append("\n");
+            }
         }
         return out;
     }
@@ -174,10 +175,11 @@ public class ReportRepository {
         }
         StringBuilder out = new StringBuilder();
         String Path = "report" + idreport + ".txt";
-        BufferedReader reader = new BufferedReader(new FileReader(Path));
-        String line;
-        while((line = reader.readLine()) != null){
-            out.append(line);
+        try(BufferedReader reader = new BufferedReader(new FileReader(Path))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                out.append(line).append("\n");
+            }
         }
         return out;
     }
