@@ -1,5 +1,7 @@
 package com.cryptomanager.controllers;
 
+
+import com.cryptomanager.models.StrategyNames;
 import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +36,11 @@ public class ClientController{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
+  
     @PostMapping("/add")
-    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password){
+    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @RequestParam double balance){
         try{
-            clientService.addClient(userID, portfolioID, password);
+            clientService.addClient(userID, portfolioID, password, strategyNames.getDisplayName(), balance);
             return ResponseEntity.ok("Cliente cadastrado com sucesso");
         } catch (ClientServiceException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -64,7 +66,4 @@ public class ClientController{
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
-
-
 }
