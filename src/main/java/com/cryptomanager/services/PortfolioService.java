@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+import static com.cryptomanager.repositories.CryptoRepository.loadCryptoByName;
 import static com.cryptomanager.services.InvestmentStrategyService.getInvestmentStrategyByName;
 import static com.cryptomanager.services.InvestmentStrategyService.getRandomCrypto;
 
@@ -122,12 +123,13 @@ public class PortfolioService {
         if (portfolio == null)
             throw new IllegalArgumentException("IDs invalidos");
 
-        CryptoCurrency crypto = cryptoRepository.loadCryptoByName(cryptoName);
-        if (crypto == null)
-            throw new IllegalArgumentException("Nome da Criptomoeda não encontrado: " + cryptoName);
+        CryptoCurrency crypto = loadCryptoByName(cryptoName);
 
         if (portfolio.getBalance() < amount * crypto.getPrice())
             throw new IllegalArgumentException("Saldo disponível não é suficiente para essa compra");
+
+        if (crypto.getAvailableAmount() < amount)
+            throw new IllegalArgumentException("Quantidade da criptomoeda disponível no mercado é insuficiente para essa compra");
 
         portfolio.setBalance(portfolio.getBalance() - amount * crypto.getPrice());
 
@@ -142,8 +144,9 @@ public class PortfolioService {
             crypto.setInvestorsAmount(crypto.getInvestorsAmount() + 1);
             Investment newInvestment = new Investment(crypto, crypto.getPrice(), amount);
             portfolio.getInvestments().add(newInvestment);
-            cryptoRepository.updateCrypto(crypto);
         }
+        crypto.setAvailableAmount(crypto.getAvailableAmount() - amount);
+        cryptoRepository.updateCrypto(crypto);
         portfolioRepository.updatePortfolio(portfolio);
     }
   
@@ -152,9 +155,7 @@ public class PortfolioService {
         if (portfolio == null)
             throw new IllegalArgumentException("IDs invalidos");
 
-        CryptoCurrency crypto = cryptoRepository.loadCryptoByName(cryptoName);
-        if (crypto == null)
-            throw new IllegalArgumentException("Nome da Criptomoeda não encontrado: " + cryptoName);
+        CryptoCurrency crypto = loadCryptoByName(cryptoName);
 
         if (!hasCrypto(cryptoName, portfolio))
             throw new IllegalArgumentException("Criptomoeda não encontrada no portfólio: " + cryptoName);
@@ -170,10 +171,11 @@ public class PortfolioService {
         if (updatedInvestment.getCryptoInvestedQuantity() - amount == 0) {
             crypto.setInvestorsAmount(crypto.getInvestorsAmount() - 1);
             portfolio.getInvestments().remove(updatedInvestment);
-            cryptoRepository.updateCrypto(crypto);
         } else {
             updatedInvestment.setCryptoInvestedQuantity(updatedInvestment.getCryptoInvestedQuantity() - amount);
         }
+        crypto.setAvailableAmount(crypto.getAvailableAmount() + amount);
+        cryptoRepository.updateCrypto(crypto);
         portfolioRepository.updatePortfolio(portfolio);
     }
 }

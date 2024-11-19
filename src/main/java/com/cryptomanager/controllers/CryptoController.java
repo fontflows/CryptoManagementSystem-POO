@@ -1,12 +1,14 @@
 package com.cryptomanager.controllers;
 
 import com.cryptomanager.exceptions.CryptoServiceException;
-import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.services.CryptoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
 
 @RestController
 @RequestMapping("/cryptos")
@@ -38,9 +40,9 @@ public class CryptoController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addCrypto(@RequestParam String cryptoName, @RequestParam double price, @RequestParam double growthRate, @RequestParam double marketCap, @RequestParam double volume24h, @RequestParam int riskFactor) {
+    public ResponseEntity<String> addCrypto(@RequestParam String cryptoName, @RequestParam double price, @RequestParam double growthRate, @RequestParam int riskFactor, @RequestParam double availableAmount) {
         try {
-            cryptoService.addCrypto(cryptoName, price, growthRate, marketCap, volume24h, riskFactor);
+            cryptoService.addCrypto(cryptoName, price, growthRate, riskFactor, availableAmount);
             return ResponseEntity.ok("Criptomoeda adicionada com sucesso!");
         } catch (CryptoServiceException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
@@ -58,9 +60,9 @@ public class CryptoController {
     }
 
     @PostMapping("/edit")
-    public ResponseEntity<String> updateCrypto(@RequestBody CryptoCurrency crypto) {
-        try {
-            cryptoService.updateCrypto(crypto);
+    public ResponseEntity<String> updateCrypto(@RequestParam String cryptoName, @Parameter(description = "Edit field", schema = @Schema(allowableValues = {"Price", "Growth Rate", "Risk Factor"})) @RequestParam String fieldToEdit, @RequestParam String newValue) {
+        try{
+            cryptoService.updateCrypto(cryptoName, fieldToEdit, newValue);
             return ResponseEntity.ok("Criptomoeda atualizada com sucesso!");
         } catch (CryptoServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

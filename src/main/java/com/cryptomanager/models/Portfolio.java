@@ -97,11 +97,6 @@ public class Portfolio {
         sb.append(id).append(",").append(userId).append(",").append(investmentStrategy.getInvestmentStrategyName()).append(",").append(balance).append("\n");
         for (Investment investment : investments) {
             sb.append(investment.getCryptoCurrency().getName()).append(",")
-                    .append(investment.getCryptoCurrency().getPrice()).append(",")
-                    .append(investment.getCryptoCurrency().getGrowthRate()).append(",")
-                    .append(investment.getCryptoCurrency().getMarketCap()).append(",")
-                    .append(investment.getCryptoCurrency().getVolume24h()).append(",")
-                    .append(investment.getCryptoCurrency().getRiskFactor()).append(",")
                     .append(investment.getCryptoInvestedQuantity()).append(",")
                     .append(investment.getPurchasePrice())
                     .append("\n");
