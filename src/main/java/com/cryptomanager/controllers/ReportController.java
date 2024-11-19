@@ -28,26 +28,37 @@ public class ReportController {
 
     @PostMapping("/create-portifolio-report")
     public ResponseEntity<String> CreatePortifolioReport(@RequestParam String portfolioID, @RequestParam String userID) {
-        int id = reportService.CreatePortifolioReport(userID, portfolioID);
-        return ResponseEntity.ok(reportService.AcessReport(id));
+        try {
+            int id = reportService.CreatePortifolioReport(userID, portfolioID);
+            return ResponseEntity.ok(reportService.AcessReport(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PostMapping("/create-projected-portifolio-report")
     public ResponseEntity<String> CreateProjectedPortifolioReport(@RequestParam String portfolioid, @RequestParam String userid, @RequestParam int months) {
-        int id = reportService.CreateProjectedPortifolioReport(userid, portfolioid, months);
-        return ResponseEntity.ok(reportService.AcessReport(id));
+        try {
+            int id = reportService.CreateProjectedPortifolioReport(userid, portfolioid, months);
+            return ResponseEntity.ok(reportService.AcessReport(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
     @PostMapping("/create-crypto-or-client-report")
     public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client", "all"})) @RequestParam String reportType) {
-
-        List<String> list = (reportType.equals("client")) ? clientService.getAllClientsToString() : cryptoService.getAllCryptosToString();
-        if (reportType.equals("all")) {
-            list.add("\n");
-            list.addAll(clientService.getAllClientsToString());
+        try {
+            List<String> list = (reportType.equals("client")) ? clientService.getAllClientsToString() : cryptoService.getAllCryptosToString();
+            if (reportType.equals("all")) {
+                list.add("\n");
+                list.addAll(clientService.getAllClientsToString());
+            }
+            int id = reportService.CreateListReport(list);
+            return ResponseEntity.ok(reportService.AcessReport(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
-        int id = reportService.CreateListReport(list);
-        return ResponseEntity.ok(reportService.AcessReport(id));
     }
 
     @PostMapping("/get-sum-reports")
