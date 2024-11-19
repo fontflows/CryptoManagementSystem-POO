@@ -43,6 +43,7 @@ public class ReportController {
 
         List<String> list = (reportType.equals("client")) ? clientService.getAllClientsToString() : cryptoService.getAllCryptosToString();
         if (reportType.equals("all")) {
+            list.add("\n");
             list.addAll(clientService.getAllClientsToString());
         }
         int id = reportService.CreateListReport(list);
