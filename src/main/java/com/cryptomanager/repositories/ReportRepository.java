@@ -49,35 +49,38 @@ public class ReportRepository {
                 .append(portfolio.getId()).append(",")
                 .append(portfolio.getUserId()).append("\n");
 
-        for (Investment investment : portfolio.getInvestments()) {
-            CryptoCurrency crypto = investment.getCryptoCurrency();
-            double investedQuantity = investment.getCryptoInvestedQuantity();
-            double purchasePrice = investment.getPurchasePrice();
-            double investedValue = investedQuantity * purchasePrice;
-            double currentValue = investedQuantity * crypto.getPrice();
-            double percentageReturn = ((currentValue - investedValue) / investedValue) * 100;
+        if(!(portfolio.getInvestments().isEmpty())) {
 
-            // Conteúdo: cryptoname,investedQuantity,purshacePrice,cryptoPrice,investedValue,currentValue,percentageReturn
+            for (Investment investment : portfolio.getInvestments()) {
+                CryptoCurrency crypto = investment.getCryptoCurrency();
+                double investedQuantity = investment.getCryptoInvestedQuantity();
+                double purchasePrice = investment.getPurchasePrice();
+                double investedValue = investedQuantity * purchasePrice;
+                double currentValue = investedQuantity * crypto.getPrice();
+                double percentageReturn = ((currentValue - investedValue) / investedValue) * 100;
 
-            report.append(crypto.getName()).append(",")
-                    .append(investedQuantity).append(",")
-                    .append(purchasePrice).append(",")
-                    .append(crypto.getPrice()).append(",")
-                    .append(investedValue).append(",")
-                    .append(currentValue).append(",")
-                    .append(percentageReturn).append("\n");
+                // Conteúdo: cryptoname,investedQuantity,purshacePrice,cryptoPrice,investedValue,currentValue,percentageReturn
 
-            investedTotal += investedValue;
-            currentTotalValue += currentValue;
+                report.append(crypto.getName()).append(",")
+                        .append(investedQuantity).append(",")
+                        .append(purchasePrice).append(",")
+                        .append(crypto.getPrice()).append(",")
+                        .append(investedValue).append(",")
+                        .append(currentValue).append(",")
+                        .append(percentageReturn).append("\n");
+
+                investedTotal += investedValue;
+                currentTotalValue += currentValue;
+            }
+
+            // rodapé do portfolio : investedTotal,currentTotalValue,totalPercentageReturn
+
+            double totalPercentageReturn = ((currentTotalValue - investedTotal) / investedTotal) * 100;
+            report.append("\n")
+                    .append(investedTotal).append(",")
+                    .append(currentTotalValue).append(",")
+                    .append(totalPercentageReturn).append("\n");
         }
-
-        // rodapé do portfolio : investedTotal,currentTotalValue,totalPercentageReturn
-
-        double totalPercentageReturn = ((currentTotalValue - investedTotal) / investedTotal) * 100;
-        report.append("\n")
-                .append(investedTotal).append(",")
-                .append(currentTotalValue).append(",")
-                .append(totalPercentageReturn).append("\n");
 
         try {
             saveReport(report.toString());
