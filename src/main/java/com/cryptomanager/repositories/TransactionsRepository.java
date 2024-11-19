@@ -49,7 +49,7 @@ public class TransactionsRepository {
             String[] parts;
             while ((line = reader.readLine()) != null) {
                 parts = line.split(",");
-                if (parts[3].equalsIgnoreCase(transactionType)) {
+                if (parts[3].equalsIgnoreCase(transactionType) || transactionType.equalsIgnoreCase("ALL")) {
                     transactions.add(line);
                 }
             }
@@ -73,6 +73,7 @@ public class TransactionsRepository {
     }
 
     public String listToString(List<String> transactions, String transactionType) throws IOException {
+        if(transactions.isEmpty()) { return ""; }
         StringBuilder history = new StringBuilder();
         if(transactionType.equalsIgnoreCase("BUY") || transactionType.equalsIgnoreCase("SELL")) {
             history.append("DATE | USER-ID | PORTFOLIO-ID | TRANSACTION-TYPE | CRYPTOCURRENCY | AMOUNT | PRICE |\n");
@@ -88,14 +89,15 @@ public class TransactionsRepository {
             }
             history.append("\n");
         }
+        history.append("\n");
         return history.toString();
     }
 
     public String allListsToString() throws IOException {
-        return listToString(loadTransactions("BUY"), "BUY") + "\n" + listToString(loadTransactions("SELL"), "SELL") + "\n" + listToString(loadTransactions("CONVERSION"), "CONVERSION");
+        return listToString(loadTransactions("BUY"), "BUY") + listToString(loadTransactions("SELL"), "SELL") + listToString(loadTransactions("CONVERSION"), "CONVERSION");
     }
 
     public String allListsToStringByID(String userID) throws IOException {
-        return listToString(loadTransactionsByID("BUY", userID), "BUY") + "\n" + listToString(loadTransactionsByID("SELL", userID), "SELL") + "\n" + listToString(loadTransactionsByID("CONVERSION", userID), "CONVERSION");
+        return listToString(loadTransactionsByID("BUY", userID), "BUY") + listToString(loadTransactionsByID("SELL", userID), "SELL") + listToString(loadTransactionsByID("CONVERSION", userID), "CONVERSION");
     }
 }

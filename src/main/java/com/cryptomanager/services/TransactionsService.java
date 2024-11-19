@@ -24,10 +24,14 @@ public class TransactionsService {
     public String getTransactionHistory(String transactionType){
         try {
             if (transactionType.equals("BUY") || transactionType.equals("SELL") || transactionType.equals("CONVERSION")) {
-                return transactionsRepository.listToString(transactionsRepository.loadTransactions(transactionType), transactionType);
+                String history =  transactionsRepository.listToString(transactionsRepository.loadTransactions(transactionType), transactionType);
+                if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
+                else { return history; }
             }
             else if (transactionType.equals("ALL")) {
-                return transactionsRepository.allListsToString();
+                String history = transactionsRepository.allListsToString();
+                if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
+                else { return history; }
             }
             throw new IllegalArgumentException("Tipo de transação inválido");
         } catch (IOException e) {
@@ -42,10 +46,14 @@ public class TransactionsService {
     public String getTransactionHistoryByID(String transactionType, String userID){
         try {
             if (transactionType.equals("BUY") || transactionType.equals("SELL") || transactionType.equals("CONVERSION")) {
-                return transactionsRepository.listToString(transactionsRepository.loadTransactionsByID(transactionType, userID), transactionType);
+                String history =  transactionsRepository.listToString(transactionsRepository.loadTransactionsByID(transactionType, userID), transactionType);
+                if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
+                else { return history; }
             }
             else if (transactionType.equals("ALL")) {
-                return transactionsRepository.allListsToStringByID(userID);
+                String history = transactionsRepository.allListsToStringByID(userID);
+                if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
+                else { return history; }
             }
             throw new IllegalArgumentException("Tipo de transação inválido");
         } catch (IOException e) {
