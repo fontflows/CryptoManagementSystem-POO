@@ -51,7 +51,6 @@ public class CurrencyConverterService {
         if(fromOldAmount - cryptoAmount == 0) {
             portfolio.getInvestments().remove(fromInvestment);
             cryptoFrom.setInvestorsAmount(cryptoFrom.getInvestorsAmount() - 1);
-            cryptoRepository.updateCrypto(cryptoFrom);
         }
         else
             fromInvestment.setCryptoInvestedQuantity(fromOldAmount - cryptoAmount);
@@ -61,7 +60,6 @@ public class CurrencyConverterService {
             Investment newInvestment = new Investment(cryptoTo, cryptoTo.getPrice(), newAmount);
             portfolio.getInvestments().add(newInvestment);
             cryptoTo.setInvestorsAmount(cryptoTo.getInvestorsAmount() + 1);
-            cryptoRepository.updateCrypto(cryptoTo);
         }
         //atualiza a crypto "To" existente
         else {
@@ -71,7 +69,11 @@ public class CurrencyConverterService {
             toInvestment.setCryptoInvestedQuantity(avaragePrice);
             toInvestment.setCryptoInvestedQuantity(toOldAmount + newAmount);
         }
+        cryptoFrom.setAvailableAmount(cryptoFrom.getAvailableAmount() + cryptoAmount);
+        cryptoTo.setAvailableAmount(cryptoTo.getAvailableAmount() - newAmount);
         saveConversionTransaction(userId, portfolioId, fromCrypto, toCrypto, cryptoAmount, convertionRate, cryptoAmount*cryptoFrom.getPrice());
+        cryptoRepository.updateCrypto(cryptoFrom);
+        cryptoRepository.updateCrypto(cryptoTo);
         portfolioRepository.updatePortfolio(portfolio);
     }
 

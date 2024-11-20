@@ -11,6 +11,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.cryptomanager.repositories.TransactionsRepository.loadTransactions;
+import static com.cryptomanager.repositories.TransactionsRepository.loadTransactionsByID;
+
 @Service
 public class TransactionsService {
     private static final Logger logger = LoggerFactory.getLogger(TransactionsService.class);
@@ -23,17 +26,15 @@ public class TransactionsService {
 
     public String getTransactionHistory(String transactionType){
         try {
+            String history = "";
             if (transactionType.equals("BUY") || transactionType.equals("SELL") || transactionType.equals("CONVERSION")) {
-                String history =  transactionsRepository.listToString(transactionsRepository.loadTransactions(transactionType), transactionType);
-                if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
-                else { return history; }
+                history =  transactionsRepository.listToString(loadTransactions(transactionType), transactionType);
             }
             else if (transactionType.equals("ALL")) {
-                String history = transactionsRepository.allListsToString();
-                if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
-                else { return history; }
+                history = transactionsRepository.allListsToString();
             }
-            throw new IllegalArgumentException("Tipo de transação inválido");
+            if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
+            else { return history; }
         } catch (IOException e) {
             logger.error("Erro interno do servidor ao carregar histórico de transações", e);
             throw new TransactionServiceException("Erro interno do servidor ao carregar histórico de transações", e);
@@ -45,17 +46,15 @@ public class TransactionsService {
 
     public String getTransactionHistoryByID(String transactionType, String userID){
         try {
+            String history = "";
             if (transactionType.equals("BUY") || transactionType.equals("SELL") || transactionType.equals("CONVERSION")) {
-                String history =  transactionsRepository.listToString(transactionsRepository.loadTransactionsByID(transactionType, userID), transactionType);
-                if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
-                else { return history; }
+                history =  transactionsRepository.listToString(loadTransactionsByID(transactionType, userID), transactionType);
             }
             else if (transactionType.equals("ALL")) {
-                String history = transactionsRepository.allListsToStringByID(userID);
-                if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
-                else { return history; }
+                history = transactionsRepository.allListsToStringByID(userID);
             }
-            throw new IllegalArgumentException("Tipo de transação inválido");
+            if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
+            else { return history; }
         } catch (IOException e) {
             logger.error("Erro interno do servidor ao carregar histórico de transações", e);
             throw new TransactionServiceException("Erro interno do servidor ao carregar histórico de transações", e);

@@ -42,7 +42,7 @@ public class TransactionsRepository {
         }
     }
 
-    public List<String> loadTransactions(String transactionType) throws IOException {
+    public static List<String> loadTransactions(String transactionType) throws IOException {
         List<String> transactions = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
@@ -57,7 +57,7 @@ public class TransactionsRepository {
         return transactions;
     }
 
-    public List<String> loadTransactionsByID(String transactionType, String userID) throws IOException {
+    public static List<String> loadTransactionsByID(String transactionType, String userID) throws IOException {
         List<String> transactions = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
