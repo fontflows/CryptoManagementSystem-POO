@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.cryptomanager.repositories.CryptoRepository.loadCryptoByName;
 import static com.cryptomanager.services.PortfolioService.findInvestment;
 import static com.cryptomanager.services.PortfolioService.hasCrypto;
 
@@ -91,7 +92,7 @@ public class PortfolioRepository {
                     portfolioList.add(currentPortfolio);
                 }
 
-                else if (parts.length >= 8 && currentPortfolio != null) {
+                else if (parts.length == 3 && currentPortfolio != null) {
                     Investment investment = createInvestmentFromParts(parts);
                     currentPortfolio.getInvestments().add(investment);
                 }
@@ -103,20 +104,15 @@ public class PortfolioRepository {
     }
 
     // Função auxiliar para criar um investimento a partir de uma linha de texto
-    private Investment createInvestmentFromParts(String[] parts) {
-        if (parts.length < 8)
+    private Investment createInvestmentFromParts(String[] parts) throws IOException {
+        if (parts.length < 3)
             throw new IllegalArgumentException("Dados do investimento mal formados");
 
         String cryptoName = parts[0];
-        double price = Double.parseDouble(parts[1]);
-        double growthRate = Double.parseDouble(parts[2]);
-        double marketCap = Double.parseDouble(parts[3]);
-        double volume24h = Double.parseDouble(parts[4]);
-        int riskFactor = Integer.parseInt(parts[5]);
-        double quantity = Double.parseDouble(parts[6]);
-        double purchasePrice = Double.parseDouble(parts[7]);
+        double quantity = Double.parseDouble(parts[1]);
+        double purchasePrice = Double.parseDouble(parts[2]);
 
-        CryptoCurrency cryptoCurrency = new CryptoCurrency(cryptoName, price, growthRate, marketCap, volume24h, riskFactor);
+        CryptoCurrency cryptoCurrency = loadCryptoByName(cryptoName);
         return new Investment(cryptoCurrency, purchasePrice, quantity);
     }
 
