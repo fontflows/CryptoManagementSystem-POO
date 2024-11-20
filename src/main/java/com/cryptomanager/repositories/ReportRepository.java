@@ -33,7 +33,7 @@ public class ReportRepository {
             writer.write(Integer.toString(id));
         }
     }
-    public void generateCurrentPortfolioReport(Portfolio portfolio) throws IOException {
+    public int generateCurrentPortfolioReport(Portfolio portfolio) throws IOException {
 
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
@@ -49,49 +49,55 @@ public class ReportRepository {
                 .append(portfolio.getId()).append(",")
                 .append(portfolio.getUserId()).append("\n");
 
-        for (Investment investment : portfolio.getInvestments()) {
-            CryptoCurrency crypto = investment.getCryptoCurrency();
-            double investedQuantity = investment.getCryptoInvestedQuantity();
-            double purchasePrice = investment.getPurchasePrice();
-            double investedValue = investedQuantity * purchasePrice;
-            double currentValue = investedQuantity * crypto.getPrice();
-            double percentageReturn = ((currentValue - investedValue) / investedValue) * 100;
+        if(!(portfolio.getInvestments().isEmpty())) {
 
-            // Conteúdo: cryptoname,investedQuantity,purshacePrice,cryptoPrice,investedValue,currentValue,percentageReturn
+            for (Investment investment : portfolio.getInvestments()) {
+                CryptoCurrency crypto = investment.getCryptoCurrency();
+                double investedQuantity = investment.getCryptoInvestedQuantity();
+                double purchasePrice = investment.getPurchasePrice();
+                double investedValue = investedQuantity * purchasePrice;
+                double currentValue = investedQuantity * crypto.getPrice();
+                double percentageReturn = ((currentValue - investedValue) / investedValue) * 100;
 
-            report.append(crypto.getName()).append(",")
-                    .append(investedQuantity).append(",")
-                    .append(purchasePrice).append(",")
-                    .append(crypto.getPrice()).append(",")
-                    .append(investedValue).append(",")
-                    .append(currentValue).append(",")
-                    .append(percentageReturn).append("\n");
+                // Conteúdo: cryptoname,investedQuantity,purshacePrice,cryptoPrice,investedValue,currentValue,percentageReturn
 
-            investedTotal += investedValue;
-            currentTotalValue += currentValue;
+                report.append(crypto.getName()).append(",")
+                        .append(investedQuantity).append(",")
+                        .append(purchasePrice).append(",")
+                        .append(crypto.getPrice()).append(",")
+                        .append(investedValue).append(",")
+                        .append(currentValue).append(",")
+                        .append(percentageReturn).append("\n");
+
+                investedTotal += investedValue;
+                currentTotalValue += currentValue;
+            }
+
+            // rodapé do portfolio : investedTotal,currentTotalValue,totalPercentageReturn
+
+            double totalPercentageReturn = ((currentTotalValue - investedTotal) / investedTotal) * 100;
+            report.append("\n")
+                    .append(investedTotal).append(",")
+                    .append(currentTotalValue).append(",")
+                    .append(totalPercentageReturn).append("\n");
         }
-
-        // rodapé do portfolio : investedTotal,currentTotalValue,totalPercentageReturn
-
-        double totalPercentageReturn = ((currentTotalValue - investedTotal) / investedTotal) * 100;
-        report.append("\n")
-                .append(investedTotal).append(",")
-                .append(currentTotalValue).append(",")
-                .append(totalPercentageReturn).append("\n");
 
         try {
             saveReport(report.toString());
+            return id-1;
         } catch (IOException e) {
             throw new IOException(e);
         }
     }
-    public void generateProjectionReport(Portfolio portfolio,int months) throws IOException {
+    public int generateProjectionReport(Portfolio portfolio,int months) throws IOException {
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        // RELATÓRIO DE PROJEÇÃO = reportdate,meses
+        // RELATÓRIO DE PROJEÇÃO = reportdate,portid,Userid,meses
         report.append(reportDate.format(formatter)).append(",")
+                .append(portfolio.getId()).append(",")
+                .append(portfolio.getUserId()).append(",")
                 .append(months).append("\n");
 
         double totalProjectedValue = 0.0;
@@ -124,11 +130,12 @@ public class ReportRepository {
 
         try {
             saveReport(report.toString());
+            return id-1;
         } catch (IOException e) {
             throw new IOException(e);
         }
     }
-    public void generateListReport(List<String> list) throws IOException{
+    public int generateListReport(List<String> list) throws IOException{
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -138,11 +145,11 @@ public class ReportRepository {
         }
         try {
             saveReport(report.toString());
+            return id-1;
         } catch (IOException e) {
             throw new IOException(e);
         }
     }
-    
     public void saveReport(String report) throws IOException{
 
         String PATH =  Integer.toString(id);
@@ -153,5 +160,30 @@ public class ReportRepository {
         }
         saveID();
     }
-
+    public StringBuilder getSumReports() throws IOException{
+        if(readID() <= 0){
+            throw new IllegalStateException("Não há relatórios");
+        }
+        StringBuilder out = new StringBuilder();
+        for(int i = 0;i<id;i++){
+            try(BufferedReader reader = new BufferedReader(new FileReader("report"+i+".txt"))) {
+                out.append("report ").append(i).append(" :").append(reader.readLine()).append("\n");
+            }
+        }
+        return out;
+    }
+    public StringBuilder acessReport(int idreport) throws IOException{
+        if(readID() <= 0){
+            throw new IllegalStateException("Não há relatórios");
+        }
+        StringBuilder out = new StringBuilder();
+        String Path = "report" + idreport + ".txt";
+        try(BufferedReader reader = new BufferedReader(new FileReader(Path))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                out.append(line).append("\n");
+            }
+        }
+        return out;
+    }
 }
