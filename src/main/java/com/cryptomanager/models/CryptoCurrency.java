@@ -116,6 +116,6 @@ public class CryptoCurrency {
 
     @Override
     public String toString() {
-        return name + "," + price + "," + growthRate + "," + marketCap + "," + volume24h + "," + riskFactor + "," + investorsAmount;
+        return name + "," + price + "," + growthRate + "," + marketCap + "," + volume24h + "," + riskFactor + "," + investorsAmount + "," + totalAmount + "," + availableAmount;
     }
 }

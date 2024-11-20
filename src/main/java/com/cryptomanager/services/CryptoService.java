@@ -3,6 +3,7 @@ package com.cryptomanager.services;
 import com.cryptomanager.exceptions.CryptoServiceException;
 import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.repositories.CryptoRepository;
+import com.cryptomanager.repositories.TransactionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.cryptomanager.repositories.CryptoRepository.loadCryptoByName;
+import static com.cryptomanager.repositories.TransactionsRepository.loadTransactions;
 
 @Service
 public class CryptoService {
@@ -128,8 +130,8 @@ public class CryptoService {
         }
     }
 
-    public static double calculateVolume24h(String cryptoName){
-        List<String> history = transactionsRepository.loadTransactions("ALL");
+    public static double calculateVolume24h(String cryptoName) throws IOException {
+        List<String> history = loadTransactions("ALL");
         LocalDateTime localDateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String date = localDateTime.format(formatter);

@@ -29,11 +29,12 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 8) {
+                if (parts.length == 9) {
                     CryptoCurrency loadedCrypto = new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]), Integer.parseInt(parts[5]), Double.parseDouble(parts[7]));
                     loadedCrypto.setMarketCap(Double.parseDouble(parts[3]));
                     loadedCrypto.setVolume24h(Double.parseDouble(parts[4]));
                     loadedCrypto.setInvestorsAmount(Integer.parseInt(parts[6]));
+                    loadedCrypto.setAvailableAmount(Double.parseDouble(parts[8]));
                     cryptos.add(loadedCrypto);
                 }
             }
@@ -58,11 +59,12 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 8 && parts[0].equalsIgnoreCase(cryptoName)) {
+                if (parts.length == 9 && parts[0].equalsIgnoreCase(cryptoName)) {
                     crypto = new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]), Integer.parseInt(parts[5]), Double.parseDouble(parts[7]));
                     crypto.setMarketCap(Double.parseDouble(parts[3]));
                     crypto.setVolume24h(Double.parseDouble(parts[4]));
                     crypto.setInvestorsAmount(Integer.parseInt(parts[6]));
+                    crypto.setAvailableAmount(Double.parseDouble(parts[8]));
                 }
             }
         }
@@ -95,7 +97,7 @@ public class CryptoRepository {
         if(!cryptoExists(updatedCrypto.getName())) { throw new NoSuchElementException("Criptomoeda não encontrada"); }
         List<CryptoCurrency> allCryptos = loadCryptos();
         updatedCrypto.setVolume24h(calculateVolume24h(updatedCrypto.getName()));
-        updatedCrypto.setMarketCap(updatedCrypto.getPrice()*(updatedCrypto.getTotalAmount()-updatedCrypto.getAvailableAmount()));
+        updatedCrypto.setMarketCap(updatedCrypto.getPrice()*updatedCrypto.getTotalAmount());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (CryptoCurrency crypto : allCryptos) {
                 if(crypto.getName().equalsIgnoreCase(updatedCrypto.getName())){
@@ -115,7 +117,7 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 8 && parts[0].equalsIgnoreCase(cryptoName)) {
+                if (parts.length == 9 && parts[0].equalsIgnoreCase(cryptoName)) {
                     return true;
                 }
             }
