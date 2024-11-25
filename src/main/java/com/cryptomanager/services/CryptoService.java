@@ -65,6 +65,7 @@ public class CryptoService {
 
     public void addCrypto(String cryptoName, double price, double growthRate, int riskFactor, double availableAmount) {
         try {
+            cryptoName = cryptoName.toUpperCase();
             CryptoCurrency newCrypto = new CryptoCurrency(cryptoName, price, growthRate, riskFactor, availableAmount);
             cryptoRepository.saveCrypto(newCrypto);
         } catch (IOException e) {
