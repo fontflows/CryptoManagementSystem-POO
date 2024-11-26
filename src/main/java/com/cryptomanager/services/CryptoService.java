@@ -53,6 +53,7 @@ public class CryptoService {
 
     public CryptoCurrency getCryptoByName(String name) {
         try {
+            name = name.trim();
             return loadCryptoByName(name);
         } catch (IOException e) {
             logger.error("Erro ao carregar criptomoeda", e);
@@ -65,7 +66,7 @@ public class CryptoService {
 
     public void addCrypto(String cryptoName, double price, double growthRate, int riskFactor, double availableAmount) {
         try {
-            cryptoName = cryptoName.toUpperCase();
+            cryptoName = cryptoName.toUpperCase().trim();
             CryptoCurrency newCrypto = new CryptoCurrency(cryptoName, price, growthRate, riskFactor, availableAmount);
             cryptoRepository.saveCrypto(newCrypto);
         } catch (IOException e) {
@@ -80,6 +81,7 @@ public class CryptoService {
 
     public void deleteCryptoByName(String name) {
         try {
+            name = name.trim();
             cryptoRepository.deleteCryptoByName(name);
         } catch (IOException e) {
             logger.error("Erro ao remover criptomoeda", e);
@@ -92,6 +94,7 @@ public class CryptoService {
 
     public void updateCrypto(String cryptoName, String fieldToEdit, String newValue) {
         try {
+            cryptoName = cryptoName.trim();
             CryptoCurrency crypto = loadCryptoByName(cryptoName);
             if(crypto.getInvestorsAmount() > 0) { throw new IllegalArgumentException("Criptomoeda tem investidores ativos e não pode ser editada"); }
             switch (fieldToEdit) {
