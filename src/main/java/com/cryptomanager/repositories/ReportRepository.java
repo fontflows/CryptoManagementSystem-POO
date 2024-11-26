@@ -90,6 +90,9 @@ public class ReportRepository {
         }
     }
     public int generateProjectionReport(Portfolio portfolio,int months) throws IOException {
+        if(portfolio.getInvestments().isEmpty()){
+            throw new IllegalStateException("Portfolio nao tem investimentos, logo nao pode criar report");
+        }
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
