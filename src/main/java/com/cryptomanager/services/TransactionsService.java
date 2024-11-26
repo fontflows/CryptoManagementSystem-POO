@@ -32,6 +32,7 @@ public class TransactionsService {
      * Obtém o histórico das transações realizadas em todo o programa baseado no tipo de transação.
      * @param transactionType Tipo de transação solicitado : {@code SELL}, {@code BUY}, {@code CONVERSION} ou {@code ALL}.
      * @return {@code String} Lista com o histórico já formatado.
+     * @throws TransactionServiceException Caso haja algum erro no carregamento do histórico.
      */
     public String getTransactionHistory(String transactionType){
         try {
@@ -57,6 +58,7 @@ public class TransactionsService {
      * Obtém o histórico das transações realizadas por um cliente baseado no tipo de transação.
      * @param transactionType Tipo de transação solicitado {@code SELL}, {@code BUY}, {@code CONVERSION} ou {@code ALL}.
      * @return {@code String} Lista com o histórico já formatado.
+     * @throws TransactionServiceException Caso haja algum erro no carregamento do histórico.
      */
     public String getTransactionHistoryByID(String transactionType, String userID){
         try {
