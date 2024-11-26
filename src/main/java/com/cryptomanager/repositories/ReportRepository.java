@@ -43,7 +43,6 @@ public class ReportRepository {
         double currentTotalValue = 0.0;
 
 
-
         // Cabeçalho do relatório: Data,id,userid;
         report.append(reportDate.format(formatter)).append(",")
                 .append(portfolio.getId()).append(",")
@@ -74,7 +73,6 @@ public class ReportRepository {
             }
 
             // rodapé do portfolio : investedTotal,currentTotalValue,totalPercentageReturn
-
             double totalPercentageReturn = ((currentTotalValue - investedTotal) / investedTotal) * 100;
             report.append("\n")
                     .append(investedTotal).append(",")
@@ -100,34 +98,34 @@ public class ReportRepository {
                 .append(portfolio.getUserId()).append(",")
                 .append(months).append("\n");
 
-        double totalProjectedValue = 0.0;
-        double totalCurrentValue = 0.0;
-        for (Investment investment : portfolio.getInvestments()) {
-            CryptoCurrency crypto = investment.getCryptoCurrency();
-            double investedQuantity = investment.getCryptoInvestedQuantity();
-            double currentValue = investedQuantity * crypto.getPrice();
+        if(!(portfolio.getInvestments().isEmpty())) {
+            double totalProjectedValue = 0.0;
+            double totalCurrentValue = 0.0;
+            for (Investment investment : portfolio.getInvestments()) {
+                CryptoCurrency crypto = investment.getCryptoCurrency();
+                double investedQuantity = investment.getCryptoInvestedQuantity();
+                double currentValue = investedQuantity * crypto.getPrice();
 
-            // Utiliza o InvestmentProjectionService para calcular a projeção
-            double projectedvalue = InvestmentProjectionService.calculateInvestmentProjection(investedQuantity, crypto, months);
-            // Conteúdo = cryptoname, valoratualcrypto, meses , valorprojetado, crescimento mensal%,
-            report.append(crypto.getName()).append(",")
-                    .append(currentValue).append(",")
-                    .append(months).append(",")
-                    .append(projectedvalue).append(",")
-                    .append(crypto.getGrowthRate() * 100).append(",\n");
+                // Utiliza o InvestmentProjectionService para calcular a projeção
+                double projectedvalue = InvestmentProjectionService.calculateInvestmentProjection(investedQuantity, crypto, months);
+                // Conteúdo = cryptoname, valoratualcrypto, meses , valorprojetado, crescimento mensal%,
+                report.append(crypto.getName()).append(",")
+                        .append(currentValue).append(",")
+                        .append(months).append(",")
+                        .append(projectedvalue).append(",")
+                        .append(crypto.getGrowthRate() * 100).append(",\n");
 
-            totalProjectedValue += projectedvalue;
-            totalCurrentValue += currentValue;
+                totalProjectedValue += projectedvalue;
+                totalCurrentValue += currentValue;
+            }
+            // Sumário da projeção = totalCurrentValue,totalProjectedValue,projectedGrowth
+
+            double projectedGrowth = ((totalProjectedValue - totalCurrentValue) / totalCurrentValue) * 100;
+
+            report.append(totalCurrentValue).append(",")
+                    .append(totalProjectedValue).append(",")
+                    .append(projectedGrowth).append(",\n");
         }
-
-        // Sumário da projeção = totalCurrentValue,totalProjectedValue,projectedGrowth
-
-        double projectedGrowth = ((totalProjectedValue - totalCurrentValue) / totalCurrentValue) * 100;
-
-        report.append(totalCurrentValue).append(",")
-                .append(totalProjectedValue).append(",")
-                .append(projectedGrowth).append(",\n");
-
         try {
             saveReport(report.toString());
             return id-1;
