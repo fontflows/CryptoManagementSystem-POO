@@ -2,15 +2,15 @@ package com.cryptomanager.services;
 
 import com.cryptomanager.models.CryptoCurrency;
 
-/** Classe responsável por calcular projeções de investimento. */
+/** Classe responsavel por calcular projecoes de investimento. */
 public class InvestmentProjectionService {
 
     /** Calcula o patrimonio projetado baseado na taxa de crescimento mensal de uma criptomoeda e quantidade de meses investido
-     * @param coinAmount Quantidade de criptomoedas consideradas na projeção.
-     * @param months Quantidade de meses considerados na projeção.
-     * @param cryptoCurrency Criptomoeda considerada na projeção.
-     * @return {@code double} Patrimonio projetado após periodo de tempo definido.
-     * @throws IllegalArgumentException Caso valores dos parâmetros sejam inválidos.
+     * @param coinAmount Quantidade de criptomoedas consideradas na projecao.
+     * @param months Quantidade de meses considerados na projecao.
+     * @param cryptoCurrency Criptomoeda considerada na projecao.
+     * @return {@code double} Patrimonio projetado apos periodo de tempo definido.
+     * @throws IllegalArgumentException Caso valores dos parametros sejam invalidos.
      */
     public static double calculateInvestmentProjection (double coinAmount, CryptoCurrency cryptoCurrency, int months){
         double usedPrice = cryptoCurrency.getPrice();
@@ -27,11 +27,11 @@ public class InvestmentProjectionService {
     }
 
     /** Calcula o tempo em meses para atingir um valor alvo baseado na taxa de crescimento mensal de uma criptomoeda
-     * @param coinAmount Quantidade de criptomoedas consideradas na projeção.
-     * @param targetValue Valor alvo de patrimônio desejado.
-     * @param cryptoCurrency Criptomoeda considerada na projeção.
-     * @return {@code int} Quantidade de meses necessários para atingir valor alvo.
-     * @throws IllegalArgumentException Caso valores dos parâmetros sejam inválidos.
+     * @param coinAmount Quantidade de criptomoedas consideradas na projecao.
+     * @param targetValue Valor alvo de patrimonio desejado.
+     * @param cryptoCurrency Criptomoeda considerada na projecao.
+     * @return {@code int} Quantidade de meses necessarios para atingir valor alvo.
+     * @throws IllegalArgumentException Caso valores dos parametros sejam invalidos.
      */
     public static int calculateTimeToTarget (double coinAmount, CryptoCurrency cryptoCurrency, double targetValue){
         double usedPrice = cryptoCurrency.getPrice();

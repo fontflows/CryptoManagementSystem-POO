@@ -14,14 +14,14 @@ import static com.cryptomanager.repositories.TransactionsRepository.loadTransact
 import static com.cryptomanager.repositories.TransactionsRepository.loadTransactionsByID;
 
 
-/** Classe responsável pelos métodos Service de registro e leitura do histórico de transações de clientes */
+/** Classe responsavel pelos metodos Service de registro e leitura do histórico de transações de clientes */
 @Service
 public class TransactionsService {
     private static final Logger logger = LoggerFactory.getLogger(TransactionsService.class);
     private final TransactionsRepository transactionsRepository;
 
     /** Constructor TransactionsService
-     * @param transactionsRepository Instância que conecta o Service à classe que manipula os dados no arquivo
+     * @param transactionsRepository Instancia que conecta o Service na classe que manipula os dados no arquivo
      */
     @Autowired
     public TransactionsService(TransactionsRepository transactionsRepository) {
@@ -29,10 +29,10 @@ public class TransactionsService {
     }
 
     /**
-     * Obtém o histórico das transações realizadas em todo o programa baseado no tipo de transação.
-     * @param transactionType Tipo de transação solicitado : {@code SELL}, {@code BUY}, {@code CONVERSION} ou {@code ALL}.
-     * @return {@code String} Lista com o histórico já formatado.
-     * @throws TransactionServiceException Caso haja algum erro no carregamento do histórico.
+     * Obtem o historico das transações realizadas em todo o programa baseado no tipo de transação.
+     * @param transactionType Tipo de transacao solicitado : {@code SELL}, {@code BUY}, {@code CONVERSION} ou {@code ALL}.
+     * @return {@code String} Lista com o historico ja formatado.
+     * @throws TransactionServiceException Caso haja algum erro no carregamento do historico.
      */
     public String getTransactionHistory(String transactionType){
         try {
@@ -55,10 +55,10 @@ public class TransactionsService {
     }
 
     /**
-     * Obtém o histórico das transações realizadas por um cliente baseado no tipo de transação.
-     * @param transactionType Tipo de transação solicitado {@code SELL}, {@code BUY}, {@code CONVERSION} ou {@code ALL}.
-     * @return {@code String} Lista com o histórico já formatado.
-     * @throws TransactionServiceException Caso haja algum erro no carregamento do histórico.
+     * Obtem o historico das transacoes realizadas por um cliente baseado no tipo de transacao.
+     * @param transactionType Tipo de transacao solicitado {@code SELL}, {@code BUY}, {@code CONVERSION} ou {@code ALL}.
+     * @return {@code String} Lista com o historico ja formatado.
+     * @throws TransactionServiceException Caso haja algum erro no carregamento do historico.
      */
     public String getTransactionHistoryByID(String transactionType, String userID){
         try {
