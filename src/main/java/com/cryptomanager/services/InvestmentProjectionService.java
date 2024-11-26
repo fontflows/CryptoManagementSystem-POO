@@ -2,9 +2,16 @@ package com.cryptomanager.services;
 
 import com.cryptomanager.models.CryptoCurrency;
 
+/** Classe responsável por calcular projeções de investimento. */
 public class InvestmentProjectionService {
 
-    //Calcula o patrimonio projetado baseado na taxa de crescimento mensal e quantidade de meses investido
+    /** Calcula o patrimonio projetado baseado na taxa de crescimento mensal de uma criptomoeda e quantidade de meses investido
+     * @param coinAmount Quantidade de criptomoedas consideradas na projeção.
+     * @param months Quantidade de meses considerados na projeção.
+     * @param cryptoCurrency Criptomoeda considerada na projeção.
+     * @return {@code double} Patrimonio projetado após periodo de tempo definido.
+     * @throws IllegalArgumentException Caso valores dos parâmetros sejam inválidos.
+     */
     public static double calculateInvestmentProjection (double coinAmount, CryptoCurrency cryptoCurrency, int months){
         double usedPrice = cryptoCurrency.getPrice();
         double usedGrowthRate = cryptoCurrency.getGrowthRate();
@@ -19,7 +26,13 @@ public class InvestmentProjectionService {
         return totalValue;
     }
 
-    //Calcula o tempo em meses para atingir um valor alvo baseado na taxa de crescimento mensal
+    /** Calcula o tempo em meses para atingir um valor alvo baseado na taxa de crescimento mensal de uma criptomoeda
+     * @param coinAmount Quantidade de criptomoedas consideradas na projeção.
+     * @param targetValue Valor alvo de patrimônio desejado.
+     * @param cryptoCurrency Criptomoeda considerada na projeção.
+     * @return {@code int} Quantidade de meses necessários para atingir valor alvo.
+     * @throws IllegalArgumentException Caso valores dos parâmetros sejam inválidos.
+     */
     public static int calculateTimeToTarget (double coinAmount, CryptoCurrency cryptoCurrency, double targetValue){
         double usedPrice = cryptoCurrency.getPrice();
         double usedGrowthRate = cryptoCurrency.getGrowthRate();
