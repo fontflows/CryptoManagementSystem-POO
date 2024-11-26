@@ -1,5 +1,6 @@
-
-
-
-
-
+PORT1,USER1,Aggressive,2073920.0
+Doge,1.0,200.0
+Eth,1.0,50000.0
+PORT2,USER2,Aggressive,9910.0
+Bitcoin,9.0E-4,100000.0
+PORT3,USER3,Aggressive,10000.0
