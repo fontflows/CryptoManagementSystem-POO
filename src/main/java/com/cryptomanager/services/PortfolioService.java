@@ -124,7 +124,6 @@ public class PortfolioService {
     public void buyCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
         if (amount <= 0)
             throw new IllegalArgumentException("Quantidade para compra deve ser maior que zero");
-
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
         CryptoCurrency crypto = loadCryptoByName(cryptoName);
 
@@ -147,9 +146,9 @@ public class PortfolioService {
             portfolio.getInvestments().add(newInvestment);
         }
         crypto.setAvailableAmount(crypto.getAvailableAmount() - amount);
-        saveBuyTransaction(userID, portfolioID, new Investment(crypto, crypto.getPrice(), amount));
         cryptoRepository.updateCrypto(crypto);
         portfolioRepository.updatePortfolio(portfolio);
+        saveBuyTransaction(userID, portfolioID, new Investment(crypto, crypto.getPrice(), amount));
     }
   
     public void sellCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
@@ -174,8 +173,8 @@ public class PortfolioService {
             updatedInvestment.setCryptoInvestedQuantity(updatedInvestment.getCryptoInvestedQuantity() - amount);
         }
         crypto.setAvailableAmount(crypto.getAvailableAmount() + amount);
-        saveSellTransaction(userID, portfolioID, new Investment(crypto, crypto.getPrice(), amount));
         cryptoRepository.updateCrypto(crypto);
         portfolioRepository.updatePortfolio(portfolio);
+        saveSellTransaction(userID, portfolioID, new Investment(crypto, crypto.getPrice(), amount));
     }
 }
