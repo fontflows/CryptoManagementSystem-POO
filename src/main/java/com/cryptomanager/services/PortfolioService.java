@@ -46,18 +46,6 @@ public class PortfolioService {
         return totalValue;
     }
 
-    //Adiciona um portfólio no arquivo
-    public void addPortfolio(String userID, String portfolioID, String strategyName, double balance) throws IOException {
-        portfolioID = portfolioID.toUpperCase();
-        userID = userID.toUpperCase();
-        Portfolio portfolio = new Portfolio(portfolioID, userID, strategyName, balance);
-        portfolioRepository.addPortfolio(portfolio);
-    }
-
-    public void deletePortfolio(String userID, String portfolioID) throws IOException {
-        portfolioRepository.deletePortfolio(userID, portfolioID);
-    }
-
     //Retorna investimento pelo nome da crypto
     public static Investment findInvestment(Portfolio portfolio, String cryptoName) {
         for (Investment investment : portfolio.getInvestments()) {
@@ -127,6 +115,8 @@ public class PortfolioService {
             throw new IllegalArgumentException("IDs invalidos");
 
         CryptoCurrency crypto = loadCryptoByName(cryptoName);
+        if(crypto.getAvailableAmount() < amount)
+            throw new IllegalArgumentException("Quantidade dísponivel da criptomoeda é insuficiente para essa compra");
 
         if (portfolio.getBalance() < amount * crypto.getPrice())
             throw new IllegalArgumentException("Saldo disponível não é suficiente para essa compra");
