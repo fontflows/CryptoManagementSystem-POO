@@ -9,14 +9,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
-/** Classe responsável pelos métodos Service das estratégias de investimento.*/
+/** Classe responsavel pelos metodos Service das estrategias de investimento.*/
 @Service
 public class InvestmentStrategyService {
 
     private static CryptoRepository cryptoRepository;
 
     /** Constructor InvestmentStrategyService
-     * @param cryptoRepository Instância que conecta o Service à classe que manipula os dados das CryptoCurrencies no arquivo.
+     * @param cryptoRepository Instancia que conecta o Service a classe que manipula os dados das criptomoedas no arquivo.
      */
     @Autowired
     public InvestmentStrategyService(CryptoRepository cryptoRepository) {
@@ -24,8 +24,8 @@ public class InvestmentStrategyService {
     }
 
     /** Atualiza a lista de CryptoCurrencies de uma dada estratégia de investimento baseado no fator de risco de cada moeda.
-     * @param investmentStrategy Estratégia de investimento cuja lista de CryptoCurrencies será atualizada.
-     * @throws IOException Caso ocorra erros na leitura das CryptoCurrencies no arquivo.
+     * @param investmentStrategy Estratégia de investimento cuja lista de criptomoedas será atualizada.
+     * @throws IOException Caso ocorra erros na leitura das criptomoedas no arquivo.
      */
     public static void updateInvestmentStrategyList(InvestmentStrategy investmentStrategy) throws IOException {
         investmentStrategy.getSuggestedCryptos().clear();
@@ -37,9 +37,9 @@ public class InvestmentStrategyService {
         }
     }
 
-    /** Obtém uma CryptoCurrency baseado na estratégia de investimento selecionada.
-     * @param investmentStrategy Estratégia de investimento da qual será sugerido uma CryptoCurrency.
-     * @return {@code CryptoCurrency} Moeda sugerida.
+    /** Obtém uma instancia de uma CryptoCurrency baseado na estrategia de investimento selecionada.
+     * @param investmentStrategy Estrategia de investimento da qual sera obtido uma criptomoeda.
+     * @return {@code CryptoCurrency} criptomoeda sugerida.
      */
     public static CryptoCurrency getRandomCrypto(InvestmentStrategy investmentStrategy) {
         List<CryptoCurrency> cryptos = investmentStrategy.getSuggestedCryptos();
@@ -49,9 +49,9 @@ public class InvestmentStrategyService {
         return cryptos.get(rng.nextInt(cryptos.size()));
     }
 
-    /** Obtém uma instância da classe InvestmentStrategy pelo nome da estratégia.
-     * @param strategyName Nome da estratégia.
-     * @return {@code InvestmentStrategy} Instância de uma estratégia de investimento com nome identificado.
+    /** Obtém uma instancia da classe InvestmentStrategy pelo nome da estrategia.
+     * @param strategyName Nome da estrategia.
+     * @return {@code InvestmentStrategy} Instancia de uma estrategia de investimento com nome identificado.
      */
     public static InvestmentStrategy getInvestmentStrategyByName(String strategyName) {
          switch (strategyName) {
