@@ -50,23 +50,7 @@ public class ReportController {
     @PostMapping("/create-crypto-or-client-report")
     public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client", "all"})) @RequestParam String reportType) {
         try {
-            List <String> list = new ArrayList<>();
-            switch (reportType) {
-                case "client" -> {
-                    list.add("ClientId,PortfolioId,Password");
-                    list.addAll(clientService.getAllClientsToString());
-                }
-                case "crypto" -> {
-                    list.add("Name,Price,GrowthRate,MarketCap,Volume24h,RiskFactor,InvestorsAmount,TotalAmount,AvailableAmount");
-                    list.addAll(cryptoService.getAllCryptosToString());
-                }
-                case "all" -> {
-                    list.add("ClientId,PortfolioId,Password");
-                    list.addAll(clientService.getAllClientsToString());
-                    list.add("\nName,Price,GrowthRate,MarketCap,Volume24h,RiskFactor,InvestorsAmount,TotalAmount,AvailableAmount");
-                    list.addAll(cryptoService.getAllCryptosToString());
-                }
-            }
+            List <String> list = reportService.CreateListForReport(reportType);
             int id = reportService.CreateListReport(list);
             return ResponseEntity.ok(reportService.AcessReport(id));
         } catch (Exception e) {
