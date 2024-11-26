@@ -122,10 +122,10 @@ public class PortfolioService {
     }
 
     public void buyCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
-        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-        if (portfolio == null)
-            throw new IllegalArgumentException("IDs invalidos");
+        if (amount <= 0)
+            throw new IllegalArgumentException("Quantidade para compra deve ser maior que zero");
 
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
         CryptoCurrency crypto = loadCryptoByName(cryptoName);
 
         if (portfolio.getBalance() < amount * crypto.getPrice())
@@ -154,9 +154,6 @@ public class PortfolioService {
   
     public void sellCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-        if (portfolio == null)
-            throw new IllegalArgumentException("IDs invalidos");
-
         CryptoCurrency crypto = loadCryptoByName(cryptoName);
 
         if (!hasCrypto(cryptoName, portfolio))
