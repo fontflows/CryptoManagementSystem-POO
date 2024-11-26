@@ -43,13 +43,14 @@ public class ReportRepository {
         double currentTotalValue = 0.0;
 
 
+        report.append("Data-Hora,PortId,Userid\n");
         // Cabeçalho do relatório: Data,id,userid;
         report.append(reportDate.format(formatter)).append(",")
                 .append(portfolio.getId()).append(",")
                 .append(portfolio.getUserId()).append("\n");
 
         if(!(portfolio.getInvestments().isEmpty())) {
-
+            report.append("\nCryptoname,InvestedQuantity,purshacePrice,CryptoPrice,InvestedValue,CurrentValue,PercentageReturn\n");
             for (Investment investment : portfolio.getInvestments()) {
                 CryptoCurrency crypto = investment.getCryptoCurrency();
                 double investedQuantity = investment.getCryptoInvestedQuantity();
@@ -72,6 +73,7 @@ public class ReportRepository {
                 currentTotalValue += currentValue;
             }
 
+            report.append("\nInvestedTotal,CurrentTotalValue,TotalPercentageReturn");
             // rodapé do portfolio : investedTotal,currentTotalValue,totalPercentageReturn
             double totalPercentageReturn = ((currentTotalValue - investedTotal) / investedTotal) * 100;
             report.append("\n")
@@ -92,6 +94,7 @@ public class ReportRepository {
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+        report.append("Data-Hora,PortId,Userid,Months\n");
         // RELATÓRIO DE PROJEÇÃO = reportdate,portid,Userid,meses
         report.append(reportDate.format(formatter)).append(",")
                 .append(portfolio.getId()).append(",")
@@ -101,6 +104,7 @@ public class ReportRepository {
         if(!(portfolio.getInvestments().isEmpty())) {
             double totalProjectedValue = 0.0;
             double totalCurrentValue = 0.0;
+            report.append("\nCryptoname,CurrentValueCrypto,Months,ProjectedValue,GrowthRate\n");
             for (Investment investment : portfolio.getInvestments()) {
                 CryptoCurrency crypto = investment.getCryptoCurrency();
                 double investedQuantity = investment.getCryptoInvestedQuantity();
@@ -118,6 +122,7 @@ public class ReportRepository {
                 totalProjectedValue += projectedvalue;
                 totalCurrentValue += currentValue;
             }
+            report.append("\ntotalCurrentValue,TotalProjectedValue,ProjectedGrowth");
             // Sumário da projeção = totalCurrentValue,totalProjectedValue,projectedGrowth
 
             double projectedGrowth = ((totalProjectedValue - totalCurrentValue) / totalCurrentValue) * 100;
