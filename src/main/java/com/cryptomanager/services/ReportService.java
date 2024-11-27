@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.cryptomanager.repositories.TransactionsRepository.allListsToString;
+
 
 @Service
 public class ReportService {
@@ -81,6 +83,7 @@ public class ReportService {
                 case "client" -> {
                     list.add("ClientId,PortfolioId,Password");
                     list.addAll(clientRepository.loadClientsToString());
+                    list.add(allListsToString());
                 }
                 case "crypto" -> {
                     list.add("Name,Price,GrowthRate,MarketCap,Volume24h,RiskFactor,InvestorsAmount,TotalAmount,AvailableAmount");
@@ -89,6 +92,7 @@ public class ReportService {
                 case "all" -> {
                     list.add("ClientId,PortfolioId,Password");
                     list.addAll(clientRepository.loadClientsToString());
+                    list.add(allListsToString());
                     list.add("\nName,Price,GrowthRate,MarketCap,Volume24h,RiskFactor,InvestorsAmount,TotalAmount,AvailableAmount");
                     list.addAll(cryptoRepository.loadCryptosToString());
                 }

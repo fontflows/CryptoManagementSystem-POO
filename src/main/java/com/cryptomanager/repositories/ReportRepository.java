@@ -15,6 +15,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.cryptomanager.repositories.TransactionsRepository.allListsToStringByID;
+
+
 @Repository
 public class ReportRepository {
     private int id = readID();
@@ -42,7 +45,7 @@ public class ReportRepository {
 
         double investedTotal = 0.0;
         double currentTotalValue = 0.0;
-
+        String transactionHistory = allListsToStringByID(portfolio.getUserId());
 
         report.append("Data-Hora,PortId,Userid\n");
         // Cabeçalho do relatório: Data,id,userid;
@@ -82,6 +85,9 @@ public class ReportRepository {
                     .append(currentTotalValue).append(",")
                     .append(totalPercentageReturn).append("\n");
         }
+        report.append("\nTransactions");
+        report.append(transactionHistory);
+
 
         try {
             saveReport(report.toString());
