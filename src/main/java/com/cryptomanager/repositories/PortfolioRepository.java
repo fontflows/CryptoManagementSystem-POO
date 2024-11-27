@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.cryptomanager.repositories.CryptoRepository.loadCryptoByName;
-import static com.cryptomanager.services.PortfolioService.findInvestment;
-import static com.cryptomanager.services.PortfolioService.hasCrypto;
 
 @Repository
 public class PortfolioRepository {
@@ -36,28 +34,11 @@ public class PortfolioRepository {
     public Portfolio loadPortfolioByUserIdAndPortfolioId(String userId, String portfolioId) {
         List<Portfolio> allPortfolios = loadAllPortfolios();
         for(Portfolio portfolio: allPortfolios){
-            if(portfolio.getUserId().equalsIgnoreCase(userId) && portfolio.getId().equalsIgnoreCase(portfolioId)){
+            if(portfolio.getUserId().equalsIgnoreCase(userId.trim()) && portfolio.getId().equalsIgnoreCase(portfolioId.trim())){
                 return portfolio;
             }
         }
         throw new NoSuchElementException("Portfolio não encontrado");
-    }
-
-    // Remover ativo de um portfólio específico
-    public void removeAssetFromPortfolio(String portfolioId, String userId, String assetName) throws IOException{
-        try {
-            Portfolio portfolio = loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
-            if (hasCrypto(assetName, portfolio)) {
-                Investment removedInvestment = findInvestment(portfolio, assetName);
-                portfolio.getInvestments().remove(removedInvestment);
-                updatePortfolio(portfolio);  // Salva as mudanças
-            }
-
-            else
-                throw new IllegalArgumentException("Criptomoeda não encontrada no portfólio");
-        } catch(IllegalArgumentException e) {
-            throw new IllegalArgumentException("Erro ao remover ativo: " + e.getMessage());
-        }
     }
 
     // Atualiza todos os portfólios no arquivo
@@ -66,7 +47,7 @@ public class PortfolioRepository {
         List<Portfolio> allPortfolios = loadAllPortfolios();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Portfolio portfolio : allPortfolios) {
-                if(updatedPortfolio.getId().equalsIgnoreCase(portfolio.getId())){
+                if(updatedPortfolio.getId().equalsIgnoreCase(portfolio.getId().trim())){
                     writer.write(updatedPortfolio.toString());
                 }
 
@@ -139,7 +120,7 @@ public class PortfolioRepository {
         List<Portfolio> portfolios = loadAllPortfolios();
         Portfolio removedPortfolio = null;
         for(Portfolio currentPortfolio: portfolios){
-            if(currentPortfolio.getUserId().equalsIgnoreCase(userID) && currentPortfolio.getId().equalsIgnoreCase(portfolioID)){
+            if(currentPortfolio.getUserId().equalsIgnoreCase(userID.trim()) && currentPortfolio.getId().equalsIgnoreCase(portfolioID.trim())){
                 removedPortfolio = currentPortfolio;
                 break;
             }
@@ -159,7 +140,7 @@ public class PortfolioRepository {
             while ((line = reader.readLine()) != null) {
                 if (line.isEmpty()) continue;
                 String[] parts = line.split(",");
-                if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioID) && parts[1].equalsIgnoreCase(userID)) {
+                if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioID.trim()) && parts[1].equalsIgnoreCase(userID.trim())) {
                     return true;
                 }
             }
@@ -175,7 +156,7 @@ public class PortfolioRepository {
             while ((line = reader.readLine()) != null) {
                 if (line.isEmpty()) continue;
                 String[] parts = line.split(",");
-                if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioID) && parts[1].equalsIgnoreCase(userID)) {
+                if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioID.trim()) && parts[1].equalsIgnoreCase(userID.trim())) {
                     found = true;
                 }
                 else if(parts.length >= 8 && found){

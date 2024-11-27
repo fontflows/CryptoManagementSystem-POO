@@ -23,12 +23,10 @@ public class CryptoService {
 
     private static final Logger logger = LoggerFactory.getLogger(CryptoService.class);
     private final CryptoRepository cryptoRepository;
-    private final TransactionsRepository transactionsRepository;
 
     @Autowired
-    public CryptoService(CryptoRepository cryptoRepository, TransactionsRepository transactionsRepository) {
+    public CryptoService(CryptoRepository cryptoRepository) {
         this.cryptoRepository = cryptoRepository;
-        this.transactionsRepository = transactionsRepository;
     }
 
     public List<CryptoCurrency> getAllCryptos() {
@@ -53,7 +51,6 @@ public class CryptoService {
 
     public CryptoCurrency getCryptoByName(String name) {
         try {
-            name = name.trim();
             return loadCryptoByName(name);
         } catch (IOException e) {
             logger.error("Erro ao carregar criptomoeda", e);
@@ -81,7 +78,6 @@ public class CryptoService {
 
     public void deleteCryptoByName(String name) {
         try {
-            name = name.trim();
             cryptoRepository.deleteCryptoByName(name);
         } catch (IOException e) {
             logger.error("Erro ao remover criptomoeda", e);
@@ -94,7 +90,6 @@ public class CryptoService {
 
     public void updateCrypto(String cryptoName, String fieldToEdit, String newValue) {
         try {
-            cryptoName = cryptoName.trim();
             CryptoCurrency crypto = loadCryptoByName(cryptoName);
             if(crypto.getInvestorsAmount() > 0) { throw new IllegalArgumentException("Criptomoeda tem investidores ativos e não pode ser editada"); }
             switch (fieldToEdit) {
@@ -142,10 +137,10 @@ public class CryptoService {
         double volume24h = 0.0;
         for(String transactions : history){
             String[] parts = transactions.split(",");
-            if(parts[0].equals(date) && parts[4].equalsIgnoreCase(cryptoName) && parts.length == 7){
+            if(parts[0].equals(date) && parts[4].equalsIgnoreCase(cryptoName.trim()) && parts.length == 7){
                 volume24h += validateParseDouble(parts[5])*validateParseDouble(parts[6]);
             }
-            else if(parts[0].equals(date) && (parts[4].equalsIgnoreCase(cryptoName) || parts[5].equalsIgnoreCase(cryptoName)) && parts.length == 9){
+            else if(parts[0].equals(date) && (parts[4].equalsIgnoreCase(cryptoName.trim()) || parts[5].equalsIgnoreCase(cryptoName.trim())) && parts.length == 9){
                 volume24h += validateParseDouble(parts[8]);
             }
         }

@@ -29,11 +29,6 @@ public class PortfolioService {
     public double calculateTotalValue(String userId, String portfolioId) {
         double totalValue = 0.0;
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
-
-        if (portfolio == null) {
-            throw new IllegalArgumentException("Portfólio não encontrado.");
-        }
-
         for (Investment investment : portfolio.getInvestments()) {
             // Obtém a criptomoeda e seu preço atual
             CryptoCurrency cryptoCurrency = investment.getCryptoCurrency();
@@ -46,22 +41,10 @@ public class PortfolioService {
         return totalValue;
     }
 
-    //Adiciona um portfólio no arquivo
-    public void addPortfolio(String userID, String portfolioID, String strategyName, double balance) throws IOException {
-        portfolioID = portfolioID.toUpperCase();
-        userID = userID.toUpperCase();
-        Portfolio portfolio = new Portfolio(portfolioID, userID, strategyName, balance);
-        portfolioRepository.addPortfolio(portfolio);
-    }
-
-    public void deletePortfolio(String userID, String portfolioID) throws IOException {
-        portfolioRepository.deletePortfolio(userID, portfolioID);
-    }
-
     //Retorna investimento pelo nome da crypto
     public static Investment findInvestment(Portfolio portfolio, String cryptoName) {
         for (Investment investment : portfolio.getInvestments()) {
-            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName)) {
+            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName.trim())) {
                 return investment;
             }
         }
@@ -72,7 +55,7 @@ public class PortfolioService {
     // Verifica se um portfólio contém um ativo específico
     public static boolean hasCrypto(String cryptoName, Portfolio portfolio) {
         for (Investment investment : portfolio.getInvestments()) {
-            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName)) {
+            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName.trim())) {
                 return true;
             }
         }
@@ -81,10 +64,6 @@ public class PortfolioService {
 
     public CryptoCurrency suggestCryptoCurrency(String userID, String portfolioID) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-
-        if (portfolio == null)
-            throw new IllegalArgumentException("IDs invalidos");
-
         InvestmentStrategy investmentStrategy = portfolio.getInvestmentStrategy();
         InvestmentStrategyService.updateInvestmentStrategyList(investmentStrategy);
 
@@ -148,7 +127,7 @@ public class PortfolioService {
         crypto.setAvailableAmount(crypto.getAvailableAmount() - amount);
         cryptoRepository.updateCrypto(crypto);
         portfolioRepository.updatePortfolio(portfolio);
-        saveBuyTransaction(userID, portfolioID, new Investment(crypto, crypto.getPrice(), amount));
+        saveBuyTransaction(portfolio.getUserId(), portfolio.getId(), new Investment(crypto, crypto.getPrice(), amount));
     }
   
     public void sellCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
@@ -175,6 +154,6 @@ public class PortfolioService {
         crypto.setAvailableAmount(crypto.getAvailableAmount() + amount);
         cryptoRepository.updateCrypto(crypto);
         portfolioRepository.updatePortfolio(portfolio);
-        saveSellTransaction(userID, portfolioID, new Investment(crypto, crypto.getPrice(), amount));
+        saveSellTransaction(portfolio.getUserId(), portfolio.getId(), new Investment(crypto, crypto.getPrice(), amount));
     }
 }

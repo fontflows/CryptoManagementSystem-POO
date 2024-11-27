@@ -41,7 +41,6 @@ public class ClientService{
 
     public String getClientByClientIDToString(String clientID){
         try {
-            clientID = clientID.trim();
              return clientRepository.loadClientByIDToString(clientID);
         } catch (IOException e) {
             logger.error("Erro ao carregar cliente", e);
@@ -58,7 +57,6 @@ public class ClientService{
             portfolioID = portfolioID.toUpperCase().trim();
             password = password.trim();
             Portfolio portfolio = new Portfolio(portfolioID, userID, strategyName, balance);
-            portfolioRepository.addPortfolio(portfolio);
             clientRepository.saveClient(new Client(userID, portfolio, password));
         } catch (IOException e) {
             throw new ClientServiceException("Erro interno do servidor ao adicionar cliente: " + e.getMessage(), e);
@@ -69,7 +67,6 @@ public class ClientService{
 
     public void deleteClientByClientID(String clientID){
         try {
-            clientID = clientID.trim();
             clientRepository.deleteClientByID(clientID);
         } catch (IOException e) {
             logger.error("Erro ao remover cliente", e);

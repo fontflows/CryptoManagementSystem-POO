@@ -37,7 +37,7 @@ public class InvestmentStrategyService {
         return cryptos.get(rng.nextInt(cryptos.size()));
     }
 
-    public static InvestmentStrategy getInvestmentStrategyByName(String strategyName) throws IOException {
+    public static InvestmentStrategy getInvestmentStrategyByName(String strategyName) {
          switch (strategyName) {
             case "CONSERVATIVE": return new ConservativeStrategy();
             case "AGGRESSIVE": return new AggressiveStrategy();
