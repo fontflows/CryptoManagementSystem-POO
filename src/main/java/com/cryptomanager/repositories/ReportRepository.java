@@ -132,7 +132,7 @@ public class ReportRepository {
                 totalProjectedValue += projectedvalue;
                 totalCurrentValue += currentValue;
             }
-            report.append("\ntotalCurrentValue,TotalProjectedValue,ProjectedGrowth");
+            report.append("\ntotalCurrentValue,TotalProjectedValue,ProjectedGrowth\n");
             // Sumário da projeção = totalCurrentValue,totalProjectedValue,projectedGrowth
 
             double projectedGrowth = ((totalProjectedValue - totalCurrentValue) / totalCurrentValue) * 100;
