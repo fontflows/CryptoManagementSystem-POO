@@ -23,12 +23,10 @@ public class CryptoService {
 
     private static final Logger logger = LoggerFactory.getLogger(CryptoService.class);
     private final CryptoRepository cryptoRepository;
-    private final TransactionsRepository transactionsRepository;
 
     @Autowired
-    public CryptoService(CryptoRepository cryptoRepository, TransactionsRepository transactionsRepository) {
+    public CryptoService(CryptoRepository cryptoRepository) {
         this.cryptoRepository = cryptoRepository;
-        this.transactionsRepository = transactionsRepository;
     }
 
     public List<CryptoCurrency> getAllCryptos() {
@@ -65,6 +63,7 @@ public class CryptoService {
 
     public void addCrypto(String cryptoName, double price, double growthRate, int riskFactor, double availableAmount) {
         try {
+            cryptoName = cryptoName.toUpperCase().trim();
             CryptoCurrency newCrypto = new CryptoCurrency(cryptoName, price, growthRate, riskFactor, availableAmount);
             cryptoRepository.saveCrypto(newCrypto);
         } catch (IOException e) {
@@ -138,10 +137,10 @@ public class CryptoService {
         double volume24h = 0.0;
         for(String transactions : history){
             String[] parts = transactions.split(",");
-            if(parts[0].equals(date) && parts[4].equalsIgnoreCase(cryptoName) && parts.length == 7){
+            if(parts[0].equals(date) && parts[4].equalsIgnoreCase(cryptoName.trim()) && parts.length == 7){
                 volume24h += validateParseDouble(parts[5])*validateParseDouble(parts[6]);
             }
-            else if(parts[0].equals(date) && (parts[4].equalsIgnoreCase(cryptoName) || parts[5].equalsIgnoreCase(cryptoName)) && parts.length == 9){
+            else if(parts[0].equals(date) && (parts[4].equalsIgnoreCase(cryptoName.trim()) || parts[5].equalsIgnoreCase(cryptoName.trim())) && parts.length == 9){
                 volume24h += validateParseDouble(parts[8]);
             }
         }
