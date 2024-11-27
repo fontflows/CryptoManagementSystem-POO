@@ -20,7 +20,6 @@ public class ClientRepository {
 
     public void saveClient(Client client) throws IOException {
         if(clientExists(client.getClientID())) { throw new IllegalArgumentException("Cliente com esse userID ja está cadastrado"); }
-        System.out.println("HIIII");
         portfolioRepository.addPortfolio(client.getPortfolio());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
             writer.write(client + "\n");
