@@ -8,22 +8,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.cryptomanager.repositories.TransactionsRepository.loadTransactions;
 import static com.cryptomanager.repositories.TransactionsRepository.loadTransactionsByID;
 
+
+/** Classe responsavel pelos metodos Service de registro e leitura do histórico de transações de clientes */
 @Service
 public class TransactionsService {
     private static final Logger logger = LoggerFactory.getLogger(TransactionsService.class);
     private final TransactionsRepository transactionsRepository;
 
+    /** Constructor TransactionsService
+     * @param transactionsRepository Instancia que conecta o Service na classe que manipula os dados no arquivo
+     */
     @Autowired
     public TransactionsService(TransactionsRepository transactionsRepository) {
         this.transactionsRepository = transactionsRepository;
     }
 
+    /**
+     * Obtem o historico das transações realizadas em todo o programa baseado no tipo de transação.
+     * @param transactionType Tipo de transacao solicitado : {@code SELL}, {@code BUY}, {@code CONVERSION} ou {@code ALL}.
+     * @return {@code String} Lista com o historico ja formatado.
+     * @throws TransactionServiceException Caso haja algum erro no carregamento do historico.
+     */
     public String getTransactionHistory(String transactionType){
         try {
             String history = "";
@@ -44,6 +54,12 @@ public class TransactionsService {
         }
     }
 
+    /**
+     * Obtem o historico das transacoes realizadas por um cliente baseado no tipo de transacao.
+     * @param transactionType Tipo de transacao solicitado {@code SELL}, {@code BUY}, {@code CONVERSION} ou {@code ALL}.
+     * @return {@code String} Lista com o historico ja formatado.
+     * @throws TransactionServiceException Caso haja algum erro no carregamento do historico.
+     */
     public String getTransactionHistoryByID(String transactionType, String userID){
         try {
             String history = "";

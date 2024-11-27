@@ -58,9 +58,9 @@ public class ClientController{
     }
 
     @PostMapping("/edit")
-    public ResponseEntity<String> updateClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password){
+    public ResponseEntity<String> updateClient(@RequestParam String userID, @RequestParam String password){
         try {
-            clientService.updateClient(userID, portfolioID, password);
+            clientService.updateClient(userID, password);
             return ResponseEntity.ok("Cliente atualizado com sucesso!");
         } catch (ClientServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

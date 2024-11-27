@@ -64,7 +64,7 @@ public class TransactionsRepository {
             String[] parts;
             while ((line = reader.readLine()) != null) {
                 parts = line.split(",");
-                if (parts[1].equalsIgnoreCase(userID) && parts[3].equalsIgnoreCase(transactionType)) {
+                if (parts[1].equalsIgnoreCase(userID.trim()) && parts[3].equalsIgnoreCase(transactionType)) {
                     transactions.add(line);
                 }
             }

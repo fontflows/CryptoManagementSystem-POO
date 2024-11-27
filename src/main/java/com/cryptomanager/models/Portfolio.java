@@ -35,9 +35,6 @@ public class Portfolio {
         if (userId == null || userId.isEmpty())
             throw new IllegalArgumentException("UserID não pode ser nulo ou vazio.");
 
-        if(!(Objects.equals(investmentStrategy, "Aggressive")) && !(Objects.equals(investmentStrategy, "Moderate")) && !(Objects.equals(investmentStrategy, "Conservative")))
-            throw new IllegalArgumentException("Estratégia de investimento inválida");
-
         if(balance < 0)
             throw new IllegalArgumentException("Saldo não pode ser negativo");
 
@@ -77,7 +74,7 @@ public class Portfolio {
 
     public Double getAssetAmount(String assetName) {
         for (Investment investment : investments) {
-            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(assetName))
+            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(assetName.trim()))
                 return investment.getCryptoInvestedQuantity(); // Retorna a quantidade
         }
         return null; // Retorna null se o ativo não for encontrado
