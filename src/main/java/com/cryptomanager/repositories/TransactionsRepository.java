@@ -72,7 +72,7 @@ public class TransactionsRepository {
         return transactions;
     }
 
-    public String listToString(List<String> transactions, String transactionType) throws IOException {
+    public static String listToString(List<String> transactions, String transactionType) throws IOException {
         if(transactions.isEmpty()) { return ""; }
         StringBuilder history = new StringBuilder();
         if(transactionType.equalsIgnoreCase("BUY") || transactionType.equalsIgnoreCase("SELL")) {
@@ -93,11 +93,11 @@ public class TransactionsRepository {
         return history.toString();
     }
 
-    public String allListsToString() throws IOException {
+    public static String allListsToString() throws IOException {
         return listToString(loadTransactions("BUY"), "BUY") + listToString(loadTransactions("SELL"), "SELL") + listToString(loadTransactions("CONVERSION"), "CONVERSION");
     }
 
-    public String allListsToStringByID(String userID) throws IOException {
+    public static String allListsToStringByID(String userID) throws IOException {
         return listToString(loadTransactionsByID("BUY", userID), "BUY") + listToString(loadTransactionsByID("SELL", userID), "SELL") + listToString(loadTransactionsByID("CONVERSION", userID), "CONVERSION");
     }
 }

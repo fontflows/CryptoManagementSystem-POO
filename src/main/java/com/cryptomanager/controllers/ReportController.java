@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -49,11 +50,7 @@ public class ReportController {
     @PostMapping("/create-crypto-or-client-report")
     public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client", "all"})) @RequestParam String reportType) {
         try {
-            List<String> list = (reportType.equals("client")) ? clientService.getAllClientsToString() : cryptoService.getAllCryptosToString();
-            if (reportType.equals("all")) {
-                list.add("\n");
-                list.addAll(clientService.getAllClientsToString());
-            }
+            List <String> list = reportService.CreateListForReport(reportType);
             int id = reportService.CreateListReport(list);
             return ResponseEntity.ok(reportService.AcessReport(id));
         } catch (Exception e) {

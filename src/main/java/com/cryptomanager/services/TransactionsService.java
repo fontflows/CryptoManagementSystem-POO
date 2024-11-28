@@ -10,8 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
-import static com.cryptomanager.repositories.TransactionsRepository.loadTransactions;
-import static com.cryptomanager.repositories.TransactionsRepository.loadTransactionsByID;
+import static com.cryptomanager.repositories.TransactionsRepository.*;
 
 
 /** Classe responsavel pelos metodos Service de registro e leitura do histórico de transações de clientes */
@@ -38,10 +37,10 @@ public class TransactionsService {
         try {
             String history = "";
             if (transactionType.equals("BUY") || transactionType.equals("SELL") || transactionType.equals("CONVERSION")) {
-                history =  transactionsRepository.listToString(loadTransactions(transactionType), transactionType);
+                history = listToString(loadTransactions(transactionType), transactionType);
             }
             else if (transactionType.equals("ALL")) {
-                history = transactionsRepository.allListsToString();
+                history = allListsToString();
             }
             if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
             else { return history; }
@@ -64,10 +63,10 @@ public class TransactionsService {
         try {
             String history = "";
             if (transactionType.equals("BUY") || transactionType.equals("SELL") || transactionType.equals("CONVERSION")) {
-                history =  transactionsRepository.listToString(loadTransactionsByID(transactionType, userID), transactionType);
+                history =  listToString(loadTransactionsByID(transactionType, userID), transactionType);
             }
             else if (transactionType.equals("ALL")) {
-                history = transactionsRepository.allListsToStringByID(userID);
+                history = allListsToStringByID(userID);
             }
             if(history.isEmpty()) { throw new NoSuchElementException("Nenhuma transação encontrada"); }
             else { return history; }
