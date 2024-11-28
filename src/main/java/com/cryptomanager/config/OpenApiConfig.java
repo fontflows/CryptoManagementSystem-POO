@@ -14,7 +14,7 @@ public class OpenApiConfig {
             // Remove endpoints para usuários não autorizados
             openApi.getPaths().entrySet().removeIf(entry -> {
                 String path = entry.getKey(); // O endpoint
-                return isRestrictedEndpoint(path) && !hasPermissionForPath(path);
+                return isRestrictedEndpoint(path) && !hasPermissionForPath();
             });
         };
     }
@@ -29,7 +29,7 @@ public class OpenApiConfig {
         return false;
     }
 
-    private boolean hasPermissionForPath(String path) {
+    private boolean hasPermissionForPath() {
         var auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || auth.getAuthorities() == null) {
             return false;

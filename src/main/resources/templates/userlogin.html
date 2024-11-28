@@ -78,10 +78,14 @@
             <label for="register-password">Senha:</label>
             <input type="password" id="register-password" name="password" placeholder="Escolha uma senha" required>
 
-            <label for="register-role">Função:</label>
-            <select id="register-role" name="role" required>
-                <option value="USER">Usuário</option>
-                <option value="ADMIN">Administrador</option>
+            <label for="portfolioID">Portfolio ID:</label>
+            <input type="text" id="portfolioID" name="portfolioID" required placeholder="Digite o seu Portfolio ID">
+
+            <label for="register-strategy">Estratégia de Investimento:</label>
+            <select id="register-strategy" name="strategyName" required>
+                <option value="AGGRESSIVE">AGRESSIVE</option>
+                <option value="MODERATE">MODERATE</option>
+                <option value="CONSERVATIVE">CONSERVATIVE</option>
             </select>
 
             <button type="submit">Cadastrar</button>

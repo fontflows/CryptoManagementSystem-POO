@@ -57,7 +57,6 @@ public class ClientService{
             portfolioID = portfolioID.toUpperCase().trim();
             password = password.trim();
             Portfolio portfolio = new Portfolio(portfolioID, userID, strategyName, balance);
-            portfolioRepository.addPortfolio(portfolio);
             clientRepository.saveClient(new Client(userID, portfolio, password, "CLIENT"));
         } catch (IOException e) {
             throw new ClientServiceException("Erro interno do servidor ao adicionar cliente: " + e.getMessage(), e);
