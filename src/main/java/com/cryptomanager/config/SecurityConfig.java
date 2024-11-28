@@ -1,11 +1,13 @@
 package com.cryptomanager.config;
 
 import com.cryptomanager.repositories.ClientRepository;
+import com.cryptomanager.repositories.LoginRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -13,9 +15,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
     private final ClientRepository clientRepository;
+    private final LoginRepository loginRepository;
 
-    public SecurityConfig(ClientRepository clientRepository) {
+    public SecurityConfig(ClientRepository clientRepository, LoginRepository loginRepository) {
         this.clientRepository = clientRepository;
+        this.loginRepository = loginRepository;
     }
 
     @Bean
@@ -25,8 +29,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register", "/login").permitAll()
                         .requestMatchers("/cryptos/add", "/cryptos/edit", "/cryptos/delete").hasRole("ADMIN")
-                        .requestMatchers("/client/get-all-Clients", "/client/add", "/client/delete").hasRole("ADMIN")
+                        .requestMatchers("/client/get-all-Clients", "/client/add", "/client/delete", "/client/search-by-id", "/client/edit-passwords").hasRole("ADMIN")
                         .requestMatchers("/report/create-crypto-or-client-report").hasRole("ADMIN")
+                        .requestMatchers("/transactions-history/get-history-by-ID", "/transactions-history/get-full-history").hasRole("ADMIN")
                         .requestMatchers("/cryptos", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -42,6 +47,6 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return new CustomUserDetailsService(clientRepository);
+        return new CustomUserDetailsService(clientRepository, loginRepository);
     }
 }

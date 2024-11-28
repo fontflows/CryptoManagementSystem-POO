@@ -20,7 +20,7 @@ public class OpenApiConfig {
     }
 
     private boolean isRestrictedEndpoint(String path) {
-        String[] restricted = {"/cryptos/add", "/cryptos/edit", "/cryptos/delete", "/client/get-all-Clients", "/client/add", "/client/delete", "/report/create-crypto-or-client-report"};
+        String[] restricted = {"/cryptos/add", "/cryptos/edit", "/cryptos/delete", "/client/get-all-Clients", "/client/add", "/client/delete", "/report/create-crypto-or-client-report", "/transactions-history/get-history-by-ID", "/transactions-history/get-full-history", "/client/search-by-id", "/client/edit-passwords"};
         for(String check: restricted) {
             if(path.startsWith(check)) {
                 return true;
