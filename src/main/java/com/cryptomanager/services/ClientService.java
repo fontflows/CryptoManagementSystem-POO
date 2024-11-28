@@ -39,9 +39,9 @@ public class ClientService{
         }
     }
 
-    public String getClientByClientIDToString(String ClientID){
+    public String getClientByClientIDToString(String clientID){
         try {
-             return clientRepository.loadClientByIDToString(ClientID);
+             return clientRepository.loadClientByIDToString(clientID);
         } catch (IOException e) {
             logger.error("Erro ao carregar cliente", e);
             throw new ClientServiceException("Erro interno do servidor ao carregar cliente" , e);
@@ -53,8 +53,9 @@ public class ClientService{
 
     public void addClient(String userID, String portfolioID, String password, String strategyName, double balance){
         try{
-            userID = userID.toUpperCase();
-            portfolioID = portfolioID.toUpperCase();
+            userID = userID.toUpperCase().trim();
+            portfolioID = portfolioID.toUpperCase().trim();
+            password = password.trim();
             Portfolio portfolio = new Portfolio(portfolioID, userID, strategyName, balance);
             portfolioRepository.addPortfolio(portfolio);
             clientRepository.saveClient(new Client(userID, portfolio, password, "CLIENT"));
@@ -65,9 +66,9 @@ public class ClientService{
         }
     }
 
-    public void deleteClientByClientID(String ClientId){
+    public void deleteClientByClientID(String clientID){
         try {
-            clientRepository.deleteClientByID(ClientId);
+            clientRepository.deleteClientByID(clientID);
         } catch (IOException e) {
             logger.error("Erro ao remover cliente", e);
             throw new ClientServiceException("Erro interno do servidor ao remover cliente" , e);
@@ -77,11 +78,10 @@ public class ClientService{
         }
     }
 
-    public void updateClient(String userID, String portfolioID, String password) {
+    public void updateClient(String userID, String password) {
         try {
-            userID = userID.toUpperCase();
-            portfolioID = portfolioID.toUpperCase();
-            Client client = new Client(userID, portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID), password, "CLIENT");
+            Client client = clientRepository.loadClientByID(userID);
+            client.setPassword(password.trim());
             clientRepository.updateClient(client);
         } catch (IOException e) {
             logger.error("Erro ao atualizar cliente", e);

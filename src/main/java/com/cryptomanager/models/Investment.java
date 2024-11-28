@@ -37,7 +37,6 @@ public class Investment {
 
     @Override
     public String toString() {
-        return cryptoCurrency.getName() + ", " + cryptoInvestedQuantity + ", " + purchasePrice; /* Formato: nomeCrypto,
-        quantidadeInvestida, precoCompra*/
+        return cryptoCurrency.getName() + "," + cryptoInvestedQuantity + "," + purchasePrice; //Formato: nomeCrypto, quantidadeInvestida, precoCompra
     }
 }
