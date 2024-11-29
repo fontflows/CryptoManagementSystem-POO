@@ -1,20 +1,36 @@
 package com.cryptomanager.config;
 
+import com.cryptomanager.models.Client;
+import com.cryptomanager.repositories.ClientRepository;
+import com.cryptomanager.repositories.LoginRepository;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.io.IOException;
 
 @Configuration
 public class OpenApiConfig {
+
+    private final ClientRepository clientRepository;
+    private final LoginRepository loginRepository;
+
+    public OpenApiConfig(ClientRepository clientRepository, LoginRepository loginRepository) {
+        this.clientRepository = clientRepository;
+        this.loginRepository = loginRepository;
+    }
 
     @Bean
     public OpenApiCustomizer customOpenAPI() {
         return openApi -> {
             // Remove endpoints para usuários não autorizados
             openApi.getPaths().entrySet().removeIf(entry -> {
-                String path = entry.getKey(); // O endpoint
-                return isRestrictedEndpoint(path) && !hasPermissionForPath();
+                String path = entry.getKey();
+                try {
+                    return isRestrictedEndpoint(path) && !hasPermissionForPath();
+                } catch (IOException e) {
+                    throw new RuntimeException("Erro ao carregar dados do usuario");
+                }
             });
         };
     }
@@ -29,12 +45,9 @@ public class OpenApiConfig {
         return false;
     }
 
-    private boolean hasPermissionForPath() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || auth.getAuthorities() == null) {
-            return false;
-        }
-        return auth.getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"));
+    private boolean hasPermissionForPath() throws IOException {;
+        String clientID = loginRepository.loadLoggedInfo()[0];
+        Client client = clientRepository.loadClientByID(clientID);
+        return client.getRole().equalsIgnoreCase("admin");
     }
 }
