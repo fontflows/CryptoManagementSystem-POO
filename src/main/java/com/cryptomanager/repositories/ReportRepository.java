@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.cryptomanager.repositories.TransactionsRepository.allListsToStringByID;
@@ -149,9 +148,9 @@ public class ReportRepository {
         }
     }
     public int generateListReport(List<String> list) throws IOException{
-        LocalDateTime reportDate = LocalDateTime.now();
+        LocalDateTime.now();
         StringBuilder report = new StringBuilder();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
         for (String element : list){
             report.append(element).append("\n");

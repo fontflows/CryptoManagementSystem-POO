@@ -1,19 +1,18 @@
 package com.cryptomanager.controllers;
 
-import com.cryptomanager.models.*;
+import com.cryptomanager.models.StrategyNames;
 import com.cryptomanager.services.CurrencyConverterService;
 import com.cryptomanager.services.PortfolioService;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/portfolio")
 public class PortfolioController {
-
     private final PortfolioService portfolioService;
     private final CurrencyConverterService currencyConverterService;
 
@@ -29,33 +28,31 @@ public class PortfolioController {
             double totalValue = portfolioService.calculateTotalValue(userId, portfolioId);
             String responseMessage = "O valor total do portfólio é: " + totalValue;
             return ResponseEntity.ok(responseMessage);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor: " + e.getMessage());
+            throw new RuntimeException("Erro ao calcular o valor total do portfólio");
         }
     }
 
     @PostMapping("/crypto-conversion-by-portfolioId")
-    public ResponseEntity<String> convertCrypto(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) throws IOException{
+    public ResponseEntity<String> convertCrypto(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) throws Throwable {
         try {
             currencyConverterService.currencyConverter(userId, portfolioId, fromCryptoName, toCryptoName, balance);
-            return ResponseEntity.ok("Criptomoeda convertida com sucesso !");
-        } catch(IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao converter criptomoeda com o saldo informado: " + e.getMessage());
+            return ResponseEntity.ok("Criptomoeda convertida com sucesso!");
+        } catch (IllegalArgumentException | NoSuchElementException | IOException e) {
+            // Se ocorrer algum erro específico, ele será tratado pelo @ControllerAdvice
+            throw e;
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor: " + e.getMessage());
+            // Qualquer outra exceção será tratada pelo handler genérico
+            throw new RuntimeException("Erro ao converter criptomoeda", e);
         }
     }
-  
+
     @GetMapping("/get-suggested-crypto")
-    public ResponseEntity<?> suggestCryptoCurrency(@RequestParam String userID, @RequestParam String portfolioID){
+    public ResponseEntity<?> suggestCryptoCurrency(@RequestParam String userID, @RequestParam String portfolioID) {
         try {
             return ResponseEntity.ok(portfolioService.suggestCryptoCurrency(userID, portfolioID));
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor ao sugerir criptomoeda" + e.getMessage());
-        } catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao sugerir criptomoeda: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao sugerir criptomoedas");
         }
     }
 
@@ -64,50 +61,48 @@ public class PortfolioController {
         try {
             portfolioService.setPortfolioInvestmentStrategy(userID, portfolioID, strategyName.getDisplayName());
             return ResponseEntity.ok("Estratégia de investimento atualizada com sucesso!");
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor ao atualizar estratégia: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao atualizar a estratégia de investimento");
         }
     }
 
     @PostMapping("/add-balance")
-    public ResponseEntity<String> addBalance(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam double amount){
-        try{
+    public ResponseEntity<String> addBalance(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam double amount)  {
+        try {
             portfolioService.addBalance(userID, portfolioID, amount);
             return ResponseEntity.ok("Saldo adicionado com sucesso!");
-        } catch(IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao adicionar saldo: " + e.getMessage());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao adicionar saldo");
         }
     }
 
     @PostMapping("/redeem-balance")
-    public ResponseEntity<String> redeemBalance(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam double amount){
-        try{
+    public ResponseEntity<String> redeemBalance(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam double amount) {
+        try {
             portfolioService.redeemBalance(userID, portfolioID, amount);
             return ResponseEntity.ok("Saldo resgatado com sucesso!");
-        } catch(IllegalArgumentException | IOException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao resgatar saldo: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao resgatar saldo");
         }
     }
-  
+
     @PostMapping("/buy-crypto")
-    public ResponseEntity<String> buyCrypto(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String cryptoName, @RequestParam double amount){
-        try{
+    public ResponseEntity<String> buyCrypto(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String cryptoName, @RequestParam double amount) {
+        try {
             portfolioService.buyCrypto(userID, portfolioID, cryptoName, amount);
             return ResponseEntity.ok("Criptomoeda comprada com sucesso!");
-        } catch (IOException | IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao comprar criptomoeda: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao comprar criptomoeda");
         }
     }
 
     @PostMapping("/sell-crypto")
-    public ResponseEntity<String> sellCrypto(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String cryptoName, @RequestParam double amount){
-        try{
+    public ResponseEntity<String> sellCrypto(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String cryptoName, @RequestParam double amount) {
+        try {
             portfolioService.sellCrypto(userID, portfolioID, cryptoName, amount);
             return ResponseEntity.ok("Criptomoeda vendida com sucesso!");
-        } catch (IOException | IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao vender criptomoeda: " + e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao vender criptomoeda");
         }
     }
 }

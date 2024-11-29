@@ -75,14 +75,16 @@ public class TransactionsRepository {
     public static String listToString(List<String> transactions, String transactionType) throws IOException {
         if(transactions.isEmpty()) { return ""; }
         StringBuilder history = new StringBuilder();
-        if(transactionType.equalsIgnoreCase("BUY") || transactionType.equalsIgnoreCase("SELL")) {
+
+        if(transactionType.equalsIgnoreCase("BUY") || transactionType.equalsIgnoreCase("SELL"))
             history.append("DATE | USER-ID | PORTFOLIO-ID | TRANSACTION-TYPE | CRYPTOCURRENCY | AMOUNT | PRICE |\n");
-        }
-        else if(transactionType.equalsIgnoreCase("CONVERSION")) {
+
+        else if(transactionType.equalsIgnoreCase("CONVERSION"))
             history.append("DATE | USER-ID | PORTFOLIO-ID | TRANSACTION-TYPE | FROM-CRYPTOCURRENCY | TO-CRYPTOCURRENCY | AMOUNT | CONVERSION-RATE | VALUE |\n");
-        }
+
         for (String transaction : transactions) {
             String[] parts = transaction.split(",");
+
             for (String part : parts) {
                 history.append(part);
                 history.append(" | ");

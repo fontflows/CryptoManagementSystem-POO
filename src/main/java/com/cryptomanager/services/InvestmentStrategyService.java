@@ -38,11 +38,11 @@ public class InvestmentStrategyService {
     }
 
     public static InvestmentStrategy getInvestmentStrategyByName(String strategyName) {
-         switch (strategyName) {
-            case "CONSERVATIVE": return new ConservativeStrategy();
-            case "AGGRESSIVE": return new AggressiveStrategy();
-            case "MODERATE": return new ModerateStrategy();
-            default: throw new IllegalArgumentException("Estratégia de investimento inválida");
-        }
+        return switch (strategyName) { // Uso de enhaced switch
+            case "CONSERVATIVE" -> new ConservativeStrategy();
+            case "AGGRESSIVE" -> new AggressiveStrategy();
+            case "MODERATE" -> new ModerateStrategy();
+            default -> throw new IllegalArgumentException("Estratégia de investimento inválida");
+        };
     }
 }
