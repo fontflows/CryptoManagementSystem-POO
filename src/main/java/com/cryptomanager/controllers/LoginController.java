@@ -27,7 +27,11 @@ public class LoginController {
                                @RequestParam String portfolioID,
                                @RequestParam String password,
                                @RequestParam String strategyName) {
-        clientService.addClient(username, portfolioID, password, strategyName, 12);
+        try {
+            clientService.addClient(username, portfolioID, password, strategyName, 0);
+        } catch (Exception e) {
+            return "redirect:/login?error=register";
+        }
 
         return "redirect:/login"; // Redireciona para a página de login após o cadastro
     }

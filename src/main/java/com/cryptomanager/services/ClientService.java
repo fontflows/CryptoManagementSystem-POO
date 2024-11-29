@@ -60,7 +60,7 @@ public class ClientService{
             clientRepository.saveClient(new Client(userID, portfolio, password, "CLIENT"));
         } catch (IOException e) {
             throw new ClientServiceException("Erro interno do servidor ao adicionar cliente: " + e.getMessage(), e);
-        } catch (IllegalArgumentException | NoSuchElementException e){
+        } catch (IllegalArgumentException e){
             throw new ClientServiceException("Erro ao adicionar cliente: " + e.getMessage(), e);
         }
     }

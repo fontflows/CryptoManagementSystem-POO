@@ -40,7 +40,7 @@
             border-radius: 5px;
         }
         button {
-            padding: 10px;
+            padding: 15px;
             background-color: #007bff;
             color: white;
             border: none;
@@ -50,9 +50,22 @@
         button:hover {
             background-color: #0056b3;
         }
+        #register-strategy{
+            margin-bottom: 10px;
+        }
     </style>
 </head>
-<body>
+<body onload="checkError()">
+<script>
+    function checkError(){
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.has('error') && urlParams.get('error') === 'login') {
+            alert('Login inválido. Cheque suas credenciais.');
+        } else if(urlParams.has('error') && urlParams.get('error') === 'register'){
+            alert('Impossível realizar cadastro. Credenciais já estão cadastradas no sistema.');
+        }
+    }
+</script>
 <div class="container">
     <!-- Login Section -->
     <div class="form-section">

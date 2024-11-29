@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")  // Caminho para a sua página de login
                         .defaultSuccessUrl("/swagger-ui/index.html", true)  // URL de redirecionamento após o login bem-sucedido
+                        .failureUrl("/login?error=login")
                         .permitAll()  // Permitir acesso à página de login sem autenticação
                 );
 
