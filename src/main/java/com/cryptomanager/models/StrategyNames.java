@@ -1,9 +1,9 @@
 package com.cryptomanager.models;
 
 public enum StrategyNames {
-    AGGRESSIVE("Aggressive"),
-    MODERATE("Moderate"),
-    CONSERVATIVE("Conservative");
+    AGGRESSIVE("AGGRESSIVE"),
+    MODERATE("MODERATE"),
+    CONSERVATIVE("CONSERVATIVE");
 
     private final String displayName;
 

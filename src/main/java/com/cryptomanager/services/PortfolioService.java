@@ -40,11 +40,6 @@ public class PortfolioService {
     public double calculateTotalValue(String userID, String portfolioID) {
         double totalValue = 0.0;
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-
-        if (portfolio == null) {
-            throw new IllegalArgumentException("Portfólio não encontrado.");
-        }
-
         for (Investment investment : portfolio.getInvestments()) {
             // Obtém a criptomoeda e seu preço atual
             CryptoCurrency cryptoCurrency = investment.getCryptoCurrency();
@@ -65,7 +60,7 @@ public class PortfolioService {
      */
     public static Investment findInvestment(Portfolio portfolio, String cryptoName) {
         for (Investment investment : portfolio.getInvestments()) {
-            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName)) {
+            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName.trim())) {
                 return investment;
             }
         }
@@ -79,7 +74,7 @@ public class PortfolioService {
      */
     public static boolean hasCrypto(String cryptoName, Portfolio portfolio) {
         for (Investment investment : portfolio.getInvestments()) {
-            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName)) {
+            if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName.trim())) {
                 return true;
             }
         }
@@ -96,10 +91,6 @@ public class PortfolioService {
      */
     public CryptoCurrency suggestCryptoCurrency(String userID, String portfolioID) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-
-        if (portfolio == null)
-            throw new IllegalArgumentException("IDs invalidos");
-
         InvestmentStrategy investmentStrategy = portfolio.getInvestmentStrategy();
         InvestmentStrategyService.updateInvestmentStrategyList(investmentStrategy);
 
@@ -164,10 +155,9 @@ public class PortfolioService {
      * @throws NoSuchElementException Caso a criptomoeda ou o Portfolio nao seja encontrado.
      */
     public void buyCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
+        if (amount <= 0)
+            throw new IllegalArgumentException("Quantidade para compra deve ser maior que zero");
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-        if (portfolio == null)
-            throw new IllegalArgumentException("IDs invalidos");
-
         CryptoCurrency crypto = loadCryptoByName(cryptoName);
         if(crypto.getAvailableAmount() < amount)
             throw new IllegalArgumentException("Quantidade dísponivel da criptomoeda é insuficiente para essa compra");
@@ -191,9 +181,9 @@ public class PortfolioService {
             portfolio.getInvestments().add(newInvestment);
         }
         crypto.setAvailableAmount(crypto.getAvailableAmount() - amount);
-        saveBuyTransaction(userID, portfolioID, new Investment(crypto, crypto.getPrice(), amount));
         cryptoRepository.updateCrypto(crypto);
         portfolioRepository.updatePortfolio(portfolio);
+        saveBuyTransaction(portfolio.getUserId(), portfolio.getId(), new Investment(crypto, crypto.getPrice(), amount));
     }
 
     /** Realiza a venda de uma criptomoeda em um Portfolio.
@@ -207,9 +197,6 @@ public class PortfolioService {
      */
     public void sellCrypto(String userID, String portfolioID, String cryptoName, double amount) throws IOException {
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-        if (portfolio == null)
-            throw new IllegalArgumentException("IDs invalidos");
-
         CryptoCurrency crypto = loadCryptoByName(cryptoName);
 
         if (!hasCrypto(cryptoName, portfolio))
@@ -230,8 +217,8 @@ public class PortfolioService {
             updatedInvestment.setCryptoInvestedQuantity(updatedInvestment.getCryptoInvestedQuantity() - amount);
         }
         crypto.setAvailableAmount(crypto.getAvailableAmount() + amount);
-        saveSellTransaction(userID, portfolioID, new Investment(crypto, crypto.getPrice(), amount));
         cryptoRepository.updateCrypto(crypto);
         portfolioRepository.updatePortfolio(portfolio);
+        saveSellTransaction(portfolio.getUserId(), portfolio.getId(), new Investment(crypto, crypto.getPrice(), amount));
     }
 }

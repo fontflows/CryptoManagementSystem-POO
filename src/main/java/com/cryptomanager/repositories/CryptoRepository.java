@@ -59,7 +59,7 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 9 && parts[0].equalsIgnoreCase(cryptoName)) {
+                if (parts.length == 9 && parts[0].equalsIgnoreCase(cryptoName.trim())) {
                     crypto = new CryptoCurrency(parts[0], Double.parseDouble(parts[1]),Double.parseDouble(parts[2]), Integer.parseInt(parts[5]), Double.parseDouble(parts[7]));
                     crypto.setMarketCap(Double.parseDouble(parts[3]));
                     crypto.setVolume24h(Double.parseDouble(parts[4]));
@@ -77,7 +77,7 @@ public class CryptoRepository {
         List<CryptoCurrency> cryptos = loadCryptos();
         CryptoCurrency removedCrypto = null;
         for(CryptoCurrency crypto: cryptos) {
-            if (crypto.getName().equalsIgnoreCase(cryptoName)) {
+            if (crypto.getName().equalsIgnoreCase(cryptoName.trim())) {
                 removedCrypto = crypto;
                 if(removedCrypto.getInvestorsAmount() > 0) { throw new IllegalArgumentException("A criptomoeda tem investidores ativos e não pode ser removida"); }
                 break;
@@ -100,7 +100,7 @@ public class CryptoRepository {
         updatedCrypto.setMarketCap(updatedCrypto.getPrice()*updatedCrypto.getTotalAmount());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (CryptoCurrency crypto : allCryptos) {
-                if(crypto.getName().equalsIgnoreCase(updatedCrypto.getName())){
+                if(crypto.getName().equalsIgnoreCase(updatedCrypto.getName().trim())){
                     writer.write(updatedCrypto.toString());
                     writer.newLine();
                 }
@@ -117,7 +117,7 @@ public class CryptoRepository {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 9 && parts[0].equalsIgnoreCase(cryptoName)) {
+                if (parts.length == 9 && parts[0].equalsIgnoreCase(cryptoName.trim())) {
                     return true;
                 }
             }

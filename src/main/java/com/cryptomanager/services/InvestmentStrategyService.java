@@ -48,16 +48,16 @@ public class InvestmentStrategyService {
             throw new IllegalStateException("A lista de criptomoedas está vazia.");
         return cryptos.get(rng.nextInt(cryptos.size()));
     }
-
+  
     /** Obtém uma instancia da classe InvestmentStrategy pelo nome da estrategia.
      * @param strategyName Nome da estrategia.
      * @return {@code InvestmentStrategy} Instancia de uma estrategia de investimento com nome identificado.
      */
     public static InvestmentStrategy getInvestmentStrategyByName(String strategyName) {
          switch (strategyName) {
-            case "Conservative": return new ConservativeStrategy();
-            case "Aggressive": return new AggressiveStrategy();
-            case "Moderate": return new ModerateStrategy();
+            case "CONSERVATIVE": return new ConservativeStrategy();
+            case "AGGRESSIVE": return new AggressiveStrategy();
+            case "MODERATE": return new ModerateStrategy();
             default: throw new IllegalArgumentException("Estratégia de investimento inválida");
         }
     }
