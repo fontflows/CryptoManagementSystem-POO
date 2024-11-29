@@ -1,7 +1,5 @@
 package com.cryptomanager.services;
 
-import com.cryptomanager.exceptions.InvestmentStrategyNotFoundException;
-import com.cryptomanager.exceptions.NoCryptosSuggestedException;
 import com.cryptomanager.exceptions.PortfolioNotFoundException;
 import com.cryptomanager.models.*;
 import com.cryptomanager.repositories.CryptoRepository;
@@ -10,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 import static com.cryptomanager.repositories.CryptoRepository.loadCryptoByName;
 import static com.cryptomanager.repositories.TransactionsRepository.saveBuyTransaction;
@@ -53,7 +52,7 @@ public class PortfolioService {
             if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName.trim()))
                 return investment;
         }
-        throw new IllegalArgumentException("Investimento não encontrado para a criptomoeda " + cryptoName);
+        throw new NoSuchElementException("Investimento não encontrado para a criptomoeda " + cryptoName);
     }
 
     // Verifica se o portfólio contém uma criptomoeda
@@ -73,12 +72,12 @@ public class PortfolioService {
 
         InvestmentStrategy investmentStrategy = portfolio.getInvestmentStrategy();
         if (investmentStrategy == null)
-            throw new InvestmentStrategyNotFoundException("Estratégia de investimento não configurada para o portfólio.");
+            throw new NoSuchElementException("Estratégia de investimento não configurada para o portfólio.");
 
         InvestmentStrategyService.updateInvestmentStrategyList(investmentStrategy);
 
         if (investmentStrategy.getSuggestedCryptos().isEmpty())
-            throw new NoCryptosSuggestedException("Nenhuma criptomoeda disponível para sugestão na estratégia " + investmentStrategy.getInvestmentStrategyName());
+            throw new NoSuchElementException("Nenhuma criptomoeda disponível para sugestão na estratégia " + investmentStrategy.getInvestmentStrategyName());
 
         return getRandomCrypto(investmentStrategy);
     }

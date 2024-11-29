@@ -1,5 +1,6 @@
-package com.cryptomanager.models;
+package com.cryptomanager.controllers;
 
+import com.cryptomanager.models.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,6 +8,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
+
+/**
+ * Classe que uniformiza o tratamento de exceções da aplicação Swagger
+ */
 
 @ControllerAdvice
 public class GlobalExceptionHandler {

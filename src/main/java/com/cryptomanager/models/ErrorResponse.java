@@ -1,5 +1,9 @@
 package com.cryptomanager.models;
 
+/**
+ *  Classe que trata da resposta do erro capturado pelo controller GlobalExceptionHandler
+ */
+
 public class ErrorResponse {
     private String message;
     private String details;
