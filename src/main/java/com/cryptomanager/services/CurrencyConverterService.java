@@ -30,7 +30,6 @@ public class CurrencyConverterService {
     public void currencyConverter(String userId, String portfolioId, String fromCrypto, String toCrypto, double cryptoAmount) throws IOException {
         if(cryptoAmount <= 0)
             throw new IllegalArgumentException("Quantidade de criptomoedas a serem convertidas deve ser maior que zero");
-
         CryptoCurrency cryptoFrom = loadCryptoByName(fromCrypto);
         CryptoCurrency cryptoTo = loadCryptoByName(toCrypto);
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
@@ -43,6 +42,8 @@ public class CurrencyConverterService {
         Investment fromInvestment = findInvestment(portfolio, cryptoFrom.getName());
         double convertionRate = getConversionRate(cryptoFrom, cryptoTo);
         double newAmount = convertionRate*cryptoAmount;
+        if(cryptoTo.getAvailableAmount() < newAmount)
+            throw new IllegalArgumentException("Quantidade disponível da criptomoeda de destino é insuficiente para essa transação");
         double fromOldAmount = fromInvestment.getCryptoInvestedQuantity();
 
         //Atualiza o investimento "From"
