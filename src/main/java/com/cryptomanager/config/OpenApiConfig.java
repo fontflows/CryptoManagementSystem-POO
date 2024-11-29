@@ -48,6 +48,6 @@ public class OpenApiConfig {
     private boolean hasPermissionForPath() throws IOException {;
         String clientID = loginRepository.loadLoggedInfo()[0];
         Client client = clientRepository.loadClientByID(clientID);
-        return client.getRole().equalsIgnoreCase("admin");
+        return client.getRole().equalsIgnoreCase("ADMIN");
     }
 }

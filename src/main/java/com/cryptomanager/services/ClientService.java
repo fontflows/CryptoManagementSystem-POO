@@ -51,13 +51,13 @@ public class ClientService{
         }
     }
 
-    public void addClient(String userID, String portfolioID, String password, String strategyName, double balance){
+    public void addClient(String userID, String portfolioID, String password, String strategyName, double balance, String role){
         try{
             userID = userID.toUpperCase().trim();
             portfolioID = portfolioID.toUpperCase().trim();
             password = password.trim();
             Portfolio portfolio = new Portfolio(portfolioID, userID, strategyName, balance);
-            clientRepository.saveClient(new Client(userID, portfolio, password, "CLIENT"));
+            clientRepository.saveClient(new Client(userID, portfolio, password, role));
         } catch (IOException e) {
             throw new ClientServiceException("Erro interno do servidor ao adicionar cliente: " + e.getMessage(), e);
         } catch (IllegalArgumentException e){

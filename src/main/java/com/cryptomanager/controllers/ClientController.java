@@ -5,6 +5,8 @@ import com.cryptomanager.models.StrategyNames;
 import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.repositories.LoginRepository;
 import com.cryptomanager.services.ClientService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -53,9 +55,9 @@ public class ClientController{
     }
   
     @PostMapping("/add")
-    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames){
+    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN"})) @RequestParam String role){
         try{
-            clientService.addClient(userID, portfolioID, password, strategyNames.getDisplayName(), 0);
+            clientService.addClient(userID, portfolioID, password, strategyNames.getDisplayName(), 0, role);
             return ResponseEntity.ok("Cliente cadastrado com sucesso");
         } catch (ClientServiceException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
