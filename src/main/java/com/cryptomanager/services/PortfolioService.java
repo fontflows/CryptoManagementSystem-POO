@@ -82,7 +82,7 @@ public class PortfolioService {
         } catch (NoSuchElementException e) {
             throw new PortfolioNotFoundException("Portfolio nao encontrado : " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro ao sugerir criptomoeda: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro interno do servidor ao sugerir criptomoeda: " + e.getMessage(), e);
         }
     }
 
@@ -101,7 +101,7 @@ public class PortfolioService {
         } catch (NoSuchElementException | IllegalArgumentException e) {
             throw new PortfolioNotFoundException("Portfolio nao encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro interno do servidor durante a aplicacao do investimento: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro interno do servidor durante a aplicação da estratégia: " + e.getMessage(), e);
         }
     }
 
@@ -117,7 +117,7 @@ public class PortfolioService {
         } catch (NoSuchElementException e) {
             throw new PortfolioNotFoundException("Portfolio nao encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro ao adicionar saldo no portfolio: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro interno do servidor ao adicionar saldo: " + e.getMessage(), e);
         }
     }
 
@@ -137,7 +137,7 @@ public class PortfolioService {
         } catch (NoSuchElementException e) {
             throw new PortfolioNotFoundException("Portfolio nao encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro ao resgatar saldo do portfolio: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro interno do servidor ao resgatar saldo: " + e.getMessage(), e);
         }
     }
 
@@ -177,7 +177,7 @@ public class PortfolioService {
         } catch (NoSuchElementException e) {
             throw new PortfolioNotFoundException("Portfolio nao encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro ao comprar criptomoeda para o portfolio: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro interno do servidor ao comprar criptomoeda: " + e.getMessage(), e);
         }
     }
 
@@ -215,7 +215,7 @@ public class PortfolioService {
         } catch (NoSuchElementException e) {
             throw new PortfolioNotFoundException("Portfolio nao encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro ao vender criptomoeda do portfolio: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro interno do servidor ao vender criptomoeda: " + e.getMessage(), e);
         }
     }
 }
