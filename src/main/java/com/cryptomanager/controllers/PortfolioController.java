@@ -28,7 +28,7 @@ public class PortfolioController {
         this.currencyConverterService = currencyConverterService;
     }
 
-    /**
+    /** Metodo responsavel por calcular o valor total acumulado nos portfolios gerados durante a interacao do usuario com o sistema Swagger.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a captura do valor total.
@@ -46,7 +46,7 @@ public class PortfolioController {
         }
     }
 
-    /**
+    /** Metodo responsavel por realizar a conversao de um tipo de criptomoeda para outro, a partir do ID do portfolio informado pelo usuario.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
      * @param fromCryptoName Recebe o nome da criptomoeda a ser convertida.
@@ -66,7 +66,7 @@ public class PortfolioController {
         }
     }
 
-    /**
+    /** Metodo responsavel por ofertar ao usuario a criptomoeda sugerida para realizar investimentos, considerando o seu portfolio.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a captura da criptomoeda sugerida ao usuario.
@@ -82,7 +82,7 @@ public class PortfolioController {
         }
     }
 
-    /**
+    /** Metodo responsavel por atribuir o tipo de estrategia de investimento ao portfolio criado, durante a interacao do usuario com o Swagger.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
      * @param strategyName Recebe o nome da estrategia de investimento a qual o usuario deseja implementar em seu portfolio.
@@ -100,7 +100,7 @@ public class PortfolioController {
         }
     }
 
-    /**
+    /** Metodo responsavel por adicionar o saldo de interesse do usuario para o seu portfolio.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
      * @param amount Recebe a quantia que o usuario deseja adicionar em seu investimento.
@@ -120,10 +120,10 @@ public class PortfolioController {
         }
     }
 
-    /**
+    /** Metodo responsavel por realizar o resgate de saldo do portfolio do usuario.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
-     * @param amount Recebe a quantia que o usuario deseja adicionar em seu investimento.
+     * @param amount Recebe a quantia que o usuario deseja resgatar de seu investimento.
      * @return Mensagem de retorno da correta execucao das funcoes associadas ao resgate do saldo desejado pelo usuario.
      */
     @PostMapping("/redeem-balance")
@@ -140,11 +140,11 @@ public class PortfolioController {
         }
     }
 
-    /**
+    /** Metodo responsavel por realizar a compra da criptomoeda de interesse do usuario.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
      * @param cryptoName Recebe o nome da criptomoeda a qual o usuario deseja comprar.
-     * @param amount Recebe a quantia que o usuario deseja adicionar em seu investimento.
+     * @param amount Recebe a quantia que o usuario deseja comprar em seu investimento.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a compra da criptomoeda de interesse do usuario.
      */
     @PostMapping("/buy-crypto")
@@ -161,7 +161,7 @@ public class PortfolioController {
         }
     }
 
-    /**
+    /** Metodo responsavel por operar a venda da criptomoeda de interesse do usuario.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
      * @param cryptoName Recebe o nome da criptomoeda a qual o usuario deseja vender.
