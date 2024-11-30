@@ -15,7 +15,6 @@ import java.util.NoSuchElementException;
 
 @Service
 public class ClientService{
-
     private static final Logger logger = LoggerFactory.getLogger(ClientService.class);
     private final ClientRepository clientRepository;
 

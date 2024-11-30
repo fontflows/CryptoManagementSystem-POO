@@ -21,7 +21,6 @@ import static com.cryptomanager.repositories.TransactionsRepository.allListsToSt
 public class ReportRepository {
     private int id = readID();
 
-
     private int readID() {
         try (BufferedReader reader = new BufferedReader(new FileReader("reportConfig.txt"))) {
             String line = reader.readLine();
@@ -54,6 +53,7 @@ public class ReportRepository {
 
         if(!(portfolio.getInvestments().isEmpty())) {
             report.append("\nCryptoname,InvestedQuantity,purshacePrice,CryptoPrice,InvestedValue,CurrentValue,PercentageReturn\n");
+
             for (Investment investment : portfolio.getInvestments()) {
                 CryptoCurrency crypto = investment.getCryptoCurrency();
                 double investedQuantity = investment.getCryptoInvestedQuantity();
@@ -84,9 +84,9 @@ public class ReportRepository {
                     .append(currentTotalValue).append(",")
                     .append(totalPercentageReturn).append("\n");
         }
+
         report.append("\nTransactions");
         report.append(transactionHistory);
-
 
         try {
             saveReport(report.toString());
@@ -96,9 +96,9 @@ public class ReportRepository {
         }
     }
     public int generateProjectionReport(Portfolio portfolio,int months) throws IOException {
-        if(portfolio.getInvestments().isEmpty()){
+        if(portfolio.getInvestments().isEmpty())
             throw new IllegalStateException("Portfolio nao tem investimentos, logo nao pode criar report");
-        }
+
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -114,6 +114,7 @@ public class ReportRepository {
             double totalProjectedValue = 0.0;
             double totalCurrentValue = 0.0;
             report.append("\nCryptoname,CurrentValueCrypto,Months,ProjectedValue,GrowthRate\n");
+
             for (Investment investment : portfolio.getInvestments()) {
                 CryptoCurrency crypto = investment.getCryptoCurrency();
                 double investedQuantity = investment.getCryptoInvestedQuantity();
@@ -140,6 +141,7 @@ public class ReportRepository {
                     .append(totalProjectedValue).append(",")
                     .append(projectedGrowth).append(",\n");
         }
+
         try {
             saveReport(report.toString());
             return id-1;
@@ -152,9 +154,9 @@ public class ReportRepository {
         StringBuilder report = new StringBuilder();
         DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-        for (String element : list){
+        for (String element : list)
             report.append(element).append("\n");
-        }
+
         try {
             saveReport(report.toString());
             return id-1;
@@ -167,16 +169,19 @@ public class ReportRepository {
         String PATH =  Integer.toString(id);
         id++;
         final String FILE_PATH = "report"+PATH+".txt";
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             writer.write(report);
         }
+
         saveID();
     }
     public StringBuilder getSumReports() throws IOException{
-        if(readID() <= 0){
+        if(readID() <= 0)
             throw new IllegalStateException("Não há relatórios");
-        }
+
         StringBuilder out = new StringBuilder();
+
         for(int i = 0;i<id;i++){
             try(BufferedReader reader = new BufferedReader(new FileReader("report"+i+".txt"))) {
                 out.append("report ").append(i).append(" :").append(reader.readLine()).append("\n");
@@ -185,16 +190,15 @@ public class ReportRepository {
         return out;
     }
     public StringBuilder acessReport(int idreport) throws IOException{
-        if(readID() <= 0){
+        if(readID() <= 0)
             throw new IllegalStateException("Não há relatórios");
-        }
+
         StringBuilder out = new StringBuilder();
         String Path = "report" + idreport + ".txt";
         try(BufferedReader reader = new BufferedReader(new FileReader(Path))) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null)
                 out.append(line).append("\n");
-            }
         }
         return out;
     }

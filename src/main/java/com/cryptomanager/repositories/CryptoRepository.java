@@ -13,7 +13,6 @@ import static com.cryptomanager.services.CryptoService.calculateVolume24h;
 
 @Repository
 public class CryptoRepository {
-
     private static final String FILE_PATH = "cryptos.txt";
 
     public void saveCrypto(CryptoCurrency crypto) throws IOException {
@@ -25,6 +24,7 @@ public class CryptoRepository {
 
     public List<CryptoCurrency> loadCryptos() throws IOException {
         List<CryptoCurrency> cryptos = new ArrayList<>();
+
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -39,6 +39,7 @@ public class CryptoRepository {
                 }
             }
         }
+
         if(cryptos.isEmpty()){ throw new NoSuchElementException("Nenhuma criptomoeda encontrada"); }
         return cryptos;
     }
@@ -47,14 +48,15 @@ public class CryptoRepository {
     public List<String> loadCryptosToString() throws IOException{
         List<CryptoCurrency> cryptos = loadCryptos();
         List<String> stringOut = new ArrayList<>();
-        for(CryptoCurrency crypto: cryptos){
+        for(CryptoCurrency crypto: cryptos)
             stringOut.add(crypto.toString());
-        }
+
         return stringOut;
     }
 
     public static CryptoCurrency loadCryptoByName(String cryptoName) throws IOException {
         CryptoCurrency crypto = null;
+
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -68,14 +70,17 @@ public class CryptoRepository {
                 }
             }
         }
+
         if (crypto == null) { throw new NoSuchElementException("Criptomoeda não encontrada"); }
         return crypto;
     }
 
     public void deleteCryptoByName(String cryptoName) throws IOException {
         if(!cryptoExists(cryptoName)) { throw new NoSuchElementException("Criptomoeda não encontrada"); }
+
         List<CryptoCurrency> cryptos = loadCryptos();
         CryptoCurrency removedCrypto = null;
+
         for(CryptoCurrency crypto: cryptos) {
             if (crypto.getName().equalsIgnoreCase(cryptoName.trim())) {
                 removedCrypto = crypto;
@@ -83,21 +88,24 @@ public class CryptoRepository {
                 break;
             }
         }
+
         cryptos.remove(removedCrypto);
         // Reescreve o arquivo com a lista atualizada
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            for (CryptoCurrency crypto : cryptos) {
+            for (CryptoCurrency crypto : cryptos)
                 writer.write(crypto.toString() + "\n");
-            }
         }
     }
 
     public void updateCrypto(CryptoCurrency updatedCrypto) throws IOException {
         if(updatedCrypto == null || updatedCrypto.getName() == null ) { throw new IllegalArgumentException("Criptomoeda inválida");}
+
         if(!cryptoExists(updatedCrypto.getName())) { throw new NoSuchElementException("Criptomoeda não encontrada"); }
+
         List<CryptoCurrency> allCryptos = loadCryptos();
         updatedCrypto.setVolume24h(calculateVolume24h(updatedCrypto.getName()));
         updatedCrypto.setMarketCap(updatedCrypto.getPrice()*updatedCrypto.getTotalAmount());
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (CryptoCurrency crypto : allCryptos) {
                 if(crypto.getName().equalsIgnoreCase(updatedCrypto.getName().trim())){
@@ -125,4 +133,3 @@ public class CryptoRepository {
         return false;
     }
 }
-

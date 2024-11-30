@@ -49,9 +49,8 @@ public class TransactionsRepository {
             String[] parts;
             while ((line = reader.readLine()) != null) {
                 parts = line.split(",");
-                if (parts[3].equalsIgnoreCase(transactionType) || transactionType.equalsIgnoreCase("ALL")) {
+                if (parts[3].equalsIgnoreCase(transactionType) || transactionType.equalsIgnoreCase("ALL"))
                     transactions.add(line);
-                }
             }
         }
         return transactions;
@@ -62,11 +61,11 @@ public class TransactionsRepository {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             String[] parts;
+
             while ((line = reader.readLine()) != null) {
                 parts = line.split(",");
-                if (parts[1].equalsIgnoreCase(userID.trim()) && parts[3].equalsIgnoreCase(transactionType)) {
+                if (parts[1].equalsIgnoreCase(userID.trim()) && parts[3].equalsIgnoreCase(transactionType))
                     transactions.add(line);
-                }
             }
         }
         return transactions;
@@ -91,6 +90,7 @@ public class TransactionsRepository {
             }
             history.append("\n");
         }
+
         history.append("\n");
         return history.toString();
     }

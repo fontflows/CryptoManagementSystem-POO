@@ -1,12 +1,12 @@
 package com.cryptomanager.repositories;
 
 import com.cryptomanager.models.*;
+import com.cryptomanager.exceptions.*;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static com.cryptomanager.repositories.CryptoRepository.loadCryptoByName;
 
@@ -17,42 +17,50 @@ public class PortfolioRepository {
     // Adiciona um portfólio novo
     public void addPortfolio(Portfolio portfolio) throws IOException {
         if (!isValidPortfolio(portfolio)) {
-            throw new IllegalArgumentException("Portfólio não encontrado");
+            throw new PortfolioValidationException("Portfólio não válido.");
         }
+
         savePortfolio(portfolio);
     }
 
-    //Adiciona um portfolio novo no arquivo
-    private void savePortfolio(Portfolio portfolio) throws IOException{
-        if(portfolioExists(portfolio.getId(), portfolio.getUserId())) { throw new IllegalArgumentException("Portfolio com esse ID ja existe"); }
+    // Adiciona um portfólio no arquivo
+    private void savePortfolio(Portfolio portfolio) throws IOException {
+        if (portfolioExists(portfolio.getId(), portfolio.getUserId())) {
+            throw new PortfolioAlreadyExistsException("Portfólio com esse ID já existe para o usuário: " + portfolio.getUserId());
+        }
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
-            writer.write(portfolio.toString());
+            writer.write(portfolio + "\n");
         }
     }
 
     // Carrega o portfólio especificado por ID e userId
     public Portfolio loadPortfolioByUserIdAndPortfolioId(String userId, String portfolioId) {
         List<Portfolio> allPortfolios = loadAllPortfolios();
-        for(Portfolio portfolio: allPortfolios){
-            if(portfolio.getUserId().equalsIgnoreCase(userId.trim()) && portfolio.getId().equalsIgnoreCase(portfolioId.trim())){
+
+        for (Portfolio portfolio : allPortfolios) {
+            if (portfolio.getUserId().equalsIgnoreCase(userId.trim()) && portfolio.getId().equalsIgnoreCase(portfolioId.trim()))
                 return portfolio;
-            }
         }
-        throw new NoSuchElementException("Portfolio não encontrado");
+
+        // Exceção lançada com causa
+        throw new PortfolioNotFoundException("Portfólio não encontrado para o usuário: " + userId + " e ID: " + portfolioId, null);
     }
 
     // Atualiza todos os portfólios no arquivo
-    public void updatePortfolio(Portfolio updatedPortfolio) throws IOException{
-        if(!portfolioExists(updatedPortfolio.getUserId(), updatedPortfolio.getId())) { throw new NoSuchElementException("Portfolio não encontrado"); }
+    public void updatePortfolio(Portfolio updatedPortfolio) throws IOException {
+        if (!portfolioExists(updatedPortfolio.getUserId(), updatedPortfolio.getId())) {
+            throw new PortfolioNotFoundException("Portfólio não encontrado: " + updatedPortfolio.getId(), null);
+        }
+
         List<Portfolio> allPortfolios = loadAllPortfolios();
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Portfolio portfolio : allPortfolios) {
-                if(updatedPortfolio.getId().equalsIgnoreCase(portfolio.getId().trim())){
-                    writer.write(updatedPortfolio.toString());
-                }
-
+                if (updatedPortfolio.getId().equalsIgnoreCase(portfolio.getId().trim()))
+                    writer.write(updatedPortfolio + "\n");
                 else
-                    writer.write(portfolio.toString());
+                    writer.write(portfolio + "\n");
             }
         }
     }
@@ -60,6 +68,7 @@ public class PortfolioRepository {
     // Carrega todos os portfólios do arquivo
     public List<Portfolio> loadAllPortfolios() {
         List<Portfolio> portfolioList = new ArrayList<>();
+
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             Portfolio currentPortfolio = null;
             String line;
@@ -71,23 +80,22 @@ public class PortfolioRepository {
                 if (parts.length == 4) {
                     currentPortfolio = new Portfolio(parts[0], parts[1], parts[2], Double.parseDouble(parts[3]));
                     portfolioList.add(currentPortfolio);
-                }
-
-                else if (parts.length == 3 && currentPortfolio != null) {
+                } else if (parts.length == 3 && currentPortfolio != null) {
                     Investment investment = createInvestmentFromParts(parts);
                     currentPortfolio.getInvestments().add(investment);
                 }
             }
         } catch (IOException e) {
-            System.err.println("Erro ao carregar portfólios: " + e.getMessage());
+            throw new PortfolioLoadException("Erro ao carregar portfólios: " + e.getMessage(), e);
         }
         return portfolioList;
     }
 
     // Função auxiliar para criar um investimento a partir de uma linha de texto
     private Investment createInvestmentFromParts(String[] parts) throws IOException {
-        if (parts.length < 3)
+        if (parts.length < 3) {
             throw new IllegalArgumentException("Dados do investimento mal formados");
+        }
 
         String cryptoName = parts[0];
         double quantity = Double.parseDouble(parts[1]);
@@ -99,74 +107,86 @@ public class PortfolioRepository {
 
     // Validação de portfólio
     public boolean isValidPortfolio(Portfolio portfolio) {
-        if (portfolio == null) return false;
+        if (portfolio == null) {
+            throw new PortfolioValidationException("Portfólio não pode ser nulo.");
+        }
 
         if (portfolio.getUserId() == null || portfolio.getUserId().isEmpty()) {
-            System.err.println("Erro: userId não pode ser nulo ou vazio.");
-            return false;
+            throw new PortfolioValidationException("userId não pode ser nulo ou vazio.");
         }
 
         if (portfolio.getId() == null || portfolio.getId().isEmpty()) {
-            System.err.println("Erro: portfolioId não pode ser nulo ou vazio.");
-            return false;
+            throw new PortfolioValidationException("portfolioId não pode ser nulo ou vazio.");
         }
 
         return true;
     }
 
     public void deletePortfolio(String userID, String portfolioID) throws IOException {
-        if(!portfolioExists(userID, portfolioID)) { throw new NoSuchElementException("Portfolio não encontrado"); }
-        if(portfolioHasInvestments(userID, portfolioID)) { throw new IllegalArgumentException("Portfolio tem investimentos ativos"); }
+        if (!portfolioExists(userID, portfolioID)) {
+            throw new PortfolioNotFoundException("Portfólio não encontrado: " + portfolioID, null);
+        }
+
+        if (portfolioHasInvestments(userID, portfolioID)) {
+            throw new PortfolioHasInvestmentsException("Portfólio tem investimentos ativos, não pode ser excluído.");
+        }
+
         List<Portfolio> portfolios = loadAllPortfolios();
         Portfolio removedPortfolio = null;
-        for(Portfolio currentPortfolio: portfolios){
-            if(currentPortfolio.getUserId().equalsIgnoreCase(userID.trim()) && currentPortfolio.getId().equalsIgnoreCase(portfolioID.trim())){
+
+        for (Portfolio currentPortfolio : portfolios) {
+            if (currentPortfolio.getUserId().equalsIgnoreCase(userID.trim()) && currentPortfolio.getId().equalsIgnoreCase(portfolioID.trim())) {
                 removedPortfolio = currentPortfolio;
                 break;
             }
         }
+
         portfolios.remove(removedPortfolio);
+
         // Reescreve o arquivo com a lista atualizada
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            for(Portfolio currentPortfolio: portfolios){
+            for (Portfolio currentPortfolio : portfolios) {
                 writer.write(currentPortfolio.toString() + "\n");
             }
         }
     }
 
-    private boolean portfolioExists(String userID, String portfolioID) throws IOException{
+    private boolean portfolioExists(String userID, String portfolioID) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.isEmpty()) continue;
+
                 String[] parts = line.split(",");
-                if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioID.trim()) && parts[1].equalsIgnoreCase(userID.trim())) {
+
+                if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioID.trim()) && parts[1].equalsIgnoreCase(userID.trim()))
                     return true;
-                }
             }
         }
+
         return false;
     }
 
-    //Verifica se um portfolio tem investimentos
+    // Verifica se um portfólio tem investimentos
     private boolean portfolioHasInvestments(String userID, String portfolioID) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             boolean found = false;
+
             while ((line = reader.readLine()) != null) {
                 if (line.isEmpty()) continue;
                 String[] parts = line.split(",");
+
                 if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioID.trim()) && parts[1].equalsIgnoreCase(userID.trim())) {
                     found = true;
-                }
-                else if(parts.length >= 8 && found){
+                } else if (parts.length >= 8 && found) {
                     return true;
-                }
-                else if(parts.length == 4 && found){
+                } else if (parts.length == 4 && found) {
                     return false;
                 }
             }
         }
+
         return false;
     }
 }

@@ -1,3 +1,4 @@
+/*
 package com.cryptomanager.controllers;
 
 import com.cryptomanager.models.ErrorResponse;
@@ -11,7 +12,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Classe que uniformiza o tratamento de exceções da aplicação Swagger
- */
+
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -56,3 +57,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+ */
