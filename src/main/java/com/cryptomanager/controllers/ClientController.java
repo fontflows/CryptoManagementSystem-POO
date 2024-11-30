@@ -27,7 +27,7 @@ public class ClientController{
         this.loginRepository = loginRepository;
     }
 
-    @GetMapping("/get-all-Clients")
+    @GetMapping("/get-all-Clients-ADMIN")
     public ResponseEntity<?> getAllClients() {
         try {
             return ResponseEntity.ok(clientService.getAllClientsToString());
@@ -36,7 +36,7 @@ public class ClientController{
         }
     }
 
-    @GetMapping("/search-by-id")
+    @GetMapping("/search-by-id-ADMIN")
     public ResponseEntity<?> getClientByID(String userID) {
         try {
             return ResponseEntity.ok(clientService.getClientByClientIDToString(userID));
@@ -54,7 +54,7 @@ public class ClientController{
         }
     }
   
-    @PostMapping("/add")
+    @PostMapping("/add-ADMIN")
     public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN"})) @RequestParam String role){
         try{
             clientService.addClient(userID, portfolioID, password, strategyNames.getDisplayName(), 0, role);
@@ -64,7 +64,7 @@ public class ClientController{
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete-ADMIN")
     public ResponseEntity<String> deleteClient(@RequestParam String userID) {
         try {
             clientService.deleteClientByClientID(userID);
@@ -74,7 +74,7 @@ public class ClientController{
         }
     }
 
-    @PostMapping("/edit-passwords")
+    @PostMapping("/edit-passwords-ADMIN")
     public ResponseEntity<String> updateClient(@RequestParam String userID, @RequestParam String password){
         try {
             clientService.updateClient(userID, password);

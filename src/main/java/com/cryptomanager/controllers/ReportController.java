@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,7 +46,8 @@ public class ReportController {
         }
     }
 
-    @PostMapping("/create-crypto-or-client-report")
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/create-crypto-or-client-report-ADMIN")
     public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client", "all"})) @RequestParam String reportType) {
         try {
             List <String> list = reportService.CreateListForReport(reportType);

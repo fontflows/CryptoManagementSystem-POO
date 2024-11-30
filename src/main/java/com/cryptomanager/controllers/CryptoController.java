@@ -39,7 +39,7 @@ public class CryptoController {
         }
     }
 
-    @PostMapping("/add")
+    @PostMapping("/add-ADMIN")
     public ResponseEntity<String> addCrypto(@RequestParam String cryptoName, @RequestParam double price, @RequestParam double growthRate, @RequestParam int riskFactor, @RequestParam double availableAmount) {
         try {
             cryptoService.addCrypto(cryptoName, price, growthRate, riskFactor, availableAmount);
@@ -49,7 +49,7 @@ public class CryptoController {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete-ADMIN")
     public ResponseEntity<String> deleteCrypto(@RequestParam String cryptoName) {
         try {
             cryptoService.deleteCryptoByName(cryptoName);
@@ -59,7 +59,7 @@ public class CryptoController {
         }
     }
 
-    @PostMapping("/edit")
+    @PostMapping("/edit-ADMIN")
     public ResponseEntity<String> updateCrypto(@RequestParam String cryptoName, @Parameter(description = "Edit field", schema = @Schema(allowableValues = {"Price", "Growth Rate", "Risk Factor"})) @RequestParam String fieldToEdit, @RequestParam String newValue) {
         try{
             cryptoService.updateCrypto(cryptoName, fieldToEdit, newValue);

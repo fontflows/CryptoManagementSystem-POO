@@ -24,7 +24,7 @@ public class TransactionsController {
         this.loginRepository = loginRepository;
     }
 
-    @GetMapping("/get-full-history")
+    @GetMapping("/get-full-history-ADMIN")
     public ResponseEntity<String> getTransactionsHistory(@Parameter(description = "Transaction type", schema = @Schema(allowableValues = {"BUY", "SELL", "CONVERSION", "ALL"})) @RequestParam String transactionType) {
         try {
             return ResponseEntity.ok(transactionsService.getTransactionHistory(transactionType));
@@ -33,7 +33,7 @@ public class TransactionsController {
         }
     }
 
-    @GetMapping("/get-history-by-ID")
+    @GetMapping("/get-history-by-ID-ADMIN")
     public ResponseEntity<String> getTransactionsHistoryByID(@RequestParam String userID, @Parameter(description = "Transaction type", schema = @Schema(allowableValues = {"BUY", "SELL", "CONVERSION", "ALL"})) @RequestParam String transactionType) {
         try {
             return ResponseEntity.ok(transactionsService.getTransactionHistoryByID(transactionType, userID));

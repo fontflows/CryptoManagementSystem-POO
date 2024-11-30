@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
-public class LoginController {
+public class AuthController {
     private final ClientService clientService;
 
     @Autowired
-    public LoginController(ClientService clientService) {
+    public AuthController(ClientService clientService) {
         this.clientService = clientService;
     }
 
