@@ -1,7 +1,7 @@
 package com.cryptomanager.exceptions;
 
 /**
- * Exceção responsável por tratar investimentos já existentes.
+ * Excecao responsavel por tratar investimentos ja existentes.
  */
 public class PortfolioHasInvestmentsException extends RuntimeException {
     public PortfolioHasInvestmentsException(String message) {

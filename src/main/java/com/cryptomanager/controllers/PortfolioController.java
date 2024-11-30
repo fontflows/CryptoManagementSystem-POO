@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 
 /**
- * Classe responsável por lidar com a manipulação das funcionalidades do portfolio de investimento dos usuários.
+ * Classe responsavel por lidar com a manipulacao das funcionalidades do portfolio de investimento dos usuarios.
  */
 
 @RestController
@@ -29,9 +29,9 @@ public class PortfolioController {
     }
 
     /**
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @return Mensagem de retorno da correta execução das funções associadas à captura do valor total.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a captura do valor total.
      */
     @GetMapping("/total-value")
     public ResponseEntity<String> calculateTotalValue(@RequestParam String userId, @RequestParam String portfolioId) {
@@ -47,12 +47,12 @@ public class PortfolioController {
     }
 
     /**
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @param fromCryptoName Recebe o nome da critpomoeda a ser convertida.
-     * @param toCryptoName Recebe o nome da critpomoeda de interesse do usuário a ser obtida.
-     * @param balance Recebe o saldo que o usuário deseja converter.
-     * @return Mensagem de retorno da correta execução das funções associadas à conversão do saldo.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @param fromCryptoName Recebe o nome da criptomoeda a ser convertida.
+     * @param toCryptoName Recebe o nome da criptomoeda de interesse do usuario a ser obtida.
+     * @param balance Recebe o saldo que o usuario deseja converter.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a conversao do saldo.
      */
     @PostMapping("/crypto-conversion-by-portfolioId")
     public ResponseEntity<String> convertCrypto(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) {
@@ -60,33 +60,33 @@ public class PortfolioController {
             currencyConverterService.currencyConverter(userId, portfolioId, fromCryptoName, toCryptoName, balance);
             return ResponseEntity.ok("Criptomoeda convertida com sucesso!");
         } catch (IllegalArgumentException | NoSuchElementException | IOException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro na conversão de criptomoeda: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro na conversao de criptomoeda: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao converter criptomoeda");
         }
     }
 
     /**
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @return Mensagem de retorno da correta execução das funções associadas à captura da criptomoeda sugerida ao usuário.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a captura da criptomoeda sugerida ao usuario.
      */
     @GetMapping("/get-suggested-crypto")
     public ResponseEntity<?> suggestCryptoCurrency(@RequestParam String userId, @RequestParam String portfolioId) {
         try {
             return ResponseEntity.ok(portfolioService.suggestCryptoCurrency(userId, portfolioId));
         } catch (PortfolioNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio não encontrado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio nao encontrado: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao sugerir criptomoedas");
         }
     }
 
     /**
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @param strategyName Recebe o nome da estratégia de investimento a qual o usuário deseja implementar em seu portfolio.
-     * @return Mensagem de retorno da correta execução das funções associadas à atribuição da estratégia de investmento.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @param strategyName Recebe o nome da estrategia de investimento a qual o usuario deseja implementar em seu portfolio.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a atribuicao da estrategia de investimento.
      */
     @PostMapping("/set-Investment-Strategy")
     public ResponseEntity<String> setPortfolioInvestmentStrategy(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam StrategyNames strategyName) {
@@ -94,17 +94,17 @@ public class PortfolioController {
             portfolioService.setPortfolioInvestmentStrategy(userId, portfolioId, strategyName.getDisplayName());
             return ResponseEntity.ok("Estratégia de investimento atualizada com sucesso!");
         } catch (PortfolioNotFoundException | IOException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao atualizar a estratégia de investimento: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao atualizar a estrategia de investimento: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar a estratégia de investimento");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao atualizar a estrategia de investimento");
         }
     }
 
     /**
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @param amount Recebe a quantia que o usuário deseja adicionar em seu investimento.
-     * @return Mensagem de retorno da correta execução das funções associadas à adição de saldo no investimento do usuário.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @param amount Recebe a quantia que o usuario deseja adicionar em seu investimento.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a adicao de saldo no investimento do usuario.
      */
     @PostMapping("/add-balance")
     public ResponseEntity<String> addBalance(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam double amount) {
@@ -112,19 +112,19 @@ public class PortfolioController {
             portfolioService.addBalance(userId, portfolioId, amount);
             return ResponseEntity.ok("Saldo adicionado com sucesso!");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valor inválido para adicionar saldo: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valor invalido para adicionar saldo: " + e.getMessage());
         } catch (PortfolioNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio não encontrado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio nao encontrado: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao adicionar saldo");
         }
     }
 
     /**
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @param amount Recebe a quantia que o usuário deseja adicionar em seu investimento.
-     * @return Mensagem de retorno da correta execução das funções associadas ao resgate do saldo desejado pelo usuário.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @param amount Recebe a quantia que o usuario deseja adicionar em seu investimento.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas ao resgate do saldo desejado pelo usuario.
      */
     @PostMapping("/redeem-balance")
     public ResponseEntity<String> redeemBalance(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam double amount) {
@@ -132,20 +132,20 @@ public class PortfolioController {
             portfolioService.redeemBalance(userId, portfolioId, amount);
             return ResponseEntity.ok("Saldo resgatado com sucesso!");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valor inválido para resgatar saldo: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valor invalido para resgatar saldo: " + e.getMessage());
         } catch (PortfolioNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio não encontrado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio nao encontrado: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao resgatar saldo");
         }
     }
 
     /**
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @param cryptoName Recebe o nome da criptomoeda a qual o usuário deseja comprar.
-     * @param amount Recebe a quantia que o usuário deseja adicionar em seu investimento.
-     * @return Mensagem de retorno da correta execução das funções associadas à compra da criptomoeda de interesse do usuário.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @param cryptoName Recebe o nome da criptomoeda a qual o usuario deseja comprar.
+     * @param amount Recebe a quantia que o usuario deseja adicionar em seu investimento.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a compra da criptomoeda de interesse do usuario.
      */
     @PostMapping("/buy-crypto")
     public ResponseEntity<String> buyCrypto(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam String cryptoName, @RequestParam double amount) {
@@ -155,18 +155,18 @@ public class PortfolioController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro na compra de criptomoeda: " + e.getMessage());
         } catch (PortfolioNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio não encontrado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio nao encontrado: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao comprar criptomoeda");
         }
     }
 
     /**
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @param cryptoName Recebe o nome da criptomoeda a qual o usuário deseja vender.
-     * @param amount Recebe a quantia que o usuário deseja retirar/vender do seu investimento.
-     * @return Mensagem de retorno da correta execução das funções associadas so resgate do saldo desejado pelo usuário.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @param cryptoName Recebe o nome da criptomoeda a qual o usuario deseja vender.
+     * @param amount Recebe a quantia que o usuario deseja retirar/vender do seu investimento.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas so resgate do saldo desejado pelo usuario.
      */
     @PostMapping("/sell-crypto")
     public ResponseEntity<String> sellCrypto(@RequestParam String userId, @RequestParam String portfolioId, @RequestParam String cryptoName, @RequestParam double amount) {
@@ -176,7 +176,7 @@ public class PortfolioController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro na venda de criptomoeda: " + e.getMessage());
         } catch (PortfolioNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio não encontrado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio nao encontrado: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao vender criptomoeda");
         }

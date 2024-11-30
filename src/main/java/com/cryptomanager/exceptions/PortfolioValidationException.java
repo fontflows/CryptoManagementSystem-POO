@@ -1,7 +1,7 @@
 package com.cryptomanager.exceptions;
 
 /**
- * Exceção responsável por lidar com a validação do portfólio.
+ * Excecao responsavel por lidar com a validacao do portfolio.
  */
 public class PortfolioValidationException extends RuntimeException {
     public PortfolioValidationException(String message) {

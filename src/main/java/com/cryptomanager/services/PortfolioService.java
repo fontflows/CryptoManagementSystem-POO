@@ -41,7 +41,7 @@ public class PortfolioService {
 
             return totalValue;
         } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado para o usuário " + userId + ": " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Portfolio nao encontrado para o usuario " + userId + ": " + e.getMessage(), e);
         }
     }
 
@@ -50,7 +50,7 @@ public class PortfolioService {
             if (investment.getCryptoCurrency().getName().equalsIgnoreCase(cryptoName.trim()))
                 return investment;
         }
-        throw new NoSuchElementException("Investimento não encontrado para a criptomoeda " + cryptoName);
+        throw new NoSuchElementException("Investimento nao encontrado para a criptomoeda " + cryptoName);
     }
 
     public static boolean hasCrypto(String cryptoName, Portfolio portfolio) {
@@ -72,15 +72,15 @@ public class PortfolioService {
                     return getRandomCrypto(investmentStrategy);
 
                 } catch (NoSuchElementException e) {
-                    throw new NoSuchElementException("Nenhuma criptomoeda disponível para sugestão na estratégia " + investmentStrategy.getInvestmentStrategyName());
+                    throw new NoSuchElementException("Nenhuma criptomoeda disponivel para sugestao na estrategia " + investmentStrategy.getInvestmentStrategyName());
                 }
 
             } catch (NoSuchElementException e) {
-                throw new NoSuchElementException("Estratégia de investimento não configurada para o portfólio.");
+                throw new NoSuchElementException("Estrategia de investimento nao configurada para o portfolio.");
             }
 
         } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado : " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Portfolio nao encontrado : " + e.getMessage(), e);
         } catch (IOException e) {
             throw new PortfolioNotFoundException("Erro ao sugerir criptomoeda: " + e.getMessage(), e);
         }
@@ -91,7 +91,7 @@ public class PortfolioService {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
 
             if (strategyName.equals(portfolio.getInvestmentStrategy().getInvestmentStrategyName()))
-                return; // Caso selecione a mesma estratégia, não é necessário alterar nada
+                return; // Caso selecione a mesma estrategia, nao e necessario alterar nada
 
             InvestmentStrategy strategy = getInvestmentStrategyByName(strategyName);
 
@@ -99,9 +99,9 @@ public class PortfolioService {
             portfolioRepository.updatePortfolio(portfolio);
 
         } catch (NoSuchElementException | IllegalArgumentException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Portfolio nao encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro interno do servidor durante a aplicação do investimento: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro interno do servidor durante a aplicacao do investimento: " + e.getMessage(), e);
         }
     }
 
@@ -115,9 +115,9 @@ public class PortfolioService {
             portfolioRepository.updatePortfolio(portfolio);
 
         } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Portfolio nao encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro ao adicionar saldo no portfólio: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro ao adicionar saldo no portfolio: " + e.getMessage(), e);
         }
     }
 
@@ -129,15 +129,15 @@ public class PortfolioService {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
 
             if (amount > portfolio.getBalance())
-                throw new IllegalArgumentException("Valor inserido para resgatar é maior que o saldo disponível");
+                throw new IllegalArgumentException("Valor inserido para resgatar e maior que o saldo disponivel");
 
             portfolio.setBalance(portfolio.getBalance() - amount);
             portfolioRepository.updatePortfolio(portfolio);
 
         } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Portfolio nao encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro ao resgatar saldo do portfólio: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro ao resgatar saldo do portfolio: " + e.getMessage(), e);
         }
     }
 
@@ -151,7 +151,7 @@ public class PortfolioService {
 
             double totalCost = amount * crypto.getPrice();
             if (portfolio.getBalance() < totalCost)
-                throw new IllegalArgumentException("Saldo disponível não é suficiente para essa compra");
+                throw new IllegalArgumentException("Saldo disponivel nao e suficiente para essa compra");
 
             portfolio.setBalance(portfolio.getBalance() - totalCost);
 
@@ -175,9 +175,9 @@ public class PortfolioService {
             saveBuyTransaction(portfolio.getUserId(), portfolio.getId(), new Investment(crypto, crypto.getPrice(), amount));
 
         } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Portfolio nao encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro ao comprar criptomoeda para o portfólio: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro ao comprar criptomoeda para o portfolio: " + e.getMessage(), e);
         }
     }
 
@@ -188,13 +188,13 @@ public class PortfolioService {
             CryptoCurrency crypto = loadCryptoByName(cryptoName);
 
             if (!hasCrypto(cryptoName, portfolio))
-                throw new IllegalArgumentException("Criptomoeda não encontrada no portfólio: " + cryptoName);
+                throw new IllegalArgumentException("Criptomoeda nao encontrada no portfolio: " + cryptoName);
 
             if (amount <= 0)
                 throw new IllegalArgumentException("Quantidade para venda deve ser maior que zero");
 
             if (portfolio.getAssetAmount(cryptoName) < amount)
-                throw new IllegalArgumentException("Quantidade da criptomoeda no portfólio é insuficiente");
+                throw new IllegalArgumentException("Quantidade da criptomoeda no portfolio e insuficiente");
 
             portfolio.setBalance(portfolio.getBalance() + amount * crypto.getPrice());
             Investment updatedInvestment = findInvestment(portfolio, cryptoName);
@@ -213,9 +213,9 @@ public class PortfolioService {
             saveSellTransaction(portfolio.getUserId(), portfolio.getId(), new Investment(crypto, crypto.getPrice(), amount));
 
         } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Portfolio nao encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro ao vender criptomoeda do portfólio: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro ao vender criptomoeda do portfolio: " + e.getMessage(), e);
         }
     }
 }

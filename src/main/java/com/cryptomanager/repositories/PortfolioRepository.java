@@ -11,43 +11,43 @@ import java.util.List;
 import static com.cryptomanager.repositories.CryptoRepository.loadCryptoByName;
 
 /**
- * Classe responsável por lidar com a pertinência de dados do portfólio dos usuários do sistema Swagger.
+ * Classe responsavel por lidar com a pertinencia de dados do portfolio dos usuarios do sistema Swagger.
  */
 @Repository
 public class PortfolioRepository {
     private static final String FILE_PATH = "portfolio.txt";
 
-    /** Método responsável por Adicionar um novo portfólio.
-     * @param portfolio Recebe o objeto da classe Portfolio, o qual será adicionado no sistema txt.
-     * @throws IOException Exceção lançada, caso alguma informação básica do portfólio não esteja adequada.
+    /** Metodo responsavel por Adicionar um novo portfolio.
+     * @param portfolio Recebe o objeto da classe Portfolio, o qual sera adicionado no sistema txt.
+     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
      */
     public void addPortfolio(Portfolio portfolio) throws IOException {
         if (!isValidPortfolio(portfolio))
-            throw new PortfolioValidationException("Portfólio não válido.");
+            throw new PortfolioValidationException("Portfolio nao valido.");
 
         savePortfolio(portfolio);
     }
 
-    /** Método responsável por salvar um portfólio no arquivo.
-     * @param portfolio Recebe o objeto da classe Portfolio, o qual será salvo no sistema txt. (Adição de um novo portfólio)
-     * @throws IOException Exceção lançada, caso alguma informação básica do portfólio não esteja adequada.
+    /** Metodo responsavel por salvar um portfolio no arquivo.
+     * @param portfolio Recebe o objeto da classe Portfolio, o qual sera salvo no sistema txt. (Adicao de um novo portfolio)
+     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
      */
     private void savePortfolio(Portfolio portfolio) throws IOException {
         if (portfolioExists(portfolio.getId(), portfolio.getUserId()))
-            throw new PortfolioAlreadyExistsException("Portfólio com esse ID já existe para o usuário: " + portfolio.getUserId());
+            throw new PortfolioAlreadyExistsException("Portfolio com esse ID ja existe para o usuario: " + portfolio.getUserId());
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))){
             writer.write(portfolio + "\n");
         }
     }
 
-    /** Método responsável por carregar o portfólio especificado pelo ID do portfólio e do usuário.
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @throws PortfolioNotFoundException Exceção lançada, caso o portfólio associado/declarado não esteja no sistema de dados txt.
-     * @return Retorna o portfólio especificado, devidamente carregado.
+    /** Metodo responsavel por carregar o portfolio especificado pelo ID do portfolio e do usuario.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @throws PortfolioNotFoundException Excecao lancada, caso o portfolio associado/declarado nao esteja no sistema de dados txt.
+     * @return Retorna o portfolio especificado, devidamente carregado.
      */
-    // Carrega o portfólio especificado por ID e userId
+    // Carrega o portfolio especificado por ID e userId
     public Portfolio loadPortfolioByUserIdAndPortfolioId(String userId, String portfolioId) {
         List<Portfolio> allPortfolios = loadAllPortfolios();
 
@@ -56,17 +56,17 @@ public class PortfolioRepository {
                 return portfolio;
         }
 
-        throw new PortfolioNotFoundException("Portfólio não encontrado para o usuário: " + userId + " e ID: " + portfolioId, null);
+        throw new PortfolioNotFoundException("Portfolio nao encontrado para o usuario: " + userId + " e ID: " + portfolioId, null);
     }
 
-    /** Método responsável por atualizar todos os portfólios presentes no arquivo txt "portfolio.txt".
-     * @param updatedPortfolio Recebe um objeto da classe Porfolio, o qual será atualizado.
-     * @throws IOException Exceção associada ao método, a qual é lançada, caso os dados de entrada estejam inadequados para o sistema.
-     * @throws PortfolioNotFoundException Exceção lançada, caso o portfólio informado não esteja no sistema de dados txt.
+    /** Metodo responsavel por atualizar todos os portfolios presentes no arquivo txt "portfolio.txt".
+     * @param updatedPortfolio Recebe um objeto da classe Portfolio, o qual sera atualizado.
+     * @throws IOException Excecao associada ao metodo, a qual e lancada, caso os dados de entrada estejam inadequados para o sistema.
+     * @throws PortfolioNotFoundException Excecao lancada, caso o portfolio informado nao esteja no sistema de dados txt.
      */
     public void updatePortfolio(Portfolio updatedPortfolio) throws IOException {
         if (!portfolioExists(updatedPortfolio.getUserId(), updatedPortfolio.getId()))
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + updatedPortfolio.getId(), null);
+            throw new PortfolioNotFoundException("Portfolio nao encontrado: " + updatedPortfolio.getId(), null);
 
         List<Portfolio> allPortfolios = loadAllPortfolios();
 
@@ -80,9 +80,9 @@ public class PortfolioRepository {
         }
     }
 
-    /** Método responsável por carregar todos os portfólios do arquivo "portfolio.txt".
-     * @throws PortfolioNotFoundException Exceção lançada, caso o portfólio informado não esteja no sistema de dados txt.
-     * @return Retorna a lista de portfólios armazenada no txt.
+    /** Metodo responsavel por carregar todos os portfolios do arquivo "portfolio.txt".
+     * @throws PortfolioNotFoundException Excecao lancada, caso o portfolio informado nao esteja no sistema de dados txt.
+     * @return Retorna a lista de portfolios armazenada no txt.
      */
     public List<Portfolio> loadAllPortfolios() {
         List<Portfolio> portfolioList = new ArrayList<>();
@@ -107,16 +107,16 @@ public class PortfolioRepository {
             }
 
         } catch (IOException e) {
-            throw new PortfolioLoadException("Erro ao carregar portfólios: " + e.getMessage(), e);
+            throw new PortfolioLoadException("Erro ao carregar portfolios: " + e.getMessage(), e);
         }
 
         return portfolioList;
     }
 
-    /** Método que possuí função auxiliar para criar um investimento, a partir de uma linha de texto.
-     * @param parts Recebe o array de Strings, que contém as informações do portfólio na linha de texto.
-     * @throws IOException Exceção lançada, caso alguma informação básica do portfólio não esteja adequada.
-     * @return Retorna o investimento gerado/criado, a partir das informações capturadas.
+    /** Metodo que possui funcao auxiliar para criar um investimento, a partir de uma linha de texto.
+     * @param parts Recebe o array de Strings, que contem as informacoes do portfolio na linha de texto.
+     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
+     * @return Retorna o investimento gerado/criado, a partir das informacoes capturadas.
      */
     private Investment createInvestmentFromParts(String[] parts) throws IOException {
         if (parts.length < 3)
@@ -131,34 +131,34 @@ public class PortfolioRepository {
         return new Investment(cryptoCurrency, purchasePrice, quantity);
     }
 
-    /** Método responsável pela validação de um portfólio.
-     * @param portfolio Recebe o objeto da classe Portfolio, o qual terá sua existência verificada.
-     * @return Retorna o valor booleano associado à sua existência ("true" ou "false").
+    /** Metodo responsavel pela validacao de um portfolio.
+     * @param portfolio Recebe o objeto da classe Portfolio, o qual tera sua existencia verificada.
+     * @return Retorna o valor booleano associado a sua existencia ("true" ou "false").
      */
     public boolean isValidPortfolio(Portfolio portfolio) {
         if (portfolio == null)
-            throw new PortfolioValidationException("Portfólio não pode ser nulo.");
+            throw new PortfolioValidationException("Portfolio nao pode ser nulo.");
 
         if (portfolio.getUserId() == null || portfolio.getUserId().isEmpty())
-            throw new PortfolioValidationException("userId não pode ser nulo ou vazio.");
+            throw new PortfolioValidationException("userId nao pode ser nulo ou vazio.");
 
         if (portfolio.getId() == null || portfolio.getId().isEmpty())
-            throw new PortfolioValidationException("portfolioId não pode ser nulo ou vazio.");
+            throw new PortfolioValidationException("portfolioId nao pode ser nulo ou vazio.");
 
         return true;
     }
 
-    /** Método responsável pela deleção do portfólio informado.
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @throws IOException Exceção lançada, caso alguma informação básica do portfólio não esteja adequada.
+    /** Metodo responsavel pela delecao do portfolio informado.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
      */
     public void deletePortfolio(String userId, String portfolioId) throws IOException {
         if (!portfolioExists(userId, portfolioId))
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + portfolioId, null);
+            throw new PortfolioNotFoundException("Portfolio nao encontrado: " + portfolioId, null);
 
         if (portfolioHasInvestments(userId, portfolioId))
-            throw new PortfolioHasInvestmentsException("Portfólio tem investimentos ativos, não pode ser excluído.");
+            throw new PortfolioHasInvestmentsException("Portfolio tem investimentos ativos, nao pode ser excluido.");
 
         List<Portfolio> portfolios = loadAllPortfolios();
         Portfolio removedPortfolio = null;
@@ -179,11 +179,11 @@ public class PortfolioRepository {
         }
     }
 
-    /** Método responsável por conferir a existência prévia de um portfólio construído no sistema Swagger, pelas informações do usuário.
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @throws IOException Exceção lançada, caso alguma informação básica do portfólio não esteja adequada.
-     * @return Retorna o valor booleano associado à verificação.
+    /** Metodo responsavel por conferir a existencia previa de um portfolio construido no sistema Swagger, pelas informacoes do usuario.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
+     * @return Retorna o valor booleano associado a verificacao.
      */
     private boolean portfolioExists(String userId, String portfolioId) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
@@ -201,11 +201,11 @@ public class PortfolioRepository {
         return false;
     }
 
-    /** Método responsável por verificar se o portfólio informado é dotado de investimentos.
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
-     * @throws IOException Exceção lançada, caso alguma informação básica do portfólio não esteja adequada.
-     * @return Retorna o valor booleano associado à verificação.
+    /** Metodo responsavel por verificar se o portfolio informado e dotado de investimentos.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
+     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
+     * @return Retorna o valor booleano associado a verificacao.
      */
     private boolean portfolioHasInvestments(String userId, String portfolioId) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
