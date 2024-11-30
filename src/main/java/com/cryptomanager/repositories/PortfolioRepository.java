@@ -107,7 +107,7 @@ public class PortfolioRepository {
             }
 
         } catch (IOException e) {
-            throw new PortfolioLoadException("Erro ao carregar portfólios: " + e.getMessage(), e);
+            throw new PortfolioLoadException("Erro interno do servidor ao carregar portfólios", e);
         }
 
         return portfolioList;
