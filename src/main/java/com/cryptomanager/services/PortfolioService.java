@@ -33,8 +33,8 @@ public class PortfolioService {
     }
 
     /** Calcula o valor total investido em um Portfolio.
-     * @param userID Identificador do usuario cujo Portfolio sera utilizado.
-     * @param portfolioID Identificador do Portfolio do usuario.
+     * @param userId Identificador do usuario cujo Portfolio sera utilizado.
+     * @param portfolioId Identificador do Portfolio do usuario.
      * @return {@code double} Valor total em investimentos do Portfolio especificado.
      */
     public double calculateTotalValue(String userId, String portfolioId) {
