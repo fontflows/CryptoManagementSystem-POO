@@ -93,23 +93,17 @@ public class PortfolioService {
     public CryptoCurrency suggestCryptoCurrency(String userID, String portfolioID) {
         try {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-
+            InvestmentStrategy investmentStrategy = portfolio.getInvestmentStrategy();
             try {
-                InvestmentStrategy investmentStrategy = portfolio.getInvestmentStrategy();
-
-                try {
-                    InvestmentStrategyService.updateInvestmentStrategyList(investmentStrategy);
-                    return getRandomCrypto(investmentStrategy);
-                } catch (NoSuchElementException e) {
+                InvestmentStrategyService.updateInvestmentStrategyList(investmentStrategy);
+                if (investmentStrategy.getSuggestedCryptos().isEmpty())
                     throw new NoSuchElementException("Nenhuma criptomoeda disponível para sugestão na estratégia " + investmentStrategy.getInvestmentStrategyName());
-                }
-
+                return getRandomCrypto(investmentStrategy);
             } catch (NoSuchElementException e) {
-                throw new NoSuchElementException("Estratégia de investimento não configurada para o portfólio.");
+                throw new NoSuchElementException(e.getMessage());
             }
-
-        } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado : " + e.getMessage(), e);
+        } catch (PortfolioNotFoundException e) {
+            throw new PortfolioNotFoundException(e.getMessage(), e);
         } catch (IOException e) {
             throw new PortfolioNotFoundException("Erro ao sugerir criptomoeda: " + e.getMessage(), e);
         }
@@ -204,6 +198,8 @@ public class PortfolioService {
         try {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
             CryptoCurrency crypto = loadCryptoByName(cryptoName);
+            if(crypto.getAvailableAmount() < amount)
+                throw new IllegalArgumentException("Quantidade dísponivel da criptomoeda é insuficiente para essa compra");
 
             double totalCost = amount * crypto.getPrice();
             if (portfolio.getBalance() < totalCost)

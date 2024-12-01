@@ -76,7 +76,7 @@ public class PortfolioController {
         try {
             return ResponseEntity.ok(portfolioService.suggestCryptoCurrency(userId, portfolioId));
         } catch (PortfolioNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio nao encontrado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
