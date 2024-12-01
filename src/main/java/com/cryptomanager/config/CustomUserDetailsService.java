@@ -25,13 +25,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         Client client;
         try {
             client = clientRepository.loadClientByID(username);
-        } catch (IOException e) {
-            throw new ClientServiceException("Erro ao verificar cadastro de cliente", e);
-        }
-        try {
             loginRepository.saveLoggedInfo(username, client.getPortfolio().getId());
         } catch (IOException e) {
-            throw new ClientServiceException("Erro ao verificar cadastro de login", e);
+            throw new ClientServiceException("Erro ao verificar cadastro de cliente", e);
+        } catch (NoSuchElementException e) {
+            throw new ClientServiceException("Cliente não encontrado", e);
         }
         return User.builder()
                 .username(client.getClientID())

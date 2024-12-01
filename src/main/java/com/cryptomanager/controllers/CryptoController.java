@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 @RestController
-@RequestMapping("/cryptos")
+@RequestMapping("2/cryptos")
 public class CryptoController {
 
     private final CryptoService cryptoService;
@@ -39,33 +39,4 @@ public class CryptoController {
         }
     }
 
-    @PostMapping("/add-ADMIN")
-    public ResponseEntity<String> addCrypto(@RequestParam String cryptoName, @RequestParam double price, @RequestParam double growthRate, @RequestParam int riskFactor, @RequestParam double availableAmount) {
-        try {
-            cryptoService.addCrypto(cryptoName, price, growthRate, riskFactor, availableAmount);
-            return ResponseEntity.ok("Criptomoeda adicionada com sucesso!");
-        } catch (CryptoServiceException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/delete-ADMIN")
-    public ResponseEntity<String> deleteCrypto(@RequestParam String cryptoName) {
-        try {
-            cryptoService.deleteCryptoByName(cryptoName);
-            return ResponseEntity.ok("Criptomoeda removida com sucesso!");
-        } catch (CryptoServiceException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/edit-ADMIN")
-    public ResponseEntity<String> updateCrypto(@RequestParam String cryptoName, @Parameter(description = "Edit field", schema = @Schema(allowableValues = {"Price", "Growth Rate", "Risk Factor"})) @RequestParam String fieldToEdit, @RequestParam String newValue) {
-        try{
-            cryptoService.updateCrypto(cryptoName, fieldToEdit, newValue);
-            return ResponseEntity.ok("Criptomoeda atualizada com sucesso!");
-        } catch (CryptoServiceException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
 }

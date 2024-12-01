@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/portfolio")
+@RequestMapping("3/portfolio")
 public class PortfolioController {
 
     private final PortfolioService portfolioService;

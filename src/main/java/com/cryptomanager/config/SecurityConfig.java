@@ -4,6 +4,7 @@ import com.cryptomanager.repositories.ClientRepository;
 import com.cryptomanager.repositories.LoginRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -27,10 +28,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register", "/login").permitAll()
-                        .requestMatchers("/cryptos/add", "/cryptos/edit", "/cryptos/delete").hasRole("ADMIN")
-                        .requestMatchers("/client/get-all-Clients", "/client/add", "/client/delete", "/client/search-by-id", "/client/edit-passwords").hasRole("ADMIN")
-                        .requestMatchers("/report/create-crypto-or-client-report").hasRole("ADMIN")
-                        .requestMatchers("/transactions-history/get-history-by-ID", "/transactions-history/get-full-history").hasRole("ADMIN")
+                        .requestMatchers("/Admin/**").hasRole("ADMIN")
                         .requestMatchers("/cryptos", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )

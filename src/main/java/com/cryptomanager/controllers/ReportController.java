@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/report")
+@RequestMapping("4/report")
 public class ReportController {
     private final ReportService reportService;
     private final LoginRepository loginRepository;
@@ -23,7 +23,6 @@ public class ReportController {
     public ReportController(ReportService reportService, LoginRepository loginRepository) {
         this.reportService = reportService;
         this.loginRepository = loginRepository;
-        
     }
 
     @PostMapping("/create-portifolio-report")
@@ -40,18 +39,6 @@ public class ReportController {
     public ResponseEntity<String> CreateProjectedPortifolioReport(@RequestParam int months) {
         try {
             int id = reportService.CreateProjectedPortifolioReport(loginRepository.loadLoggedInfo()[0], loginRepository.loadLoggedInfo()[1], months);
-            return ResponseEntity.ok(reportService.AcessReport(id));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/create-crypto-or-client-report-ADMIN")
-    public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client", "all"})) @RequestParam String reportType) {
-        try {
-            List <String> list = reportService.CreateListForReport(reportType);
-            int id = reportService.CreateListReport(list);
             return ResponseEntity.ok(reportService.AcessReport(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
