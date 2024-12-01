@@ -200,10 +200,6 @@ public class PortfolioService {
     public void buyCrypto(String userID, String portfolioID, String cryptoName, double amount) {
         if (amount <= 0)
             throw new IllegalArgumentException("Quantidade para compra deve ser maior do que zero");
-        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
-        CryptoCurrency crypto = loadCryptoByName(cryptoName);
-        if(crypto.getAvailableAmount() < amount)
-            throw new IllegalArgumentException("Quantidade dísponivel da criptomoeda é insuficiente para essa compra");
 
         try {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);

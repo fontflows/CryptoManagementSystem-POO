@@ -117,7 +117,7 @@ public class TransactionsRepository {
      * @param transactionType Tipo de transacao que sera formatado.
      * @return {@code String} Transacoes da lista formatadas em uma String.
      */
-    public String listToString(List<String> transactions, String transactionType) {
+    public static String listToString(List<String> transactions, String transactionType) {
         if(transactions.isEmpty()) { return ""; }
         StringBuilder history = new StringBuilder();
 
@@ -145,7 +145,7 @@ public class TransactionsRepository {
      * @return {@code String} Todas transacoes formatadas em uma String.
      * @throws IOException Caso ocorra um erro na leitura dos dados no arquivo.
      */
-    public String allListsToString() throws IOException {
+    public static String allListsToString() throws IOException {
         return listToString(loadTransactions("BUY"), "BUY") + listToString(loadTransactions("SELL"), "SELL") + listToString(loadTransactions("CONVERSION"), "CONVERSION");
     }
 
@@ -153,7 +153,7 @@ public class TransactionsRepository {
      * @return {@code String} Todas transacoes de um usuario formatadas em uma String.
      * @throws IOException Caso ocorra um erro na leitura dos dados no arquivo.
      */
-    public String allListsToStringByID(String userID) throws IOException {
+    public static String allListsToStringByID(String userID) throws IOException {
         return listToString(loadTransactionsByID("BUY", userID), "BUY") + listToString(loadTransactionsByID("SELL", userID), "SELL") + listToString(loadTransactionsByID("CONVERSION", userID), "CONVERSION");
     }
 }
