@@ -17,7 +17,7 @@ public class PortfolioRepository {
     // Adiciona um portfólio novo
     public void addPortfolio(Portfolio portfolio) throws IOException {
         if (!isValidPortfolio(portfolio)) {
-            throw new IllegalArgumentException("Portfólio não encontrado");
+            throw new IllegalArgumentException("Portfólio não válido");
         }
         savePortfolio(portfolio);
     }
@@ -159,7 +159,7 @@ public class PortfolioRepository {
                 if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioID.trim()) && parts[1].equalsIgnoreCase(userID.trim())) {
                     found = true;
                 }
-                else if(parts.length >= 8 && found){
+                else if(parts.length == 8 && found){
                     return true;
                 }
                 else if(parts.length == 4 && found){
