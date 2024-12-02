@@ -33,6 +33,7 @@ public class InvestmentProjectionService {
      * @return {@code int} Quantidade de meses necessarios para atingir valor alvo.
      * @throws IllegalArgumentException Caso valores dos parametros sejam invalidos.
      */
+
     public static int calculateTimeToTarget (double coinAmount, CryptoCurrency cryptoCurrency, double targetValue){
         double usedPrice = cryptoCurrency.getPrice();
         double usedGrowthRate = cryptoCurrency.getGrowthRate();

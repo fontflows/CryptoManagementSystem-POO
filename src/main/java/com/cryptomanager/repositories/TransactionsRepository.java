@@ -84,9 +84,8 @@ public class TransactionsRepository {
             String[] parts;
             while ((line = reader.readLine()) != null) {
                 parts = line.split(",");
-                if (parts[3].equalsIgnoreCase(transactionType) || transactionType.equalsIgnoreCase("ALL")) {
+                if (parts[3].equalsIgnoreCase(transactionType) || transactionType.equalsIgnoreCase("ALL"))
                     transactions.add(line);
-                }
             }
         }
         return transactions;
@@ -103,11 +102,11 @@ public class TransactionsRepository {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
             String[] parts;
+
             while ((line = reader.readLine()) != null) {
                 parts = line.split(",");
-                if (parts[1].equalsIgnoreCase(userID.trim()) && parts[3].equalsIgnoreCase(transactionType)) {
+                if (parts[1].equalsIgnoreCase(userID.trim()) && parts[3].equalsIgnoreCase(transactionType))
                     transactions.add(line);
-                }
             }
         }
         return transactions;
@@ -118,23 +117,26 @@ public class TransactionsRepository {
      * @param transactionType Tipo de transacao que sera formatado.
      * @return {@code String} Transacoes da lista formatadas em uma String.
      */
-    public String listToString(List<String> transactions, String transactionType) {
+    public static String listToString(List<String> transactions, String transactionType) {
         if(transactions.isEmpty()) { return ""; }
         StringBuilder history = new StringBuilder();
-        if(transactionType.equalsIgnoreCase("BUY") || transactionType.equalsIgnoreCase("SELL")) {
+
+        if(transactionType.equalsIgnoreCase("BUY") || transactionType.equalsIgnoreCase("SELL"))
             history.append("DATE | USER-ID | PORTFOLIO-ID | TRANSACTION-TYPE | CRYPTOCURRENCY | AMOUNT | PRICE |\n");
-        }
-        else if(transactionType.equalsIgnoreCase("CONVERSION")) {
+
+        else if(transactionType.equalsIgnoreCase("CONVERSION"))
             history.append("DATE | USER-ID | PORTFOLIO-ID | TRANSACTION-TYPE | FROM-CRYPTOCURRENCY | TO-CRYPTOCURRENCY | AMOUNT | CONVERSION-RATE | VALUE |\n");
-        }
+
         for (String transaction : transactions) {
             String[] parts = transaction.split(",");
+
             for (String part : parts) {
                 history.append(part);
                 history.append(" | ");
             }
             history.append("\n");
         }
+
         history.append("\n");
         return history.toString();
     }
@@ -143,7 +145,7 @@ public class TransactionsRepository {
      * @return {@code String} Todas transacoes formatadas em uma String.
      * @throws IOException Caso ocorra um erro na leitura dos dados no arquivo.
      */
-    public String allListsToString() throws IOException {
+    public static String allListsToString() throws IOException {
         return listToString(loadTransactions("BUY"), "BUY") + listToString(loadTransactions("SELL"), "SELL") + listToString(loadTransactions("CONVERSION"), "CONVERSION");
     }
 
@@ -151,7 +153,7 @@ public class TransactionsRepository {
      * @return {@code String} Todas transacoes de um usuario formatadas em uma String.
      * @throws IOException Caso ocorra um erro na leitura dos dados no arquivo.
      */
-    public String allListsToStringByID(String userID) throws IOException {
+    public static String allListsToStringByID(String userID) throws IOException {
         return listToString(loadTransactionsByID("BUY", userID), "BUY") + listToString(loadTransactionsByID("SELL", userID), "SELL") + listToString(loadTransactionsByID("CONVERSION", userID), "CONVERSION");
     }
 }

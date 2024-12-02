@@ -1,7 +1,5 @@
 package com.cryptomanager.controllers;
 
-import com.cryptomanager.services.ClientService;
-import com.cryptomanager.services.CryptoService;
 import com.cryptomanager.services.ReportService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,21 +8,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/report")
 public class ReportController {
     private final ReportService reportService;
-    private final ClientService clientService;
-    private final CryptoService cryptoService;
 
     @Autowired
-    public ReportController(ReportService reportService, ClientService clientService, CryptoService cryptoService) {
+    public ReportController(ReportService reportService) {
         this.reportService = reportService;
-        this.clientService = clientService;
-        this.cryptoService = cryptoService;
     }
 
     @PostMapping("/create-portifolio-report")
