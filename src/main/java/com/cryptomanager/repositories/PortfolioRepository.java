@@ -19,7 +19,7 @@ public class PortfolioRepository {
 
     /** Metodo responsavel por Adicionar um novo portfolio.
      * @param portfolio Recebe o objeto da classe Portfolio, o qual sera adicionado no sistema txt.
-     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
+     * @throws IOException Excecao lancada, caso ocorra alguma falha/interrupção em algum valor de entrada/saída.
      */
     public void addPortfolio(Portfolio portfolio) throws IOException {
         if (!isValidPortfolio(portfolio))
@@ -29,7 +29,7 @@ public class PortfolioRepository {
 
     /** Metodo responsavel por salvar um portfolio no arquivo.
      * @param portfolio Recebe o objeto da classe Portfolio, o qual sera salvo no sistema txt. (Adicao de um novo portfolio)
-     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
+     * @throws IOException Excecao lancada, caso ocorra alguma falha/interrupção em algum valor de entrada/saída.
      */
     private void savePortfolio(Portfolio portfolio) throws IOException {
         if (portfolioExists(portfolio.getId(), portfolio.getUserId()))
@@ -60,7 +60,7 @@ public class PortfolioRepository {
 
     /** Metodo responsavel por atualizar todos os portfolios presentes no arquivo txt "portfolio.txt".
      * @param updatedPortfolio Recebe um objeto da classe Portfolio, o qual sera atualizado.
-     * @throws IOException Excecao associada ao metodo, a qual e lancada, caso os dados de entrada estejam inadequados para o sistema.
+     * @throws IOException Excecao lancada, caso ocorra alguma falha/interrupção em algum valor de entrada/saída.
      * @throws PortfolioNotFoundException Excecao lancada, caso o portfolio informado nao esteja no sistema de dados txt.
      */
     public void updatePortfolio(Portfolio updatedPortfolio) throws IOException {
@@ -114,7 +114,7 @@ public class PortfolioRepository {
 
     /** Metodo que possui funcao auxiliar para criar um investimento, a partir de uma linha de texto.
      * @param parts Recebe o array de Strings, que contem as informacoes do portfolio na linha de texto.
-     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
+     * @throws IOException Excecao lancada, caso ocorra alguma falha/interrupção em algum valor de entrada/saída.
      * @return Retorna o investimento gerado/criado, a partir das informacoes capturadas.
      */
     private Investment createInvestmentFromParts(String[] parts) throws IOException {
@@ -150,7 +150,7 @@ public class PortfolioRepository {
     /** Metodo responsavel pela delecao do portfolio informado.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
-     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
+     * @throws IOException Excecao lancada, caso ocorra alguma falha/interrupção em algum valor de entrada/saída.
      */
     public void deletePortfolio(String userId, String portfolioId) throws IOException {
         if (!portfolioExists(userId, portfolioId))
@@ -181,7 +181,7 @@ public class PortfolioRepository {
     /** Metodo responsavel por conferir a existencia previa de um portfolio construido no sistema Swagger, pelas informacoes do usuario.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
-     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
+     * @throws IOException Excecao lancada, caso ocorra alguma falha/interrupção em algum valor de entrada/saída.
      * @return Retorna o valor booleano associado a verificacao.
      */
     private boolean portfolioExists(String userId, String portfolioId) throws IOException {
@@ -203,7 +203,7 @@ public class PortfolioRepository {
     /** Metodo responsavel por verificar se o portfolio informado e dotado de investimentos.
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
-     * @throws IOException Excecao lancada, caso alguma informacao basica do portfolio nao esteja adequada.
+     * @throws IOException Excecao lancada, caso ocorra alguma falha/interrupção em algum valor de entrada/saída.
      * @return Retorna o valor booleano associado a verificacao.
      */
     private boolean portfolioHasInvestments(String userId, String portfolioId) throws IOException {
