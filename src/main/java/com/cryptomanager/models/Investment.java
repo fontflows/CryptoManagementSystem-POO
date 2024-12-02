@@ -61,7 +61,7 @@ public class Investment {
         this.cryptoInvestedQuantity = cryptoInvestedQuantity;
     }
 
-    /** Metodo que sobrecarrega a funcionalidade padrão toString()
+    /** Metodo que sobrepoe a funcionalidade padrão toString()
      * @return Retorna a impressão das informações, de maneira formatada.
      */
     @Override
