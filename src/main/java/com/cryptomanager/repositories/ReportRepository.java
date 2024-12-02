@@ -150,10 +150,12 @@ public class ReportRepository {
         }
     }
     public int generateListReport(List<String> list) throws IOException{
-        LocalDateTime.now();
+        LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
-        DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+        report.append("Data-Hora\n");
+        report.append(reportDate.format(formatter)).append("\n");
         for (String element : list)
             report.append(element).append("\n");
 
