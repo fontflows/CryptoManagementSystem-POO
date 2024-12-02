@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Classe responsavel por gerar relatorios de portfolios, criptomoedas e clientes no Swagger.
+ */
 @RestController
 @RequestMapping("4/report")
 public class ReportController {
@@ -24,6 +27,9 @@ public class ReportController {
         this.loginRepository = loginRepository;
     }
 
+    /** Metodo responsavel por criar o relatorio do portfolio do usuario logado.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a criacao do relatorio desejado.
+     */
     @PostMapping("/create-portifolio-report")
     public ResponseEntity<String> CreatePortifolioReport() {
         try {

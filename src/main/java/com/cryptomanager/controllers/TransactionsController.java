@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Classe responsavel por lidar com o historico das transacoes que ocorrem durante o uso do sistema Swagger.
+ */
 @RestController
 @RequestMapping("5/transactions-history")
 public class TransactionsController {
@@ -24,6 +27,10 @@ public class TransactionsController {
         this.loginRepository = loginRepository;
     }
 
+    /** Metodo responsavel por obter/informar todo o historico de transacoes do usuario logado.
+     * @param transactionType Recebe o tipo de transacao o qual ocorreu, considerando o Id do usuario especificado.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a obtencao do historico de transacoes do usuario, conforme o seu Id.
+     */
     @GetMapping("/get-own-history")
     public ResponseEntity<String> getLoggedClientHistory(@Parameter(description = "Transaction type", schema = @Schema(allowableValues = {"BUY", "SELL", "CONVERSION", "ALL"})) @RequestParam String transactionType) {
         try {

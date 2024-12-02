@@ -47,10 +47,8 @@ public class PortfolioController {
             return ResponseEntity.ok(responseMessage);
         } catch (PortfolioNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (PortfolioLoadException e) {
+        } catch (PortfolioLoadException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno do servidor ao tentar obter as informacoes do usuario logado.");
         }
     }
 

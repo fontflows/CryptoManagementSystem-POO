@@ -12,6 +12,8 @@ public class LoginRepository {
     public void saveLoggedInfo(String userID, String portfolioID) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             writer.write(userID + "," + portfolioID);
+        } catch (IOException e) {
+            throw new IOException("Erro interno do servidor ao salvar os dados do usuario logado.");
         }
     }
 
@@ -20,6 +22,8 @@ public class LoginRepository {
             String line;
             line = reader.readLine();
             return line.split(",");
+        }catch (IOException e) {
+            throw new IOException("Erro interno do servidor ao carregar os dados do usuario logado.");
         }
     }
 

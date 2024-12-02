@@ -1,6 +1,7 @@
 package com.cryptomanager.controllers;
 
 
+import com.cryptomanager.models.StrategyNames;
 import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.repositories.LoginRepository;
 import com.cryptomanager.services.ClientService;
@@ -8,11 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 
 @RestController
 @RequestMapping("1/client-info")
+
+ /**Classe responsavel por facilitar a checagem e manipulacao de dados dos usuarios no sistema Swagger*/
 public class ClientController{
     private final ClientService clientService;
     private final LoginRepository loginRepository;
