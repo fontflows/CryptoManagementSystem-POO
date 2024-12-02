@@ -1,7 +1,6 @@
 package com.cryptomanager.controllers;
 
 import com.cryptomanager.repositories.LoginRepository;
-
 import com.cryptomanager.services.ReportService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;

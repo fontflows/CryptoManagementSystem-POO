@@ -4,7 +4,6 @@ import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.models.Client;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.repositories.ClientRepository;
-import com.cryptomanager.repositories.PortfolioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +15,12 @@ import java.util.NoSuchElementException;
 
 @Service
 public class ClientService{
-
     private static final Logger logger = LoggerFactory.getLogger(ClientService.class);
     private final ClientRepository clientRepository;
-    private final PortfolioRepository portfolioRepository;
 
     @Autowired
-    public ClientService(ClientRepository clientRepository, PortfolioRepository portfolioRepository) {
+    public ClientService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
-        this.portfolioRepository = portfolioRepository;
     }
 
     public List<String> getAllClientsToString(){

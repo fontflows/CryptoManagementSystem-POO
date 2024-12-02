@@ -3,7 +3,6 @@ package com.cryptomanager.services;
 import com.cryptomanager.exceptions.CryptoServiceException;
 import com.cryptomanager.models.CryptoCurrency;
 import com.cryptomanager.repositories.CryptoRepository;
-import com.cryptomanager.repositories.TransactionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
