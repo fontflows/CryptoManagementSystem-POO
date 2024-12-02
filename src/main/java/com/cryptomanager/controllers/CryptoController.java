@@ -65,9 +65,9 @@ public class CryptoController {
         }
     }
 
-    /** Metodo responsavel pela delecao da criptomoeda de interesse do sistema Swagger.
+    /** Metodo responsavel pela remocao da criptomoeda de interesse do sistema Swagger.
      * @param cryptoName Recebe o nome.
-     * @return Mensagem de retorno da correta execucao das funcoes associadas a delecao da criptomoeda.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a remocao da criptomoeda.
      */
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteCrypto(@RequestParam String cryptoName) {
