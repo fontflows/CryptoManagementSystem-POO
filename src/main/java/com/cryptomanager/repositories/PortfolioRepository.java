@@ -219,7 +219,7 @@ public class PortfolioRepository {
                 if (parts.length == 4 && parts[0].equalsIgnoreCase(portfolioId.trim()) && parts[1].equalsIgnoreCase(userId.trim()))
                     found = true;
                 
-                else if(parts.length == 8 && found)
+                else if(parts.length == 3 && found)
                     return true;
 
                 else if (parts.length == 4 && found)

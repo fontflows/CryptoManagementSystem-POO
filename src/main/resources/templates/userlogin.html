@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login e Cadastro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 800px;
+        }
+        .form-section {
+            width: 45%;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #register-strategy{
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body onload="checkError()">
+<script>
+    function checkError(){
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.has('error') && urlParams.get('error') === 'login') {
+            alert('Login inválido. Cheque suas credenciais.');
+        } else if(urlParams.has('error') && urlParams.get('error') === 'register'){
+            alert('Impossível realizar cadastro. Credenciais já estão cadastradas no sistema.');
+        } else if(urlParams.has('successRegister')){
+            alert('Cadastro realizado com sucesso !');
+        }
+    }
+</script>
+<div class="container">
+    <!-- Login Section -->
+    <div class="form-section">
+        <h2>Login</h2>
+        <form action="/login" method="post">
+            <label for="login-username">Usuário:</label>
+            <input type="text" id="login-username" name="username" placeholder="Digite seu userID" required>
+
+            <label for="login-password">Senha:</label>
+            <input type="password" id="login-password" name="password" placeholder="Digite sua senha" required>
+
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    <!-- Register Section -->
+    <div class="form-section">
+        <h2>Cadastro</h2>
+        <form action="/register" method="post">
+            <label for="register-username">Usuário:</label>
+            <input type="text" id="register-username" name="username" placeholder="Digite o seu userID" required>
+
+            <label for="register-password">Senha:</label>
+            <input type="password" id="register-password" name="password" placeholder="Escolha uma senha" required>
+
+            <label for="portfolioID">Portfolio ID:</label>
+            <input type="text" id="portfolioID" name="portfolioID" required placeholder="Digite o seu portfolioID">
+
+            <label for="register-strategy">Estratégia de Investimento:</label>
+            <select id="register-strategy" name="strategyName" required>
+                <option value="AGGRESSIVE">AGRESSIVE</option>
+                <option value="MODERATE">MODERATE</option>
+                <option value="CONSERVATIVE">CONSERVATIVE</option>
+            </select>
+
+            <button type="submit">Cadastrar</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+

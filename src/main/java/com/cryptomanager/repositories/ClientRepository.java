@@ -35,8 +35,9 @@ public class ClientRepository {
 
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if (parts.length == 3)
-                    clients.add(new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0], parts[1]), parts[2]));
+                if (parts.length == 4) {
+                    clients.add(new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0],parts[1]),parts[2], parts[3]));
+                }
             }
         }
 
@@ -63,8 +64,9 @@ public class ClientRepository {
 
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if ((parts.length == 3)&&(parts[0].equalsIgnoreCase(clientID.trim())))
-                    client = (new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0],parts[1]),parts[2]));
+                if ((parts.length == 4)&&(parts[0].equalsIgnoreCase(clientID.trim()))) {
+                    client = (new Client(parts[0], portfolioRepository.loadPortfolioByUserIdAndPortfolioId(parts[0],parts[1]),parts[2], parts[3]));
+                }
             }
         }
 
@@ -82,18 +84,14 @@ public class ClientRepository {
         if(!clientExists(clientID)) { throw new NoSuchElementException("Cliente não encontrado"); }
 
         List<Client> clients = loadClients();
-        Client removedClient = null;
 
         for(Client client: clients){
             if(client.getClientID().equalsIgnoreCase(clientID.trim())){
-                removedClient = client;
-                break;
+              portfolioRepository.deletePortfolio(clientID, client.getPortfolio().getId());
+              clients.remove(client);
+              break;
             }
         }
-
-        assert removedClient != null;
-        portfolioRepository.deletePortfolio(clientID, removedClient.getPortfolio().getId());
-        clients.remove(removedClient);
         // Reescreve o arquivo com a lista atualizada
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH))) {
             for (Client client : clients)
@@ -129,7 +127,7 @@ public class ClientRepository {
 
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                if ((parts.length == 3) && (parts[0].equalsIgnoreCase(clientID.trim()))) {
+                if ((parts.length == 4) && (parts[0].equalsIgnoreCase(clientID.trim()))) {
                     return true;
                 }
             }

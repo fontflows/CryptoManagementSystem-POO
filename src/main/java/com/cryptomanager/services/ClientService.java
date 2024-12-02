@@ -47,16 +47,16 @@ public class ClientService{
         }
     }
 
-    public void addClient(String userID, String portfolioID, String password, String strategyName, double balance){
+    public void addClient(String userID, String portfolioID, String password, String strategyName, double balance, String role){
         try{
             userID = userID.toUpperCase().trim();
             portfolioID = portfolioID.toUpperCase().trim();
             password = password.trim();
             Portfolio portfolio = new Portfolio(portfolioID, userID, strategyName, balance);
-            clientRepository.saveClient(new Client(userID, portfolio, password));
+            clientRepository.saveClient(new Client(userID, portfolio, password, role));
         } catch (IOException e) {
             throw new ClientServiceException("Erro interno do servidor ao adicionar cliente: " + e.getMessage(), e);
-        } catch (IllegalArgumentException | NoSuchElementException e){
+        } catch (IllegalArgumentException e){
             throw new ClientServiceException("Erro ao adicionar cliente: " + e.getMessage(), e);
         }
     }
@@ -73,10 +73,24 @@ public class ClientService{
         }
     }
 
-    public void updateClient(String userID, String password) {
+    public void updateClientPassword(String userID, String password) {
         try {
             Client client = clientRepository.loadClientByID(userID);
             client.setPassword(password.trim());
+            clientRepository.updateClient(client);
+        } catch (IOException e) {
+            logger.error("Erro ao atualizar cliente", e);
+            throw new ClientServiceException("Erro interno do servidor ao atualizar cliente", e);
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            logger.error("Erro ao atualizar cliente", e);
+            throw new ClientServiceException("Erro ao atualizar cliente: " + e.getMessage(), e);
+        }
+    }
+
+    public void updateUserRole(String userID, String role){
+        try {
+            Client client = clientRepository.loadClientByID(userID);
+            client.setRole(role);
             clientRepository.updateClient(client);
         } catch (IOException e) {
             logger.error("Erro ao atualizar cliente", e);
