@@ -54,7 +54,7 @@ public class InvestmentStrategyService {
      * @return {@code InvestmentStrategy} Instancia de uma estrategia de investimento com nome identificado.
      */
     public static InvestmentStrategy getInvestmentStrategyByName(String strategyName) {
-        return switch (strategyName) { // Uso de enhaced switch
+        return switch (strategyName) { // Uso de enhanced switch
             case "CONSERVATIVE" -> new ConservativeStrategy();
             case "AGGRESSIVE" -> new AggressiveStrategy();
             case "MODERATE" -> new ModerateStrategy();
