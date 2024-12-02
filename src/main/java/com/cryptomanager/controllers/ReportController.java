@@ -1,7 +1,5 @@
 package com.cryptomanager.controllers;
 
-import com.cryptomanager.services.ClientService;
-import com.cryptomanager.services.CryptoService;
 import com.cryptomanager.services.ReportService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -10,27 +8,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe responsavel por realizar o relatorio dos portfolios gerados durante o uso do sistema Swagger.
+ */
 @RestController
 @RequestMapping("/report")
 public class ReportController {
     private final ReportService reportService;
-    private final ClientService clientService;
-    private final CryptoService cryptoService;
 
     @Autowired
-    public ReportController(ReportService reportService, ClientService clientService, CryptoService cryptoService) {
+    public ReportController(ReportService reportService) {
         this.reportService = reportService;
-        this.clientService = clientService;
-        this.cryptoService = cryptoService;
     }
 
+    /** Metodo responsavel por criar o relatorio do portfolio especificado.
+     * @param portfolioId Recebe o Id do portfolio.
+     * @param userId Recebe o Id do usuario associado.
+     * @return  Mensagem de retorno da correta execucao das funcoes associadas a criacao do relatorio desejado.
+     */
     @PostMapping("/create-portifolio-report")
-    public ResponseEntity<String> CreatePortifolioReport(@RequestParam String portfolioID, @RequestParam String userID) {
+    public ResponseEntity<String> CreatePortifolioReport(@RequestParam String portfolioId, @RequestParam String userId) {
         try {
-            int id = reportService.CreatePortifolioReport(userID, portfolioID);
+            int id = reportService.CreatePortifolioReport(userId, portfolioId);
             return ResponseEntity.ok(reportService.AcessReport(id));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
