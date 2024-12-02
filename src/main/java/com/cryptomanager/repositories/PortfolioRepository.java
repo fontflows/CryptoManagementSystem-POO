@@ -44,10 +44,11 @@ public class PortfolioRepository {
      * @param userId Recebe o ID do usuario associado.
      * @param portfolioId Recebe o ID do portfolio do usuario associado.
      * @throws PortfolioNotFoundException Excecao lancada, caso o portfolio associado/declarado nao esteja no sistema de dados txt.
+     * @throws PortfolioLoadException Caso ocorra erros de entrada e saida ao carregar o portfolio do arquivo.
      * @return Retorna o portfolio especificado, devidamente carregado.
      */
     // Carrega o portfolio especificado por ID e userId
-    public Portfolio loadPortfolioByUserIdAndPortfolioId(String userId, String portfolioId) {
+    public Portfolio loadPortfolioByUserIdAndPortfolioId(String userId, String portfolioId) throws PortfolioLoadException{
         List<Portfolio> allPortfolios = loadAllPortfolios();
 
         for (Portfolio portfolio : allPortfolios) {
@@ -55,7 +56,7 @@ public class PortfolioRepository {
                 return portfolio;
         }
 
-        throw new PortfolioNotFoundException("Portfólio não encontrado para o usuario: " + userId + " com ID: " + portfolioId, null);
+        throw new PortfolioNotFoundException("Portfólio não encontrado para o userID: " + userId + " e portfolioID: " + portfolioId, null);
     }
 
     /** Metodo responsavel por atualizar todos os portfolios presentes no arquivo txt "portfolio.txt".
@@ -80,7 +81,7 @@ public class PortfolioRepository {
     }
 
     /** Metodo responsavel por carregar todos os portfolios do arquivo "portfolio.txt".
-     * @throws PortfolioNotFoundException Excecao lancada, caso o portfolio informado nao esteja no sistema de dados txt.
+     * @throws PortfolioLoadException Excecao lancada, caso o portfolio informado nao esteja no sistema de dados txt.
      * @return Retorna a lista de portfolios armazenada no txt.
      */
     public List<Portfolio> loadAllPortfolios() {
@@ -131,8 +132,8 @@ public class PortfolioRepository {
     }
 
     /** Metodo responsavel pela validacao de um portfolio.
-     * @param portfolio Recebe o objeto da classe Portfolio, o qual tera sua existencia verificada.
-     * @return Retorna o valor booleano associado a sua existencia ("true" ou "false").
+     * @param portfolio Recebe o objeto da classe Portfolio, o qual tera sua validade verificada.
+     * @return Retorna o valor booleano associado a sua validade ("true" ou "false").
      */
     public boolean isValidPortfolio(Portfolio portfolio) {
         if (portfolio == null)

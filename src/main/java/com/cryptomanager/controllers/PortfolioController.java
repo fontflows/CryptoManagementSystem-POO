@@ -1,5 +1,6 @@
 package com.cryptomanager.controllers;
 
+import com.cryptomanager.exceptions.PortfolioLoadException;
 import com.cryptomanager.exceptions.PortfolioNotFoundException;
 import com.cryptomanager.models.StrategyNames;
 import com.cryptomanager.services.CurrencyConverterService;
@@ -41,7 +42,7 @@ public class PortfolioController {
             return ResponseEntity.ok(responseMessage);
         } catch (PortfolioNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
+        } catch (PortfolioLoadException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -59,10 +60,12 @@ public class PortfolioController {
         try {
             currencyConverterService.currencyConverter(userId, portfolioId, fromCryptoName, toCryptoName, balance);
             return ResponseEntity.ok("Criptomoeda convertida com sucesso!");
-        } catch (IllegalArgumentException | NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro na conversão de criptomoeda: " + e.getMessage());
-        } catch (Exception e) {
+        } catch (PortfolioNotFoundException | NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (PortfolioLoadException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valor invalido para adicionar saldo: " + e.getMessage());
         }
     }
 
@@ -75,9 +78,9 @@ public class PortfolioController {
     public ResponseEntity<?> suggestCryptoCurrency(@RequestParam String userId, @RequestParam String portfolioId) {
         try {
             return ResponseEntity.ok(portfolioService.suggestCryptoCurrency(userId, portfolioId));
-        } catch (PortfolioNotFoundException e) {
+        } catch (PortfolioNotFoundException | NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
+        } catch (PortfolioLoadException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -95,7 +98,7 @@ public class PortfolioController {
             return ResponseEntity.ok("Estratégia de investimento atualizada com sucesso!");
         } catch (PortfolioNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao atualizar a estrategia de investimento: " + e.getMessage());
-        } catch (Exception e) {
+        } catch (PortfolioLoadException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -114,8 +117,8 @@ public class PortfolioController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valor invalido para adicionar saldo: " + e.getMessage());
         } catch (PortfolioNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio nao encontrado: " + e.getMessage());
-        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (PortfolioLoadException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -134,8 +137,8 @@ public class PortfolioController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valor invalido para resgatar saldo: " + e.getMessage());
         } catch (PortfolioNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio nao encontrado: " + e.getMessage());
-        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (PortfolioLoadException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -153,10 +156,10 @@ public class PortfolioController {
             portfolioService.buyCrypto(userId, portfolioId, cryptoName, amount);
             return ResponseEntity.ok("Criptomoeda comprada com sucesso!");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro na compra de criptomoeda: " + e.getMessage());
-        } catch (PortfolioNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valor invalido na compra de criptomoeda: " + e.getMessage());
+        } catch (PortfolioNotFoundException | NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
+        } catch (PortfolioLoadException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
@@ -174,10 +177,10 @@ public class PortfolioController {
             portfolioService.sellCrypto(userId, portfolioId, cryptoName, amount);
             return ResponseEntity.ok("Criptomoeda vendida com sucesso!");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro na venda de criptomoeda: " + e.getMessage());
-        } catch (PortfolioNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valor invalido na venda de criptomoeda: " + e.getMessage());
+        } catch (PortfolioNotFoundException | NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
+        } catch (PortfolioLoadException | IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
