@@ -61,7 +61,7 @@ public class AdminController {
      * @return Mensagem de retorno da correta execucao das funcoes associadas a edicao de um cliente.
      */
     @PostMapping("/Clients/add")
-    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN"})) @RequestParam String role){
+    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN", "UNAUTHORIZED"})) @RequestParam String role){
         try{
             clientService.addClient(userID, portfolioID, password, strategyNames.getDisplayName(), 0, role);
             return ResponseEntity.ok("Cliente cadastrado com sucesso");
@@ -100,7 +100,7 @@ public class AdminController {
     }
 
     @PostMapping("/Clients/edit-role-by-ID")
-    public ResponseEntity<String> updateUserRole(@RequestParam String userID, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN"})) @RequestParam String role){
+    public ResponseEntity<String> updateUserRole(@RequestParam String userID, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN", "UNAUTHORIZED"})) @RequestParam String role){
         try {
             clientService.updateUserRole(userID, role);
             return ResponseEntity.ok("Role atualizada com sucesso!");
