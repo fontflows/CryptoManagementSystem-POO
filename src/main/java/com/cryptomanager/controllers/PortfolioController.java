@@ -93,7 +93,7 @@ public class PortfolioController {
         try {
             portfolioService.setPortfolioInvestmentStrategy(userId, portfolioId, strategyName.getDisplayName());
             return ResponseEntity.ok("Estratégia de investimento atualizada com sucesso!");
-        } catch (PortfolioNotFoundException | IOException e) {
+        } catch (PortfolioNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Erro ao atualizar a estrategia de investimento: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -155,7 +155,7 @@ public class PortfolioController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro na compra de criptomoeda: " + e.getMessage());
         } catch (PortfolioNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio nao encontrado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
@@ -176,7 +176,7 @@ public class PortfolioController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro na venda de criptomoeda: " + e.getMessage());
         } catch (PortfolioNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Portfólio nao encontrado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

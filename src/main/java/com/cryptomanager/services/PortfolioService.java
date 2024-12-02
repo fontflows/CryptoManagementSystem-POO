@@ -36,8 +36,9 @@ public class PortfolioService {
      * @param userId Identificador do usuario cujo Portfolio sera utilizado.
      * @param portfolioId Identificador do Portfolio do usuario.
      * @return {@code double} Valor total dos investimentos do Portfolio especificado.
+     * @throws PortfolioNotFoundException Caso o portfolio nao seja localizado devido a dados errados ou erro do servidor.
      */
-    public double calculateTotalValue(String userId, String portfolioId) {
+    public double calculateTotalValue(String userId, String portfolioId) throws PortfolioNotFoundException {
         double totalValue = 0.0;
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
 
@@ -82,20 +83,17 @@ public class PortfolioService {
      * @param portfolioID Identificador do Portfolio do usuario.
      * @return {@code CryptoCurrency} Sugestao baseada na estrategia de investimento.
      * @throws IllegalArgumentException Caso alguma entrada seja invalida.
-     * @throws NoSuchElementException Caso uma criptomoeda ou o Portfolio nao seja encontrado.
+     * @throws NoSuchElementException Caso uma criptomoeda nao seja encontrado.
+     * @throws PortfolioNotFoundException Caso o portfolio nao seja localizado devido a dados errados ou erro do servidor.
      */
     public CryptoCurrency suggestCryptoCurrency(String userID, String portfolioID) {
         try {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
             InvestmentStrategy investmentStrategy = portfolio.getInvestmentStrategy();
-            try {
-                InvestmentStrategyService.updateInvestmentStrategyList(investmentStrategy);
-                if (investmentStrategy.getSuggestedCryptos().isEmpty())
-                    throw new NoSuchElementException("Nenhuma criptomoeda disponível para sugestão na estratégia " + investmentStrategy.getInvestmentStrategyName());
-                return getRandomCrypto(investmentStrategy);
-            } catch (NoSuchElementException e) {
-                throw new NoSuchElementException(e.getMessage());
-            }
+            InvestmentStrategyService.updateInvestmentStrategyList(investmentStrategy);
+            if (investmentStrategy.getSuggestedCryptos().isEmpty())
+                throw new NoSuchElementException("Nenhuma criptomoeda disponível para sugestão na estratégia " + investmentStrategy.getInvestmentStrategyName());
+            return getRandomCrypto(investmentStrategy);
         } catch (PortfolioNotFoundException e) {
             throw new PortfolioNotFoundException(e.getMessage(), e);
         } catch (IOException e) {
@@ -107,9 +105,9 @@ public class PortfolioService {
      * @param userID Identificador do usuario cujo Portfolio sera utilizado.
      * @param portfolioID Identificador do Portfolio do usuario.
      * @param strategyName Nome da nova estrategia que sera utilizada no Portfolio.
-     * @throws IOException Caso ocorra um erro na leitura dos Portfolios no arquivo.
+     * @throws PortfolioNotFoundException Caso o portfolio nao seja localizado devido a dados errados ou erro do servidor.
      */
-    public void setPortfolioInvestmentStrategy(String userID, String portfolioID, String strategyName) throws IOException {
+    public void setPortfolioInvestmentStrategy(String userID, String portfolioID, String strategyName) {
         try {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
 
@@ -121,10 +119,12 @@ public class PortfolioService {
             portfolio.setInvestmentStrategy(strategy);
             portfolioRepository.updatePortfolio(portfolio);
 
-        } catch (NoSuchElementException | IllegalArgumentException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + e.getMessage(), e);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }catch (PortfolioNotFoundException e) {
+            throw new PortfolioNotFoundException(e.getMessage(), e);
         } catch (IOException e) {
-            throw new PortfolioNotFoundException("Erro interno do servidor durante a aplicação do investimento: " + e.getMessage(), e);
+            throw new PortfolioNotFoundException("Erro durante a aplicação da estrategia de investimentos: " + e.getMessage(), e);
         }
     }
 
@@ -132,6 +132,7 @@ public class PortfolioService {
      * @param userID Identificador do usuario cujo Portfolio sera utilizado.
      * @param portfolioID Identificador do Portfolio do usuario.
      * @param amount Quantidade de saldo que sera adicionado.
+     * @throws PortfolioNotFoundException Caso o portfolio nao seja localizado devido a dados errados ou erro do servidor.
      */
     public void addBalance(String userID, String portfolioID, double amount) {
         if (amount <= 0)
@@ -142,8 +143,8 @@ public class PortfolioService {
             portfolio.setBalance(portfolio.getBalance() + amount);
             portfolioRepository.updatePortfolio(portfolio);
 
-        } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + e.getMessage(), e);
+        } catch (PortfolioNotFoundException e) {
+            throw new PortfolioNotFoundException(e.getMessage(), e);
         } catch (IOException e) {
             throw new PortfolioNotFoundException("Erro ao adicionar saldo no portfólio: " + e.getMessage(), e);
         }
@@ -153,6 +154,7 @@ public class PortfolioService {
      * @param userID Identificador do usuario cujo Portfolio sera utilizado.
      * @param portfolioID Identificador do Portfolio do usuario.
      * @param amount Quantidade de saldo que sera resgatado.
+     * @throws PortfolioNotFoundException Caso o portfolio nao seja localizado devido a dados errados ou erro do servidor.
      */
     public void redeemBalance(String userID, String portfolioID, double amount) {
         if (amount <= 0)
@@ -167,8 +169,8 @@ public class PortfolioService {
             portfolio.setBalance(portfolio.getBalance() - amount);
             portfolioRepository.updatePortfolio(portfolio);
 
-        } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + e.getMessage(), e);
+        } catch (PortfolioNotFoundException e) {
+            throw new PortfolioNotFoundException(e.getMessage(), e);
         } catch (IOException e) {
             throw new PortfolioNotFoundException("Erro ao resgatar saldo do portfólio: " + e.getMessage(), e);
         }
@@ -180,7 +182,8 @@ public class PortfolioService {
      * @param cryptoName Nome da criptomoeda que sera comprada.
      * @param amount Quantidade da criptomoeda que sera comprada.
      * @throws IllegalArgumentException Caso alguma entrada seja invalida.
-     * @throws NoSuchElementException Caso a criptomoeda ou o Portfolio nao seja encontrado.
+     * @throws NoSuchElementException Caso a criptomoeda ou um investimento nao seja encontrado.
+     * @throws PortfolioNotFoundException Caso o portfolio nao seja localizado devido a dados errados ou erro do servidor.
      */
     public void buyCrypto(String userID, String portfolioID, String cryptoName, double amount) {
         if (amount <= 0)
@@ -218,7 +221,9 @@ public class PortfolioService {
             saveBuyTransaction(portfolio.getUserId(), portfolio.getId(), new Investment(crypto, crypto.getPrice(), amount));
 
         } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + e.getMessage(), e);
+            throw new NoSuchElementException("Erro ao localizar dado: " + e.getMessage());
+        } catch (PortfolioNotFoundException e) {
+            throw new PortfolioNotFoundException(e.getMessage(), e);
         } catch (IOException e) {
             throw new PortfolioNotFoundException("Erro ao comprar criptomoeda para o portfólio: " + e.getMessage(), e);
         }
@@ -230,7 +235,8 @@ public class PortfolioService {
      * @param cryptoName Nome da criptomoeda que sera vendida.
      * @param amount Quantidade da criptomoeda que sera vendida.
      * @throws IllegalArgumentException Caso alguma entrada seja invalida.
-     * @throws NoSuchElementException Caso a criptomoeda ou o Portfolio nao seja encontrado.
+     * @throws NoSuchElementException Caso a criptomoeda ou um investimento nao seja encontrado.
+     * @throws PortfolioNotFoundException Caso o portfolio nao seja localizado devido a dados errados ou erro do servidor.
      */
     public void sellCrypto(String userID, String portfolioID, String cryptoName, double amount) {
         try {
@@ -262,7 +268,10 @@ public class PortfolioService {
             cryptoRepository.updateCrypto(crypto);
             portfolioRepository.updatePortfolio(portfolio);
             saveSellTransaction(portfolio.getUserId(), portfolio.getId(), new Investment(crypto, crypto.getPrice(), amount));
-
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException("Erro ao localizar dado: " + e.getMessage());
+        } catch (PortfolioNotFoundException e) {
+            throw new PortfolioNotFoundException(e.getMessage(), e);
         } catch (IOException e) {
             throw new PortfolioNotFoundException("Erro ao vender criptomoeda do portfólio: " + e.getMessage(), e);
         }

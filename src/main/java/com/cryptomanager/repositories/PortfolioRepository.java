@@ -55,7 +55,7 @@ public class PortfolioRepository {
                 return portfolio;
         }
 
-        throw new PortfolioNotFoundException("Portfolio não encontrado para o usuario: " + userId + " com ID: " + portfolioId, null);
+        throw new PortfolioNotFoundException("Portfólio não encontrado para o usuario: " + userId + " com ID: " + portfolioId, null);
     }
 
     /** Metodo responsavel por atualizar todos os portfolios presentes no arquivo txt "portfolio.txt".
