@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Classe responsavel por facilitar a checagem dos usuarios pelo administrador do sistema Swagger
+ * Classe responsavel por facilitar a checagem e manipulacao de dados dos usuarios no sistema Swagger
  * */
 @RestController
 @RequestMapping("/Client")
@@ -21,7 +21,7 @@ public class ClientController{
         this.clientService = clientService;
     }
 
-    /** Metodo responsavel por obter todos os clientes cadastrados no sistema (ate o momento no qual a funcao eh chamada).
+    /** Metodo responsavel por obter todos os clientes que estao cadastrados no sistema.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a obtencao de todos os clientes cadastrados no sistema.
      */
     @GetMapping("/get-all-Clients")
@@ -47,8 +47,8 @@ public class ClientController{
     }
 
     /** Metodo responsavel por adicionar clientes no sistema Swagger.
-     * @param userId Recebe o ID do usuário associado.
-     * @param portfolioId Recebe o ID do portfolio do usuário associado.
+     * @param userId Recebe o ID do usuario associado.
+     * @param portfolioId Recebe o ID do portfolio do usuario associado.
      * @param password Recebe a senha a ser cadastrada
      * @param strategyNames Recebe o nome da estrategia a ser colocado no portfolio de investimentos.
      * @param balance Recebe o saldo o qual sera adicionado ao portfolio.
@@ -78,10 +78,10 @@ public class ClientController{
         }
     }
 
-    /** Metodo responsavel pela edicao de um usuario cadastrado no sistema Swagger.
+    /** Metodo responsavel pela edicao da senha de um usuario cadastrado no sistema Swagger.
      * @param userId Recebe o ID do usuário associado.
      * @param password Recebe a nova senha a ser cadastrada.
-     * @return Mensagem de retorno da correta execucao das funcoes associadas a edicao do cliente.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a edicao da senha do cliente.
      */
     @PostMapping("/edit")
     public ResponseEntity<String> updateClient(@RequestParam String userId, @RequestParam String password){

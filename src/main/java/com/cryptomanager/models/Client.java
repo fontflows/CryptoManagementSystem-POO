@@ -55,7 +55,7 @@ public class Client {
         return ClientID;
     }
 
-    /** Método que sobrecarrega a funcionalidade padrão toString()
+    /** Metodo que sobrecarrega a funcionalidade padrão toString()
      * @return Retorna a impressão das informações, de maneira formatada.
      */
     @Override

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Classe responsavel por realizar o relatorio dos portfolios gerados durante o uso do sistema Swagger.
+ * Classe responsavel por gerar relatorios de portfolios, criptomoedas e clientes no Swagger.
  */
 @RestController
 @RequestMapping("/report")
@@ -26,7 +26,7 @@ public class ReportController {
     /** Metodo responsavel por criar o relatorio do portfolio especificado.
      * @param portfolioId Recebe o Id do portfolio.
      * @param userId Recebe o Id do usuario associado.
-     * @return  Mensagem de retorno da correta execucao das funcoes associadas a criacao do relatorio desejado.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a criacao do relatorio desejado.
      */
     @PostMapping("/create-portifolio-report")
     public ResponseEntity<String> CreatePortifolioReport(@RequestParam String portfolioId, @RequestParam String userId) {

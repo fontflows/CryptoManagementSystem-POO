@@ -22,7 +22,7 @@ public class CryptoController {
         this.cryptoService = cryptoService;
     }
 
-    /** Metodo responsavel por retornar todas as criptomoedas cadastradas no sistema Swagger (ate o momento em que a funcao eh chamada)
+    /** Metodo responsavel por retornar todas as criptomoedas que estao cadastradas no sistema Swagger.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a captura de todas as criptomoedas inseridas no sistema.
      */
     @GetMapping
@@ -52,7 +52,7 @@ public class CryptoController {
      * @param price Recebe o preco.
      * @param growthRate Recebe a taxa de crescimento.
      * @param riskFactor Recebe o fator de risco.
-     * @param availableAmount Recebe o valor a ser adicionado.
+     * @param availableAmount Recebe a quantidade da criptomoeda disponivel no mercado.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a adicao da criptomoeda.
      */
     @PostMapping("/add")

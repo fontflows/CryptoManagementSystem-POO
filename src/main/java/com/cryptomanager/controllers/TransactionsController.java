@@ -24,7 +24,7 @@ public class TransactionsController {
         this.transactionsService = transactionsService;
     }
 
-    /** Metodo responsavel por obter/informar todo o historico de transacoes que ocorreram no sistema Swagger (ate o momento em que a funcao eh chamada)
+    /** Metodo responsavel por obter/informar todo o historico de transacoes que ocorreram no sistema Swagger
      * @param transactionType Recebe o tipo de transacao realizada (Compra, Venda, Conversao ou Todas, respectivamente)
      * @return Mensagem de retorno da correta execucao das funcoes associadas a obtencao do historico de todas as transacoes realizadas no sistema.
      */

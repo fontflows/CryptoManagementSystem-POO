@@ -98,7 +98,7 @@ public class CryptoCurrency {
     }
 
     /** Metodo responsavel por obter a taxa de crescimento da criptomoeda.
-     * @return Recebe a taxa de crescimento da criptomoeda.
+     * @return Retorna a taxa de crescimento da criptomoeda.
      */
     public double getGrowthRate() { return growthRate;}
 
@@ -111,7 +111,7 @@ public class CryptoCurrency {
     }
 
     /** Metodo responsavel por obter o total de criptomoedas negociadas em um dia.
-     * @return Recebe o total de criptomoedas acumuladas em negociacoes, durante um dia.
+     * @return Retorna o total de criptomoedas acumuladas em negociacoes, durante um dia.
      */
     public double getVolume24h() {return volume24h;}
 
@@ -158,21 +158,21 @@ public class CryptoCurrency {
         return totalAmount;
     }
 
-    /** Metodo responsavel por obter o total de investidores que possuem acoes em determinada criptomoeda.
+    /** Metodo responsavel por obter o total de investidores que possuem investimentos em determinada criptomoeda.
      * @return Retorna o total de investidores que detem acoes em certa criptomoeda.
      */
     public int getInvestorsAmount() {
         return investorsAmount;
     }
 
-    /** Metodo responsavel por atribuir o tatal de investidores em uma certa acao de uma criptomoeda.
-     * @param investorsAmount Recebe a quantia de investidores relacionadas a uma acao de certa criptomoeda.
+    /** Metodo responsavel por atribuir o total de investidores de uma criptomoeda.
+     * @param investorsAmount Recebe a quantia de investidores relacionadas a uma criptomoeda.
      */
     public void setInvestorsAmount(int investorsAmount) {
         this.investorsAmount = investorsAmount;
     }
 
-    /** Método que sobrecarrega a funcionalidade padrão toString()
+    /** Metodo que sobrecarrega a funcionalidade padrão toString()
      * @return Retorna a impressão das informações, de maneira formatada.
      */
     @Override
