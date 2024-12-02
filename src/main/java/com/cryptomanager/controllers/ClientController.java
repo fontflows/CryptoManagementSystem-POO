@@ -64,9 +64,9 @@ public class ClientController{
         }
     }
 
-    /** Metodo responsavel pela delecao de um usuario do sistema Swagger.
+    /** Metodo responsavel pela remocao de um usuario do sistema Swagger.
      * @param userId Recebe o ID do usuário associado.
-     * @return Mensagem de retorno da correta execucao das funcoes associadas a delecao do cliente.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a remocao do cliente.
      */
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteClient(@RequestParam String userId) {
