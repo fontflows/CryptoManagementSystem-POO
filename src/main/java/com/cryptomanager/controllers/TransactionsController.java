@@ -27,7 +27,7 @@ public class TransactionsController {
         this.loginRepository = loginRepository;
     }
 
-    /** Metodo responsavel por obter/informar todo o historico de transacoes de um usuario, a partir do seu Id.
+    /** Metodo responsavel por obter/informar todo o historico de transacoes do usuario logado.
      * @param transactionType Recebe o tipo de transacao o qual ocorreu, considerando o Id do usuario especificado.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a obtencao do historico de transacoes do usuario, conforme o seu Id.
      */
