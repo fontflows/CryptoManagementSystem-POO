@@ -1,7 +1,7 @@
 package com.cryptomanager.models;
 
 /**
- * Classe modelo da estrutura padrão do investimento construido durante a execucao do sistema Swagger, para cada usuario cadastrado.
+ * Classe modelo da estrutura padrão dos investimentos realizados no sistema Swagger.
  */
 public class Investment {
     private double purchasePrice;
@@ -9,9 +9,9 @@ public class Investment {
     private double cryptoInvestedQuantity;
 
     /** Construtor padrao da classe Investment.
-     * @param cryptoCurrency Recebe um objeto de CryptoCurrency, o qual engloba o investimento a ser tratado.
+     * @param cryptoCurrency Recebe um objeto de CryptoCurrency, associada ao investimento a ser tratado.
      * @param purchasePrice Recebe o preco de compra da criptomoeda associada.
-     * @param cryptoInvestedQuantity Recebe a quantiade de criptomoedas investidas.
+     * @param cryptoInvestedQuantity Recebe a quantidade de criptomoedas investidas.
      */
     public Investment(CryptoCurrency cryptoCurrency, double purchasePrice, double cryptoInvestedQuantity) {
         this.cryptoCurrency = cryptoCurrency;
@@ -26,7 +26,7 @@ public class Investment {
         return cryptoInvestedQuantity;
     }
 
-    /** Metodo responsavel por retornar o objeto da classe CyrptoCurrency, o qual esta relacionado ao investimento a ser tratado.
+    /** Metodo responsavel por retornar o objeto da classe CryptoCurrency, o qual esta relacionado ao investimento a ser tratado.
      * @return Retorna o objeto cryptoCurrency.
      */
     public CryptoCurrency getCryptoCurrency() {
@@ -61,7 +61,7 @@ public class Investment {
         this.cryptoInvestedQuantity = cryptoInvestedQuantity;
     }
 
-    /** Método que sobrecarrega a funcionalidade padrão toString()
+    /** Metodo que sobrecarrega a funcionalidade padrão toString()
      * @return Retorna a impressão das informações, de maneira formatada.
      */
     @Override
