@@ -35,26 +35,21 @@ public class PortfolioService {
     /** Calcula o valor total investido em um Portfolio.
      * @param userId Identificador do usuario cujo Portfolio sera utilizado.
      * @param portfolioId Identificador do Portfolio do usuario.
-     * @return {@code double} Valor total em investimentos do Portfolio especificado.
+     * @return {@code double} Valor total dos investimentos do Portfolio especificado.
      */
     public double calculateTotalValue(String userId, String portfolioId) {
-        try {
-            double totalValue = 0.0;
-            Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
+        double totalValue = 0.0;
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
 
-            for (Investment investment : portfolio.getInvestments()) {
-                CryptoCurrency cryptoCurrency = investment.getCryptoCurrency();
-                double actualPrice = cryptoCurrency.getPrice();
-                double quantity = investment.getCryptoInvestedQuantity();
-                totalValue += actualPrice * quantity;
-            }
-
-            return totalValue;
-        } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado para o usuário " + userId + ": " + e.getMessage(), e);
+        for (Investment investment : portfolio.getInvestments()) {
+            CryptoCurrency cryptoCurrency = investment.getCryptoCurrency();
+            double actualPrice = cryptoCurrency.getPrice();
+            double quantity = investment.getCryptoInvestedQuantity();
+            totalValue += actualPrice * quantity;
         }
-    }
 
+        return totalValue;
+    }
 
     /** Encontra um Investment em um Portfolio baseado no nome da criptomoeda.
      * @param portfolio Portfolio que sera realizado a busca pelo Investment.
@@ -86,7 +81,6 @@ public class PortfolioService {
      * @param userID Identificador do usuario cujo Portfolio sera utilizado.
      * @param portfolioID Identificador do Portfolio do usuario.
      * @return {@code CryptoCurrency} Sugestao baseada na estrategia de investimento.
-     * @throws IOException Caso ocorra um erro na leitura dos Portfolios no arquivo.
      * @throws IllegalArgumentException Caso alguma entrada seja invalida.
      * @throws NoSuchElementException Caso uma criptomoeda ou o Portfolio nao seja encontrado.
      */
@@ -138,7 +132,6 @@ public class PortfolioService {
      * @param userID Identificador do usuario cujo Portfolio sera utilizado.
      * @param portfolioID Identificador do Portfolio do usuario.
      * @param amount Quantidade de saldo que sera adicionado.
-     * @throws IOException Caso ocorra um erro na leitura dos Portfolios no arquivo.
      */
     public void addBalance(String userID, String portfolioID, double amount) {
         if (amount <= 0)
@@ -160,7 +153,6 @@ public class PortfolioService {
      * @param userID Identificador do usuario cujo Portfolio sera utilizado.
      * @param portfolioID Identificador do Portfolio do usuario.
      * @param amount Quantidade de saldo que sera resgatado.
-     * @throws IOException Caso ocorra um erro na leitura dos Portfolios no arquivo.
      */
     public void redeemBalance(String userID, String portfolioID, double amount) {
         if (amount <= 0)
@@ -187,7 +179,6 @@ public class PortfolioService {
      * @param portfolioID Identificador do Portfolio do usuario.
      * @param cryptoName Nome da criptomoeda que sera comprada.
      * @param amount Quantidade da criptomoeda que sera comprada.
-     * @throws IOException Caso ocorra um erro na leitura dos Portfolios ou das criptomoedas no arquivo.
      * @throws IllegalArgumentException Caso alguma entrada seja invalida.
      * @throws NoSuchElementException Caso a criptomoeda ou o Portfolio nao seja encontrado.
      */
@@ -238,7 +229,6 @@ public class PortfolioService {
      * @param portfolioID Identificador do Portfolio do usuario.
      * @param cryptoName Nome da criptomoeda que sera vendida.
      * @param amount Quantidade da criptomoeda que sera vendida.
-     * @throws IOException Caso ocorra um erro na leitura dos Portfolios ou das criptomoedas no arquivo.
      * @throws IllegalArgumentException Caso alguma entrada seja invalida.
      * @throws NoSuchElementException Caso a criptomoeda ou o Portfolio nao seja encontrado.
      */
@@ -273,8 +263,6 @@ public class PortfolioService {
             portfolioRepository.updatePortfolio(portfolio);
             saveSellTransaction(portfolio.getUserId(), portfolio.getId(), new Investment(crypto, crypto.getPrice(), amount));
 
-        } catch (NoSuchElementException e) {
-            throw new PortfolioNotFoundException("Portfólio não encontrado: " + e.getMessage(), e);
         } catch (IOException e) {
             throw new PortfolioNotFoundException("Erro ao vender criptomoeda do portfólio: " + e.getMessage(), e);
         }
