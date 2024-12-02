@@ -1,6 +1,7 @@
 package com.cryptomanager.services;
 
 import com.cryptomanager.exceptions.ClientServiceException;
+import com.cryptomanager.exceptions.PortfolioHasInvestmentsException;
 import com.cryptomanager.models.Client;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.repositories.ClientRepository;
@@ -67,7 +68,7 @@ public class ClientService{
         } catch (IOException e) {
             logger.error("Erro ao remover cliente", e);
             throw new ClientServiceException("Erro interno do servidor ao remover cliente" , e);
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException | PortfolioHasInvestmentsException e){
             logger.error("Erro ao remover cliente", e);
             throw new ClientServiceException("Erro ao remover cliente: " + e.getMessage(), e);
         }

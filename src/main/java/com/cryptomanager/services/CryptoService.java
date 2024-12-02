@@ -81,7 +81,7 @@ public class CryptoService {
         } catch (IOException e) {
             logger.error("Erro ao remover criptomoeda", e);
             throw new CryptoServiceException("Erro interno do servidor ao remover criptomoeda" , e);
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException | IllegalArgumentException e){
             logger.error("Erro ao remover criptomoeda", e);
             throw new CryptoServiceException("Erro ao remover criptomoeda: " + e.getMessage(), e);
         }

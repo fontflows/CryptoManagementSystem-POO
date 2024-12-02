@@ -2,6 +2,7 @@ package com.cryptomanager.controllers;
 
 import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.exceptions.CryptoServiceException;
+import com.cryptomanager.exceptions.PortfolioHasInvestmentsException;
 import com.cryptomanager.models.StrategyNames;
 import com.cryptomanager.services.*;
 import io.swagger.v3.oas.annotations.Parameter;
