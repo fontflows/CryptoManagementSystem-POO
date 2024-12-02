@@ -28,55 +28,68 @@ public class CurrencyConverterService {
     }
 
     public void currencyConverter(String userId, String portfolioId, String fromCrypto, String toCrypto, double cryptoAmount) throws IOException {
-        if(cryptoAmount <= 0)
+        if (cryptoAmount <= 0)
             throw new IllegalArgumentException("Quantidade de criptomoedas a serem convertidas deve ser maior que zero");
         CryptoCurrency cryptoFrom = loadCryptoByName(fromCrypto);
         CryptoCurrency cryptoTo = loadCryptoByName(toCrypto);
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userId, portfolioId);
-        if(!hasCrypto(fromCrypto, portfolio))
+
+        if (portfolio == null)
+            throw new NoSuchElementException("Portfólio não encontrado para o usuário " + userId);
+
+        if (!hasCrypto(fromCrypto, portfolio))
             throw new NoSuchElementException("Criptomoeda " + fromCrypto + " não encontrada no portfólio");
 
-        if(portfolio.getAssetAmount(fromCrypto) < cryptoAmount)
+        if (portfolio.getAssetAmount(fromCrypto) < cryptoAmount)
             throw new IllegalArgumentException("Quantidade da criptomoeda " + fromCrypto + " insuficiente no portfólio");
 
         Investment fromInvestment = findInvestment(portfolio, cryptoFrom.getName());
-        double convertionRate = getConversionRate(cryptoFrom, cryptoTo);
-        double newAmount = convertionRate*cryptoAmount;
+      
+        // Obter a taxa de conversão
+        double conversionRate = getConversionRate(cryptoFrom, cryptoTo);
+        double newAmount = conversionRate * cryptoAmount;
+
         if(cryptoTo.getAvailableAmount() < newAmount)
             throw new IllegalArgumentException("Quantidade disponível da criptomoeda de destino é insuficiente para essa transação");
+      
+        // Atualizar o investimento de origem
         double fromOldAmount = fromInvestment.getCryptoInvestedQuantity();
-
-        //Atualiza o investimento "From"
-        if(fromOldAmount - cryptoAmount == 0) {
-            portfolio.getInvestments().remove(fromInvestment);
-            cryptoFrom.setInvestorsAmount(cryptoFrom.getInvestorsAmount() - 1);
+        if (fromOldAmount - cryptoAmount == 0) {
+            portfolio.getInvestments().remove(fromInvestment); // Remove o investimento se a quantidade se tornar zero
+            cryptoFrom.setInvestorsAmount(cryptoFrom.getInvestorsAmount() - 1); // Decrementa o número de investidores
         }
+
         else
-            fromInvestment.setCryptoInvestedQuantity(fromOldAmount - cryptoAmount);
+            fromInvestment.setCryptoInvestedQuantity(fromOldAmount - cryptoAmount); // Atualiza a quantidade
 
-        //Se a crypto "To" não existe no portfolio
-        if(!hasCrypto(toCrypto, portfolio)){
+        // Se a criptomoeda de destino não existe no portfólio, cria um novo investimento
+        if (!hasCrypto(toCrypto, portfolio)) {
             Investment newInvestment = new Investment(cryptoTo, cryptoTo.getPrice(), newAmount);
-            portfolio.getInvestments().add(newInvestment);
-            cryptoTo.setInvestorsAmount(cryptoTo.getInvestorsAmount() + 1);
+            portfolio.getInvestments().add(newInvestment); // Adiciona o novo investimento
+            cryptoTo.setInvestorsAmount(cryptoTo.getInvestorsAmount() + 1); // Incrementa o número de investidores
         }
-        //atualiza a crypto "To" existente
+
+        // Se a criptomoeda já existe no portfólio, atualiza o investimento existente
         else {
             Investment toInvestment = findInvestment(portfolio, cryptoTo.getName());
             double toOldAmount = toInvestment.getCryptoInvestedQuantity();
-            double avaragePrice = (toInvestment.getPurchasePrice()*toOldAmount + cryptoTo.getPrice()*newAmount)/(toOldAmount+newAmount);
-            toInvestment.setCryptoInvestedQuantity(avaragePrice);
-            toInvestment.setCryptoInvestedQuantity(toOldAmount + newAmount);
+            double averagePrice = (toInvestment.getPurchasePrice() * toOldAmount + cryptoTo.getPrice() * newAmount)
+                    / (toOldAmount + newAmount); // Calcula o preço médio ponderado
+            toInvestment.setCryptoInvestedQuantity(toOldAmount + newAmount); // Atualiza a quantidade total
+            toInvestment.setPurchasePrice(averagePrice); // Atualiza o preço médio
         }
+
         cryptoFrom.setAvailableAmount(cryptoFrom.getAvailableAmount() + cryptoAmount);
         cryptoTo.setAvailableAmount(cryptoTo.getAvailableAmount() - newAmount);
         cryptoRepository.updateCrypto(cryptoFrom);
         cryptoRepository.updateCrypto(cryptoTo);
         portfolioRepository.updatePortfolio(portfolio);
-        saveConversionTransaction(portfolio.getUserId(), portfolio.getId(), cryptoFrom.getName(), cryptoTo.getName(), cryptoAmount, convertionRate, cryptoAmount*cryptoFrom.getPrice());
+
+        // Registrar a transação de conversão
+        saveConversionTransaction(portfolio.getUserId(), portfolio.getId(), cryptoFrom.getName(), cryptoTo.getName(), cryptoAmount, conversionRate, cryptoAmount * cryptoFrom.getPrice());
     }
 
     public static double getConversionRate(CryptoCurrency fromCrypto, CryptoCurrency toCrypto) {
-        return fromCrypto.getPrice()/toCrypto.getPrice();
+        return fromCrypto.getPrice() / toCrypto.getPrice();
     }
 }

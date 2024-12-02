@@ -7,17 +7,20 @@ public class Client {
     private final String ClientID;
     private Portfolio portfolio;
     private String password;
+    private String role;
 
 
     /** Construtor padrao da classe Client.
      * @param ClientID Recebe o Id do cliente.
      * @param portfolio Recebe o portfolio em usa estrutura.
      * @param password Recebe a senha associada ao cliente.
+     * @param role Recebe a funcao do cliente no sistema, definindo suas permissoes.
      */
-    public Client(String ClientID, Portfolio portfolio, String password) {
+    public Client(String ClientID, Portfolio portfolio, String password, String role) {
         this.ClientID = ClientID;
         this.portfolio = portfolio;
         this.password = password;
+        this.role = role;
     }
 
     /** Metodo responsavel por obter o portfolio associado ao cliente.
@@ -54,12 +57,14 @@ public class Client {
     public String getClientID() {
         return ClientID;
     }
+    public void setRole(String role) { this.role = role; }
+    public String getRole() { return role; }
 
     /** Metodo que sobrepoe a funcionalidade padrão toString()
      * @return Retorna a impressão das informações, de maneira formatada.
      */
     @Override
     public String toString() {
-        return ClientID + "," + portfolio.getId() + "," + password ;
+        return ClientID + "," + portfolio.getId() + "," + password + "," + role ;
     }
 }

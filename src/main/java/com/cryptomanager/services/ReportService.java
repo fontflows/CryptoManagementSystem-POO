@@ -17,10 +17,8 @@ import java.util.List;
 
 import static com.cryptomanager.repositories.TransactionsRepository.allListsToString;
 
-
 @Service
 public class ReportService {
-
     private static final Logger logger = LoggerFactory.getLogger(ReportService.class);
     private final ReportRepository reportRepository;
     private final PortfolioRepository portfolioRepository;
@@ -44,6 +42,7 @@ public class ReportService {
             throw new ReportExceptions("Erro ao criar relatorio: " + portfolioID, e);
         }
     }
+
     public int CreateProjectedPortifolioReport(String userID, String portfolioID, int months){
         try {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID,portfolioID);
@@ -53,6 +52,7 @@ public class ReportService {
             throw new ReportExceptions("Erro ao criar relatorio de projecao: " + portfolioID + " " + months, e);
         }
     }
+
     public int CreateListReport(List <String> list){
         try{
             return reportRepository.generateListReport(list);
@@ -60,6 +60,7 @@ public class ReportService {
             throw new ReportExceptions("Erro ao criar relatorio",e);
         }
     }
+
     public String GetSumReports(){
         try{
             return reportRepository.getSumReports().toString();
@@ -69,6 +70,7 @@ public class ReportService {
             throw new ReportExceptions("Não há relatórios",e);
         }
     }
+
     public String AcessReport(int reportid){
         try{
             return reportRepository.acessReport(reportid).toString();
@@ -76,6 +78,7 @@ public class ReportService {
             throw new ReportExceptions("Erro ao acessar relatório",e);
         }
     }
+
     public List <String> CreateListForReport(String reportType){
         try{
             List <String> list = new ArrayList<>();
@@ -102,5 +105,4 @@ public class ReportService {
             throw new ReportExceptions("Erro ao criar lista",e);
         }
     }
-
 }
