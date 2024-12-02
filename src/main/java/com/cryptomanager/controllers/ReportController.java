@@ -44,22 +44,4 @@ public class ReportController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
-    @PostMapping("/get-sum-reports")
-    public ResponseEntity<String> GetSumReports() {
-        try {
-            return ResponseEntity.ok(reportService.GetSumReports());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/acess-report")
-    public ResponseEntity<String> AcessReport(@RequestParam int reportid) {
-        try {
-            return ResponseEntity.ok(reportService.AcessReport(reportid));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
 }

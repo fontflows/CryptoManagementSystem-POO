@@ -4,7 +4,7 @@ public class Client {
     private final String ClientID;
     private Portfolio portfolio;
     private String password;
-    private final String role;
+    private String role;
 
 
     public Client(String ClientID, Portfolio portfolio, String password, String role) {
@@ -29,6 +29,7 @@ public class Client {
     public String getClientID() {
         return ClientID;
     }
+    public void setRole(String role) { this.role = role; }
     public String getRole() { return role; }
 
     @Override

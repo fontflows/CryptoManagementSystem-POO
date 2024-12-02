@@ -63,6 +63,8 @@
             alert('Login inválido. Cheque suas credenciais.');
         } else if(urlParams.has('error') && urlParams.get('error') === 'register'){
             alert('Impossível realizar cadastro. Credenciais já estão cadastradas no sistema.');
+        } else if(urlParams.has('successRegister')){
+            alert('Cadastro realizado com sucesso !');
         }
     }
 </script>

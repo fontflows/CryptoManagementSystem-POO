@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws NoSuchElementException {
+    public UserDetails loadUserByUsername(String username) {
         Client client;
         try {
             client = clientRepository.loadClientByID(username);

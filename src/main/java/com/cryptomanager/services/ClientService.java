@@ -77,10 +77,24 @@ public class ClientService{
         }
     }
 
-    public void updateClient(String userID, String password) {
+    public void updateClientPassword(String userID, String password) {
         try {
             Client client = clientRepository.loadClientByID(userID);
             client.setPassword(password.trim());
+            clientRepository.updateClient(client);
+        } catch (IOException e) {
+            logger.error("Erro ao atualizar cliente", e);
+            throw new ClientServiceException("Erro interno do servidor ao atualizar cliente", e);
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            logger.error("Erro ao atualizar cliente", e);
+            throw new ClientServiceException("Erro ao atualizar cliente: " + e.getMessage(), e);
+        }
+    }
+
+    public void updateUserRole(String userID, String role){
+        try {
+            Client client = clientRepository.loadClientByID(userID);
+            client.setRole(role);
             clientRepository.updateClient(client);
         } catch (IOException e) {
             logger.error("Erro ao atualizar cliente", e);

@@ -33,7 +33,7 @@ public class AuthController {
             return "redirect:/login?error=register";
         }
 
-        return "redirect:/login"; // Redireciona para a página de login após o cadastro
+        return "redirect:/login?successRegister"; // Redireciona para a página de login após o cadastro com sucesso
     }
 
 

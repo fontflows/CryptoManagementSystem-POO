@@ -66,11 +66,21 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/Clients/edit-passwords")
+    @PostMapping("/Clients/edit-password-by-ID")
     public ResponseEntity<String> updateClient(@RequestParam String userID, @RequestParam String password){
         try {
-            clientService.updateClient(userID, password);
+            clientService.updateClientPassword(userID, password);
             return ResponseEntity.ok("Senha atualizada com sucesso!");
+        } catch (ClientServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/Clients/edit-role-by-ID")
+    public ResponseEntity<String> updateUserRole(@RequestParam String userID, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN"})) @RequestParam String role){
+        try {
+            clientService.updateUserRole(userID, role);
+            return ResponseEntity.ok("Role atualizada com sucesso!");
         } catch (ClientServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -112,6 +122,24 @@ public class AdminController {
             List<String> list = reportService.CreateListForReport(reportType);
             int id = reportService.CreateListReport(list);
             return ResponseEntity.ok(reportService.AcessReport(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/Reports/get-reports-summary")
+    public ResponseEntity<String> GetSumReports() {
+        try {
+            return ResponseEntity.ok(reportService.GetSumReports());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/Reports/acess-report-by-ID")
+    public ResponseEntity<String> AcessReport(@RequestParam int reportID) {
+        try {
+            return ResponseEntity.ok(reportService.AcessReport(reportID));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
