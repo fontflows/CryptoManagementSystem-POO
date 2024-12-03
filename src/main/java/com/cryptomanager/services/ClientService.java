@@ -107,7 +107,6 @@ public class ClientService{
             int i = 1;
             List<Client> clients = clientRepository.loadClients();
             StringBuilder unauthorizedClients = new StringBuilder();
-            unauthorizedClients.append("| UserID | PortfolioID | Password | Role |\n\n");
             for(Client client : clients){
                 if(client.getRole().equalsIgnoreCase("UNAUTHORIZED")){
                     unauthorizedClients.append(i).append(". ").append(getClientByClientIDToString(client.getClientID())).append('\n');
@@ -117,7 +116,7 @@ public class ClientService{
             if(unauthorizedClients.isEmpty()){
                 throw new NoSuchElementException("Nenhum cliente com Role 'UNAUTHORIZED'");
             }
-            return unauthorizedClients.toString();
+            return "| UserID | PortfolioID | Password | Role |\n\n" + unauthorizedClients.toString();
         } catch (IOException e){
             logger.error("Erro interno do servidor ao carregar clientes", e);
             throw new ClientServiceException("Erro interno do servidor ao carregar clientes", e);
