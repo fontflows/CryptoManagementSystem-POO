@@ -110,7 +110,7 @@ public class AdminController {
     }
 
     @GetMapping("/Clients/get-unauthorized-clients")
-    public ResponseEntity<?> getUnauthorizedClients(){
+    public ResponseEntity<String> getUnauthorizedClients(){
         try{
             return ResponseEntity.ok(clientService.getUnauthorizedClients());
         } catch (ClientServiceException e) {
