@@ -37,7 +37,6 @@ public class CryptoService {
     /** Metodo responsavel por obter todas as criptomoedas presentes no sistema.
      * @return Retorna a lista das criptomoedas presentes no sistema.
      * @throws CryptoServiceException Excecao lancada, caso ocorra algum erro na execucao da funcionalidade da criptomoeda.
-     * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
      */
     public List<CryptoCurrency> getAllCryptos() {
         try {
