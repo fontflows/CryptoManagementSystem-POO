@@ -109,6 +109,15 @@ public class AdminController {
         }
     }
 
+    @GetMapping("/Clients/get-unauthorized-clients")
+    public ResponseEntity<?> getUnauthorizedClients(){
+        try{
+            return ResponseEntity.ok(clientService.getUnauthorizedClients());
+        } catch (ClientServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     /** Metodo responsavel por adicionar dada criptomoeda de interesse ao sistema Swagger.
      * @param cryptoName Recebe o nome.
      * @param price Recebe o preco.
