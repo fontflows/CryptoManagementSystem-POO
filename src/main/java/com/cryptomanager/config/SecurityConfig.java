@@ -2,7 +2,6 @@ package com.cryptomanager.config;
 
 import com.cryptomanager.repositories.ClientRepository;
 import com.cryptomanager.repositories.LoginRepository;
-import com.cryptomanager.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,7 +38,7 @@ public class SecurityConfig {
                 )
                 .httpBasic(httpBasic -> {})
                 .formLogin(formLogin -> formLogin
-                        .loginPage("/authentication")  // Caminho para a pagina de autenticação personalizada
+                        .loginPage("/login")  // Caminho para a pagina de autenticação personalizada
                         .defaultSuccessUrl("/swagger-ui/index.html", true)  // URL de redirecionamento após o login bem-sucedido
                         .failureUrl("/login?error=login")
                         .permitAll()  // Permitir acesso à página de login sem autenticação
