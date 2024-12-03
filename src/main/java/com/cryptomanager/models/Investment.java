@@ -1,7 +1,7 @@
 package com.cryptomanager.models;
 
 /**
- * Classe modelo da estrutura padrão dos investimentos realizados no sistema Swagger.
+ * Classe modelo da estrutura padrao dos investimentos realizados no sistema Swagger.
  */
 public class Investment {
     private double purchasePrice;
