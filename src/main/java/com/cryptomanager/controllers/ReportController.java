@@ -21,6 +21,10 @@ public class ReportController {
     private final ReportService reportService;
     private final LoginRepository loginRepository;
 
+    /** Construtor ReportController
+     * @param reportService Instancia utilizada para manipulacao dos relatorios gerados no sistema.
+     * @param loginRepository Instancia que conecta o Controller com a classe que manipula os dados dos usuarios logados no arquivo.
+     */
     @Autowired
     public ReportController(ReportService reportService, LoginRepository loginRepository) {
         this.reportService = reportService;
@@ -40,6 +44,10 @@ public class ReportController {
         }
     }
 
+    /** Metodo responsavel por criar o relatorio de projecoes de investimento do portfolio do usuario logado.
+     * @param months Recebe o tempo de investimento em meses a ser considerados na projecao.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a criacao do relatorio de projecoes de investimento desejado.
+     */
     @PostMapping("/create-projected-portifolio-report")
     public ResponseEntity<String> CreateProjectedPortifolioReport(@RequestParam int months) {
         try {
