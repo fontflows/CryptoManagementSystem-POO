@@ -26,6 +26,7 @@ public class ClientRepository {
     /** Metodo responsavel por salvar/cadastrar o cliente no sistema.
      * @param client Instancia que recebe o cliente especificado.
      * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida no cadastro do cliente.
+     * @throws IllegalArgumentException Excecao lancada, caso o argumento informado para o metodo seja invalido.
      */
     public void saveClient(Client client) throws IOException {
         if(clientExists(client.getClientID())) { throw new IllegalArgumentException("Cliente com esse userID ja está cadastrado"); }
@@ -40,6 +41,7 @@ public class ClientRepository {
     /** Metodo responsavel por carregar a lista de clientes cadastrados no sistema.
      * @return Retorna a lista de clientes cadastrados encontrada.
      * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida no carregamento da lista de clientes.
+     * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
      */
     public List<Client> loadClients() throws IOException {
         List <Client> clients = new ArrayList<>();
@@ -78,6 +80,7 @@ public class ClientRepository {
      * @param clientID Recebe o ID do cliente informado.
      * @return Retorna a instancia do cliente associada ao ID informado.
      * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida no carregamento do cliente especificado pelo ID.
+     * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
      */
     public Client loadClientByID(String clientID) throws IOException {
         Client client = null;
