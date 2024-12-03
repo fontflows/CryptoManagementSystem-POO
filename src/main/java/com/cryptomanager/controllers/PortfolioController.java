@@ -1,15 +1,11 @@
 package com.cryptomanager.controllers;
 
-import com.cryptomanager.models.*;
 import com.cryptomanager.repositories.LoginRepository;
 import com.cryptomanager.services.CurrencyConverterService;
 import com.cryptomanager.services.PortfolioService;
-import jakarta.servlet.http.HttpSession;
 import com.cryptomanager.exceptions.PortfolioLoadException;
 import com.cryptomanager.exceptions.PortfolioNotFoundException;
 import com.cryptomanager.models.StrategyNames;
-import com.cryptomanager.services.CurrencyConverterService;
-import com.cryptomanager.services.PortfolioService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +25,11 @@ public class PortfolioController {
     private final CurrencyConverterService currencyConverterService;
     private final LoginRepository loginRepository;
 
+    /** Construtor PortfolioController
+     * @param portfolioService Instancia utilizada para manipulacao dos dados dos porfolios.
+     * @param currencyConverterService Instancia utilizada para realizar conversoes entre criptomoedas.
+     * @param loginRepository Instancia que conecta o Controller com a classe que manipula os dados dos usuarios logados no arquivo.
+     */
     @Autowired
     public PortfolioController(PortfolioService portfolioService, CurrencyConverterService currencyConverterService, LoginRepository loginRepository) {
         this.portfolioService = portfolioService;
