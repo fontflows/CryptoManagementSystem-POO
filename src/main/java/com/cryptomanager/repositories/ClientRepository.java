@@ -114,6 +114,7 @@ public class ClientRepository {
     /** Metodo responsavel por remover o cliente do arquivo, considerando o seu ID informado no sistema.
      * @param clientID Recebe o ID do cliente iformado.
      * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a remocao do cliente no sistema txt.
+     * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
      */
     public void deleteClientByID(String clientID) throws IOException { // Tem que verificar se ta tudo vazio *dps faço
         if(!clientExists(clientID)) { throw new NoSuchElementException("Cliente não encontrado"); }

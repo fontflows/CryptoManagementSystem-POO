@@ -34,7 +34,7 @@ public class CryptoRepository {
 
     /** Metodo responsavel por carregar as criptomoedas salvas e presentes o arquivo "cryptos.txt".
      * @return Retorna a lista de criptomoedas existentes no sistema.
-     * @throws IOException Excecao lacada, caso ocorra algum erro na entrada/saida durante o carregamento das criptomoedas existentes no sistema.
+     * @throws IOException Excecao lancada, caso ocorra algum erro na entrada/saida durante o carregamento das criptomoedas existentes no sistema.
      * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
      */
     public List<CryptoCurrency> loadCryptos() throws IOException {

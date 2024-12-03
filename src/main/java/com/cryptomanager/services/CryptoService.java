@@ -201,6 +201,11 @@ public class CryptoService {
         return volume24h;
     }
 
+    /** Metodo responsavel por obter o historico das criptomoedas removidas, devidamente, do sistema.
+     * @return Retorna o historico das criptomoedas que foram removidas, considerando a motivacao especificada.
+     * @throws CryptoServiceException Excecao lancada, caso ocorra algum erro na execucao da funcionalidade da criptomoeda.
+     * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
+     */
     public String getDeletedCryptosHistory(){
         try {
             String history = cryptoRepository.getDeletionHistoryToString();

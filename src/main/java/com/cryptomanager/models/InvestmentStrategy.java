@@ -3,7 +3,7 @@ package com.cryptomanager.models;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Classe modelo da estrutura padrao da estrategia de investimentos de cada usuario do sistema.
+/** Classe modelo da estrutura padrao do nome da estrategia de investimentos de cada usuario do sistema.
  */
 public class InvestmentStrategy {
     private String name;
@@ -12,7 +12,7 @@ public class InvestmentStrategy {
 
     /** Construtor padrao da classe InvestmentStrategy.
      * @param name Recebe o nome do investimento.
-     * @param riskQuota Recebe a cota de risco do investimento.
+     * @param riskQuota Recebe a cota de risco da estrategia de investimento.
      */
     public InvestmentStrategy(String name, int riskQuota){
         this.name = name;

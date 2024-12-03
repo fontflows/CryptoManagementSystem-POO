@@ -172,7 +172,7 @@ public class ReportRepository {
         }
     }
 
-    /** Metodo responsavel por gerar a lista de relatorios do sistema.
+    /** Metodo responsavel por gerar um relatorio, a partir de uma lista formatada.
      * @param list Instancia que recebe a lista de Strings das informacoes, para compor o relatorio padronizado no arquivo "reportConfig.txt".
      * @return Retorna o indice associado a lista gerada.
      * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
@@ -212,8 +212,8 @@ public class ReportRepository {
         saveID();
     }
 
-    /** Metodo responsavel por obter a soma dos valores armazenados nos relatorios produzidos, durante o uso do sistema.
-     * @return Retorna a soma final dos relatorios, de maneira formatada.
+    /** Metodo responsavel por obter o sumario dos relatorios.
+     * @return Retorna o sumario gerado/produzido dos relatorios, de maneira formatada.
      * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
      * @throws IllegalStateException Excecao lancada, caso ocorra a invocacao do metodo em um momento inadequado/ilegal.
      */

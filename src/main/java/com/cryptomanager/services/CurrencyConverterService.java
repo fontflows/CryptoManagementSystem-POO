@@ -25,8 +25,8 @@ public class CurrencyConverterService {
     private final CryptoRepository cryptoRepository;
 
     /** Construtor padrao da classe CurrencyConverterService.
-     * @param portfolioRepository Instancia da classe PortfolioRepository, a qual lida com a pertinencid de dados do portfolio no sistema txt.
-     * @param cryptoRepository Instancia da classe CryptoRepository, a qual lida com a pertinencid de dados do portfolio no sistema txt.
+     * @param portfolioRepository Instancia da classe PortfolioRepository, a qual lida com a pertinencia de dados do portfolio no sistema txt.
+     * @param cryptoRepository Instancia da classe CryptoRepository, a qual lida com a pertinencia de dados do portfolio no sistema txt.
      */
     @Autowired
     public CurrencyConverterService(PortfolioRepository portfolioRepository, CryptoRepository cryptoRepository) {
