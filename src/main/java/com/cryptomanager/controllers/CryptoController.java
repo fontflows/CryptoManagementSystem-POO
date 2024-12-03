@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class CryptoController {
     private final CryptoService cryptoService;
 
+    /** Construtor CryptoController
+     * @param cryptoService Instancia utilizada para manipulacao dos dados das criptomoedas.
+     */
     @Autowired
     public CryptoController(CryptoService cryptoService) {
         this.cryptoService = cryptoService;

@@ -158,7 +158,7 @@ public class PortfolioRepository {
             throw new PortfolioNotFoundException("Portfolio nao encontrado: " + portfolioId, null);
 
         if (portfolioHasInvestments(userId, portfolioId))
-            throw new PortfolioHasInvestmentsException("Portfolio tem investimentos ativos, nao pode ser excluido.");
+            throw new PortfolioHasInvestmentsException("Cliente tem investimentos ativos em seu portfólio e não pode ser removido.");
 
         List<Portfolio> portfolios = loadAllPortfolios();
         Portfolio removedPortfolio = null;

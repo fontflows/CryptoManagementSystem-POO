@@ -2,6 +2,7 @@ package com.cryptomanager.controllers;
 
 import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.exceptions.CryptoServiceException;
+import com.cryptomanager.exceptions.PortfolioHasInvestmentsException;
 import com.cryptomanager.models.StrategyNames;
 import com.cryptomanager.services.*;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**Classe responsavel por armazenar metodos com restritos a Administradores do sistema*/
 @RestController
 @RequestMapping("/Admin")
 public class AdminController {
@@ -20,6 +22,12 @@ public class AdminController {
     private final ReportService reportService;
     private final TransactionsService transactionsService;
 
+    /** Construtor AdminController
+     * @param clientService Instancia utilizada para manipulacao dos dados dos clientes.
+     * @param cryptoService Instancia utilizada para manipulacao dos dados das criptomoedas.
+     * @param reportService Instancia utilizada para manipulacao dos dados dos relatorios.
+     * @param transactionsService Instancia utilizada para manipulacao dos dados das transacoes.
+     */
     public AdminController(ClientService clientService, CryptoService cryptoService, ReportService reportService, TransactionsService transactionsService) {
         this.clientService = clientService;
         this.cryptoService = cryptoService;
@@ -52,15 +60,16 @@ public class AdminController {
         }
     }
 
-    /** Metodo responsavel por adicionar clientes no sistema Swagger.
+    /** Metodo responsavel por adicionar clientes no sistema.
      * @param userID Recebe o ID do usuario associado.
      * @param portfolioID Recebe o ID do portfolio do usuario associado.
-     * @param password Recebe a senha a ser cadastrada
+     * @param password Recebe a senha a ser cadastrada.
      * @param strategyNames Recebe o nome da estrategia a ser colocado no portfolio de investimentos.
+     * @param role Recebe o Role do usuario para definir as permissoes no sistema.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a edicao de um cliente.
      */
     @PostMapping("/Clients/add")
-    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN"})) @RequestParam String role){
+    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN", "UNAUTHORIZED"})) @RequestParam String role){
         try{
             clientService.addClient(userID, portfolioID, password, strategyNames.getDisplayName(), 0, role);
             return ResponseEntity.ok("Cliente cadastrado com sucesso");
@@ -69,7 +78,7 @@ public class AdminController {
         }
     }
 
-    /** Metodo responsavel pela remocao de um usuario do sistema Swagger.
+    /** Metodo responsavel pela remocao de um usuario do sistema.
      * @param userID Recebe o ID do usuário associado.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a remocao do cliente.
      */
@@ -83,8 +92,8 @@ public class AdminController {
         }
     }
 
-    /** Metodo responsavel pela edicao da senha de um usuario cadastrado no sistema Swagger.
-     * @param userID Recebe o ID do usuário associado.
+    /** Metodo responsavel pela edicao da senha de um usuario cadastrado no sistema.
+     * @param userID Recebe o ID do usuario associado.
      * @param password Recebe a nova senha a ser cadastrada.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a edicao da senha do cliente.
      */
@@ -98,11 +107,28 @@ public class AdminController {
         }
     }
 
+    /** Metodo responsavel por alterar o Role de um usuario cadastrado no sistema.
+     * @param userID Recebe o ID do usuario associado.
+     * @param role Recebe o Role que sera aplicada ao usuario.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a edicao do Role do cliente.
+     */
     @PostMapping("/Clients/edit-role-by-ID")
-    public ResponseEntity<String> updateUserRole(@RequestParam String userID, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN"})) @RequestParam String role){
+    public ResponseEntity<String> updateUserRole(@RequestParam String userID, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN", "UNAUTHORIZED"})) @RequestParam String role){
         try {
             clientService.updateUserRole(userID, role);
             return ResponseEntity.ok("Role atualizada com sucesso!");
+        } catch (ClientServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    /** Metodo responsavel por exibir os clientes com Role 'UNAUTHORIZED' para facilitar o processo do Administrador aprovar novos usuarios.
+    * @return Retorna uma lista com todos os clientes com Role 'UNAUTHORIZED'.
+    */
+    @GetMapping("/Clients/get-unauthorized-clients")
+    public ResponseEntity<String> getUnauthorizedClients(){
+        try{
+            return ResponseEntity.ok(clientService.getUnauthorizedClients());
         } catch (ClientServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -126,17 +152,29 @@ public class AdminController {
         }
     }
 
-    /** Metodo responsavel pela remocao da criptomoeda de interesse do sistema Swagger.
+    /** Metodo responsavel pela remocao da criptomoeda de interesse do sistema.
      * @param cryptoName Recebe o nome.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a remocao da criptomoeda.
      */
     @DeleteMapping("/Cryptos/delete")
-    public ResponseEntity<String> deleteCrypto(@RequestParam String cryptoName) {
+    public ResponseEntity<String> deleteCrypto(@RequestParam String cryptoName, @RequestParam String reason) {
         try {
-            cryptoService.deleteCryptoByName(cryptoName);
+            cryptoService.deleteCryptoByName(cryptoName, reason);
             return ResponseEntity.ok("Criptomoeda removida com sucesso!");
         } catch (CryptoServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    /** Metodo responsavel por exibir o historico de criptomoedas removidas do sistema.
+    * @return Retorna o historico de criptomoedas removidas do sistema com a razao da remocao.
+    */
+    @GetMapping("/Cryptos/get-deleted-cryptos-history")
+    public ResponseEntity<String> getDeletedCryptosHistory() {
+        try {
+            return ResponseEntity.ok(cryptoService.getDeletedCryptosHistory());
+        } catch (CryptoServiceException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -156,6 +194,10 @@ public class AdminController {
         }
     }
 
+    /** Metodo responsavel por gerar relatorios de clientes e criptomoedas cadastradas no sistema.
+     * @param reportType Tipo de relatorio que sera gerado : Criptomoedas, clientes ou todos.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas a geracao do relatorio.
+     */
     @PostMapping("/Report/create-crypto-or-client-report")
     public ResponseEntity<String> CreateCryptoOrClientReport(@Parameter(description = "Report type", schema = @Schema(allowableValues = {"crypto", "client", "all"})) @RequestParam String reportType) {
         try {
@@ -167,6 +209,9 @@ public class AdminController {
         }
     }
 
+    /** Metodo responsavel por obter o sumario de reports gerados no sistema.
+     * @return Em caso de sucesso, retorna o sumario de relatorios gerados no sistema.
+     */
     @PostMapping("/Reports/get-reports-summary")
     public ResponseEntity<String> GetSumReports() {
         try {
@@ -176,6 +221,10 @@ public class AdminController {
         }
     }
 
+    /** Metodo reponsavel por retornar um relatorio especifico baseado no ID do report.
+     * @param reportID Recebe o ID do report associado.
+     * @return Em caso de sucesso, retorna o relatorio especificado.
+     */
     @PostMapping("/Reports/acess-report-by-ID")
     public ResponseEntity<String> AcessReport(@RequestParam int reportID) {
         try {
@@ -187,7 +236,7 @@ public class AdminController {
 
     /** Metodo responsavel por obter/informar todo o historico de transacoes que ocorreram no sistema Swagger
      * @param transactionType Recebe o tipo de transacao realizada (Compra, Venda, Conversao ou Todas, respectivamente)
-     * @return Mensagem de retorno da correta execucao das funcoes associadas a obtencao do historico de todas as transacoes realizadas no sistema.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas e a obtencao do historico de todas as transacoes realizadas no sistema.
      */
     @GetMapping("/Transactions/get-full-history")
     public ResponseEntity<String> getTransactionsHistory(@Parameter(description = "Transaction type", schema = @Schema(allowableValues = {"BUY", "SELL", "CONVERSION", "ALL"})) @RequestParam String transactionType) {
@@ -201,7 +250,7 @@ public class AdminController {
     /** Metodo responsavel por obter/informar todo o historico de transacoes de um usuario, a partir do seu Id.
      * @param userID Recebe o Id do usuario.
      * @param transactionType Recebe o tipo de transacao o qual ocorreu, considerando o Id do usuario especificado.
-     * @return Mensagem de retorno da correta execucao das funcoes associadas a obtencao do historico de transacoes do usuario, conforme o seu Id.
+     * @return Mensagem de retorno da correta execucao das funcoes associadas e a obtencao do historico de transacoes do usuario, conforme o seu Id.
      */
     @GetMapping("/Transactions/get-history-by-ID")
     public ResponseEntity<String> getTransactionsHistoryByID(@RequestParam String userID, @Parameter(description = "Transaction type", schema = @Schema(allowableValues = {"BUY", "SELL", "CONVERSION", "ALL"})) @RequestParam String transactionType) {

@@ -102,17 +102,20 @@ public class CryptoService {
 
     }
 
+
     /** Metodo responsavel por remover certa criptomoeda do sistema, considerando o nome informado.
      * @param name Recebe o nome da criptomoeda.
+     * @param reason Recebe a razao, devidamente especificada, do porque da remocao da criptomoeda do sistema.
      * @throws CryptoServiceException Excecao lancada, caso ocorra algum erro na execucao da funcionalidade da criptomoeda.
      */
-    public void deleteCryptoByName(String name) {
+    public void deleteCryptoByName(String name, String reason) {
         try {
             cryptoRepository.deleteCryptoByName(name);
+            cryptoRepository.saveDeletionHistory(name, reason);
         } catch (IOException e) {
             logger.error("Erro ao remover criptomoeda", e);
             throw new CryptoServiceException("Erro interno do servidor ao remover criptomoeda" , e);
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException | IllegalArgumentException e){
             logger.error("Erro ao remover criptomoeda", e);
             throw new CryptoServiceException("Erro ao remover criptomoeda: " + e.getMessage(), e);
         }
@@ -196,5 +199,22 @@ public class CryptoService {
             }
         }
         return volume24h;
+    }
+
+    public String getDeletedCryptosHistory(){
+        try {
+            String history = cryptoRepository.getDeletionHistoryToString();
+            if(history.isEmpty()){
+                throw new NoSuchElementException("Nenhuma remoção de criptomoeda salva no histórico");
+            } else{
+                return "| Histórico de Remoção de Criptomoedas |\n\n" + history;
+            }
+        } catch (IOException e) {
+            logger.error("Erro interno do servidor ao obter histórico de criptomoedas removidas", e);
+            throw new CryptoServiceException("Erro interno do servidor ao obter histórico de criptomoedas removidas" , e);
+        } catch (NoSuchElementException e){
+            logger.error("Erro ao obter histórico de criptomoedas removidas", e);
+            throw new CryptoServiceException("Erro ao obter histórico de criptomoedas removidas: " + e.getMessage() , e);
+        }
     }
 }

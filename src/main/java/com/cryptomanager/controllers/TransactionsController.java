@@ -21,6 +21,10 @@ public class TransactionsController {
     private final TransactionsService transactionsService;
     private final LoginRepository loginRepository;
 
+    /** Construtor TransactionsController
+     * @param transactionsService Instancia utilizada para manipulacao das transacoes realizadas no sistema.
+     * @param loginRepository Instancia que conecta o Controller com a classe que manipula os dados dos usuarios logados no arquivo.
+     */
     @Autowired
     public TransactionsController(TransactionsService transactionsService, LoginRepository loginRepository) {
         this.transactionsService = transactionsService;

@@ -4,6 +4,8 @@ import com.cryptomanager.models.CryptoCurrency;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -16,6 +18,7 @@ import static com.cryptomanager.services.CryptoService.calculateVolume24h;
 @Repository
 public class CryptoRepository {
     private static final String FILE_PATH = "cryptos.txt";
+    private static final String DELETED_HISTORY_PATH = "cryptoDeletionHistory.txt";
 
     /** Metodo responsavel por salvar dada criptomoeda no arquivo "cryptos.txt".
      * @param crypto Instancia da classe padrao para a estrutura de qualquer criptomoeda do sistema.
@@ -169,5 +172,25 @@ public class CryptoRepository {
             }
         }
         return false;
+    }
+
+    public void saveDeletionHistory(String cryptoName, String reason) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(DELETED_HISTORY_PATH, true))) {
+            LocalDateTime localDateTime = LocalDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            writer.write("Data: " + localDateTime.format(dateTimeFormatter) + "\n" + "Criptomoeda: " + cryptoName + "\n" + "Motivo da remoção: " + reason + "\n");
+            writer.newLine();
+        }
+    }
+
+    public String getDeletionHistoryToString() throws IOException{
+        StringBuilder history = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(DELETED_HISTORY_PATH))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                history.append(line).append("\n");
+            }
+        }
+        return history.toString();
     }
 }
