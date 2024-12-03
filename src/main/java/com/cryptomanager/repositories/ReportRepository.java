@@ -44,7 +44,7 @@ public class ReportRepository {
         }
     }
 
-    /** Metodo responsavel por gerar o relatorio do portfolio corrente no sistema.
+    /** Metodo responsavel por gerar o relatorio do portfolio atual no sistema.
      * @param portfolio Instancia que recebe o portfolio informado no sistema.
      * @return Retorna um indice associado ao relatorio gerado.
      * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
@@ -196,7 +196,7 @@ public class ReportRepository {
     }
 
     /** Metodo responsavel por salvar o relatorio produzido no sistema.
-     * @param report Insancia que recebe o relatorio gerado durante o uso do sistema, pelo usuario.
+     * @param report Instancia que recebe o relatorio gerado durante o uso do sistema, pelo usuario.
      * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
      */
     public void saveReport(String report) throws IOException{
