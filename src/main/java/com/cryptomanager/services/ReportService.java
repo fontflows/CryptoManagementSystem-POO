@@ -17,6 +17,7 @@ import java.util.List;
 
 import static com.cryptomanager.repositories.TransactionsRepository.allListsToString;
 
+/** Classe responsavel pelos metodos Service para geracao de relatorios*/
 @Service
 public class ReportService {
     private static final Logger logger = LoggerFactory.getLogger(ReportService.class);
@@ -25,6 +26,12 @@ public class ReportService {
     private final CryptoRepository cryptoRepository;
     private final ClientRepository clientRepository;
 
+    /** Construtor ReportService
+     * @param reportRepository Instancia que conecta o Service a classe que manipula os relatorios no arquivo.
+     * @param portfolioRepository Instancia que conecta o Service a classe que manipula os dados dos portfolios no arquivo.
+     * @param cryptoRepository Instancia que conecta o Service a classe que manipula os dados das criptomoedas no arquivo.
+     * @param clientRepository Instancia que conecta o Service a classe que manipula os dados dos clientes no arquivo.
+     */
     @Autowired
     public ReportService(ReportRepository reportRepository, PortfolioRepository portfolioRepository, CryptoRepository cryptoRepository, ClientRepository clientRepository) {
         this.reportRepository = reportRepository;
@@ -33,6 +40,12 @@ public class ReportService {
         this.clientRepository = clientRepository;
     }
 
+    /** Metodo responsavel por gerar um relatorio contendo os dados atuais de um portfolio.
+     * @param userID Recebe o userID do usuario associado.
+     * @param portfolioID Recebe o portfolioID do portfolio associado.
+     * @return Retorna o indice do relatorio gerado, alem de gerar um .txt com as informacoes do relatorio.
+     * @throws ReportExceptions Caso ocorra algum erro ao obter o relatorio.
+     */
     public int CreatePortifolioReport(String userID, String portfolioID){
         try {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID,portfolioID);
@@ -43,6 +56,13 @@ public class ReportService {
         }
     }
 
+    /** Metodo responsavel por gerar um relatorio contendo projecoes de investimento de um portfolio.
+     * @param userID Recebe o userID do usuario associado.
+     * @param portfolioID Recebe o portfolioID do portfolio associado.
+     * @param months Recebe a quantidade de meses referente ao tempo de investimento considerado na projecao.
+     * @return Retorna o indice do relatorio gerado, alem de gerar um .txt com as informacoes do relatorio.
+     * @throws ReportExceptions Caso ocorra algum erro ao obter o relatorio.
+     */
     public int CreateProjectedPortifolioReport(String userID, String portfolioID, int months){
         try {
             Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID,portfolioID);
@@ -53,6 +73,11 @@ public class ReportService {
         }
     }
 
+    /** Metodo responsavel por gerar um relatorio formatado a partir de uma lista de dados.
+     * @param list Recebe a lista que sera formatada.
+     * @return Retorna o indice do relatorio gerado, alem de gerar um .txt com as informacoes do relatorio.
+     * @throws ReportExceptions Caso ocorra algum erro ao obter o relatorio.
+     */
     public int CreateListReport(List <String> list){
         try{
             return reportRepository.generateListReport(list);
@@ -61,6 +86,10 @@ public class ReportService {
         }
     }
 
+    /** Metodo responsavel por obter o sumario de todos os relatorios gerados no sistema.
+     * @return Retorna o sumario de todos os relatorios gerados no sistema.
+     * @throws ReportExceptions Caso ocorra algum erro ao obter o sumario.
+     */
     public String GetSumReports(){
         try{
             return reportRepository.getSumReports().toString();
@@ -71,6 +100,11 @@ public class ReportService {
         }
     }
 
+    /** Metodo responsavel por exibir as informacoes de um relatorio baseado em seu ID.
+     * @param reportid Recebe o ID do relatorio a ser exibido.
+     * @return Retorna o relatorio solicitado baseado no ID.
+     * @throws ReportExceptions Caso ocorra algum erro ao obter o relatorio.
+     */
     public String AcessReport(int reportid){
         try{
             return reportRepository.acessReport(reportid).toString();
@@ -79,6 +113,11 @@ public class ReportService {
         }
     }
 
+    /** Metodo responsavel por gerar uma lista para ser utilizada nos relatorios.
+     * @param reportType Recebe o tipo de relatorio que esta sendo gerado.
+     * @return Retorna uma lista formatada para ser utilizada na geracao de um relatorio.
+     * @throws ReportExceptions Caso ocorra algum erro ao criar a lista para o relatorio.
+     */
     public List <String> CreateListForReport(String reportType){
         try{
             List <String> list = new ArrayList<>();

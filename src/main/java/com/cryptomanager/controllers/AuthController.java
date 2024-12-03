@@ -23,9 +23,9 @@ public class AuthController {
     /** Metodo responsavel por referenciar a pagina de autenticacao personalizada ao sistema.
      * @return Retorna o nome do arquivo da pagina de autenticacao personalizada
      */
-    @GetMapping("/authentication")
+    @GetMapping("/login")
     public String showAuthenticationForm() {
-        return "userAuthentication";  // Nome do arquivo HTML (userAuthentication.html)
+        return "userLogin";  // Nome do arquivo HTML (userLogin.html)
     }
 
     /** Metodo responsavel por receber os dados de cadastro realizados atraves da pagina de autenticacao personalizada.

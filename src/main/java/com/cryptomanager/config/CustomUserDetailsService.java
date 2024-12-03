@@ -1,4 +1,4 @@
-package com.cryptomanager.services;
+package com.cryptomanager.config;
 
 import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.models.Client;
@@ -7,13 +7,11 @@ import com.cryptomanager.repositories.LoginRepository;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
 /** Classe responsavel por manipular os dados dos usuarios que realizam o login, implementa a interface UserDetailsService do Spring Security */
-@Service
 public class CustomUserDetailsService implements UserDetailsService {
     private final ClientRepository clientRepository;
     private final LoginRepository loginRepository;
@@ -42,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         } catch (NoSuchElementException e) {
             throw new ClientServiceException("Cliente não encontrado", e);
         }
-        return User.builder()
+        return User.builder() //Cria um User com os dados corretos de login, depois o Spring Security verifica se os campos inseridos na pagina de login equivalem às informacoes dessa instancia UserDetails.
                 .username(client.getClientID())
                 .password("{noop}" + client.getPassword())
                 .roles(client.getRole())
