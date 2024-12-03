@@ -17,17 +17,28 @@ import java.util.NoSuchElementException;
 import static com.cryptomanager.repositories.CryptoRepository.loadCryptoByName;
 import static com.cryptomanager.repositories.TransactionsRepository.loadTransactions;
 
+/**
+ * Classe responsavel pelos metodos service das criptomoedas.
+ */
 @Service
 public class CryptoService {
 
     private static final Logger logger = LoggerFactory.getLogger(CryptoService.class);
     private final CryptoRepository cryptoRepository;
 
+    /** Construtor padrao da classe CryptoService.
+     * @param cryptoRepository Instancia da classe responsavel por tratar as criptomoedas no sistema de arquivo txt.
+     */
     @Autowired
     public CryptoService(CryptoRepository cryptoRepository) {
         this.cryptoRepository = cryptoRepository;
     }
 
+    /** Metodo responsavel por obter todas as criptomoedas presentes no sistema.
+     * @return Retorna a lista das criptomoedas presentes no sistema.
+     * @throws CryptoServiceException Excecao lancada, caso ocorra algum erro na execucao da funcionalidade da criptomoeda.
+     * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
+     */
     public List<CryptoCurrency> getAllCryptos() {
         try {
             return cryptoRepository.loadCryptos();
@@ -40,6 +51,10 @@ public class CryptoService {
         }
     }
 
+    /** Metodo responsavel por obter todas as criptomoedas formatadas.
+     * @return Retorna a lista de Strings das criptomoedas formatadas.
+     * @throws CryptoServiceException Excecao lancada, caso ocorra algum erro na execucao da funcionalidade da criptomoeda.
+     */
     public List<String> getAllCryptosToString(){
         try{
             return cryptoRepository.loadCryptosToString();
@@ -48,6 +63,11 @@ public class CryptoService {
         }
     }
 
+    /** Metodo responsavel por obter a criptomoeda desejada, a partir do nome informado no sistema.
+     * @param name Recebe o nome da criptomoeda de interesse.
+     * @return Retorna a estrutura padrao da criptomoeda desejada.
+     * @throws CryptoServiceException Excecao lancada, caso ocorra algum erro na execucao da funcionalidade da criptomoeda.
+     */
     public CryptoCurrency getCryptoByName(String name) {
         try {
             return loadCryptoByName(name);
@@ -60,6 +80,14 @@ public class CryptoService {
         }
     }
 
+    /** Metodo responsavel por adicionar dada criptomoeda informada no sistema.
+     * @param cryptoName Recebe o nome da criptomoeda.
+     * @param price Recebe o preco da criptomoeda.
+     * @param growthRate Recebe a taxa de crescimento da criptomoeda.
+     * @param riskFactor Recebe a taxa do fator de risco da criptomoeda no mercado.
+     * @param availableAmount Recebe a quantia total da criptomoeda disponivel.
+     * @throws CryptoServiceException Excecao lancada, caso ocorra algum erro na execucao da funcionalidade da criptomoeda.
+     */
     public void addCrypto(String cryptoName, double price, double growthRate, int riskFactor, double availableAmount) {
         try {
             cryptoName = cryptoName.toUpperCase().trim();
@@ -75,6 +103,10 @@ public class CryptoService {
 
     }
 
+    /** Metodo responsavel por remover certa criptomoeda do sistema, considerando o nome informado.
+     * @param name Recebe o nome da criptomoeda.
+     * @throws CryptoServiceException Excecao lancada, caso ocorra algum erro na execucao da funcionalidade da criptomoeda.
+     */
     public void deleteCryptoByName(String name) {
         try {
             cryptoRepository.deleteCryptoByName(name);
@@ -87,6 +119,12 @@ public class CryptoService {
         }
     }
 
+    /** Metodo responsavel por atualizar a criptomoeda de interesse.
+     * @param cryptoName Recebe o nome da criptomoeda.
+     * @param fieldToEdit Recebe o campo de interesse a ser alterado na criptomoeda
+     * @param newValue Recebe o novo valor a ser inserido, considerando o argumento informado em "fieldToEdit".
+     * @throws CryptoServiceException Excecao lancada, caso ocorra algum erro na execucao da funcionalidade da criptomoeda.
+     */
     public void updateCrypto(String cryptoName, String fieldToEdit, String newValue) {
         try {
             CryptoCurrency crypto = loadCryptoByName(cryptoName);
@@ -112,6 +150,11 @@ public class CryptoService {
         }
     }
 
+    /** Metodo estatico responsavel por validar a insercao de um valor, a partir de um encapsulamento para a classe Double.
+     * @param value Recebe o valor a ser validado.
+     * @return Retorna o valor encapsulado e validado para Double.
+     * @throws IllegalArgumentException Excecao lancada, caso o argumento informado para o metodo seja invalido.
+     */
     private static double validateParseDouble(String value) {
         try {
             return Double.parseDouble(value);
@@ -120,6 +163,11 @@ public class CryptoService {
         }
     }
 
+    /** Metodo responsavel por validar a insercao de um valor, a partir de um encapsulamento para a classe Integer.
+     * @param value Recebe o valor a ser validado.
+     * @return Retorna o valor encapsulado e validado para Integer.
+     * @throws IllegalArgumentException Excecao lancada, caso o argumento informado para o metodo seja invalidado.
+     */
     private int validateParseInt(String value) {
         try {
             return Integer.parseInt(value);
@@ -128,6 +176,11 @@ public class CryptoService {
         }
     }
 
+    /** Metodo responsavel por calcular o total acumulado de uma criptomoeda, durante um periodo de 24 horas.
+     * @param cryptoName Recebe o nome da criptomoeda.
+     * @return Retorna o total acumulado pela criptomoeda informada.
+     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante o calculo do volume acumulado.
+     */
     public static double calculateVolume24h(String cryptoName) throws IOException {
         List<String> history = loadTransactions("ALL");
         LocalDateTime localDateTime = LocalDateTime.now();
