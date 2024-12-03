@@ -132,12 +132,21 @@ public class AdminController {
      * @return Mensagem de retorno da correta execucao das funcoes associadas a remocao da criptomoeda.
      */
     @DeleteMapping("/Cryptos/delete")
-    public ResponseEntity<String> deleteCrypto(@RequestParam String cryptoName) {
+    public ResponseEntity<String> deleteCrypto(@RequestParam String cryptoName, @RequestParam String reason) {
         try {
-            cryptoService.deleteCryptoByName(cryptoName);
+            cryptoService.deleteCryptoByName(cryptoName, reason);
             return ResponseEntity.ok("Criptomoeda removida com sucesso!");
         } catch (CryptoServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/Cryptos/get-deleted-cryptos-history")
+    public ResponseEntity<String> getDeletedCryptosHistory() {
+        try {
+            return ResponseEntity.ok(cryptoService.getDeletedCryptosHistory());
+        } catch (CryptoServiceException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
