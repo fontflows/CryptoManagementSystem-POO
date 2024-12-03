@@ -29,7 +29,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/register", "/login").permitAll()
                         .requestMatchers("/Admin/**").hasRole("ADMIN")
-                        .requestMatchers("/cryptos", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/1/**").hasAnyRole("CLIENT", "ADMIN")
+                        .requestMatchers("/2/**").hasAnyRole("CLIENT", "ADMIN")
+                        .requestMatchers("/3/**").hasAnyRole("CLIENT", "ADMIN")
+                        .requestMatchers("/4/**").hasAnyRole("CLIENT", "ADMIN")
+                        .requestMatchers("/5/**").hasAnyRole("CLIENT", "ADMIN")
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(httpBasic -> {})

@@ -15,14 +15,6 @@ import static com.cryptomanager.repositories.TransactionsRepository.*;
 /** Classe responsavel pelos metodos Service de registro e leitura do histórico de transações de clientes */
 @Service
 public class TransactionsService {
-    private static final Logger logger = LoggerFactory.getLogger(TransactionsService.class);
-
-    /** Constructor TransactionsService
-     */
-    @Autowired
-    public TransactionsService() {
-    }
-
     /**
      * Obtem o historico das transações realizadas em todo o programa baseado no tipo de transação.
      * @param transactionType Tipo de transacao solicitado : {@code SELL}, {@code BUY}, {@code CONVERSION} ou {@code ALL}.
@@ -43,11 +35,9 @@ public class TransactionsService {
             else { return history; }
 
         } catch (IOException e) {
-            logger.error("Erro interno do servidor ao carregar histórico de transações", e);
             throw new TransactionServiceException("Erro interno do servidor ao carregar histórico de transações", e);
 
         } catch (NoSuchElementException | IllegalArgumentException e) {
-            logger.error("Erro ao carregar histórico de transações", e);
             throw new TransactionServiceException("Erro ao carregar histórico de transações: " + e.getMessage(), e);
         }
     }
@@ -72,11 +62,9 @@ public class TransactionsService {
             else { return history; }
 
         } catch (IOException e) {
-            logger.error("Erro interno do servidor ao carregar histórico de transações", e);
             throw new TransactionServiceException("Erro interno do servidor ao carregar histórico de transações", e);
 
         } catch (NoSuchElementException | IllegalArgumentException e) {
-            logger.error("Erro ao carregar histórico de transações", e);
             throw new TransactionServiceException("Erro ao carregar histórico de transações: " + e.getMessage(), e);
         }
     }

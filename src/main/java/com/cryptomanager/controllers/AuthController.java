@@ -41,7 +41,7 @@ public class AuthController {
                                @RequestParam String password,
                                @RequestParam String strategyName) {
         try {
-            clientService.addClient(username, portfolioID, password, strategyName, 0, "CLIENT");
+            clientService.addClient(username, portfolioID, password, strategyName, 0, "UNAUTHORIZED");
         } catch (Exception e) {
             return "redirect:/login?error=register"; // Redireciona para a página de login com um alerta após o cadastro falhar.
         }

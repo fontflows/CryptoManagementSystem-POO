@@ -244,7 +244,7 @@ public class PortfolioService {
             CryptoCurrency crypto = loadCryptoByName(cryptoName);
 
             if (!hasCrypto(cryptoName, portfolio))
-                throw new IllegalArgumentException("Criptomoeda não encontrada no portfólio: " + cryptoName);
+                throw new NoSuchElementException("Criptomoeda não encontrada no portfólio: " + cryptoName);
 
             if (amount <= 0)
                 throw new IllegalArgumentException("Quantidade para venda deve ser maior do que zero");
