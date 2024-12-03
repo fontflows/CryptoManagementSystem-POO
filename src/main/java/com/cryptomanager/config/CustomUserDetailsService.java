@@ -40,7 +40,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         } catch (NoSuchElementException e) {
             throw new ClientServiceException("Cliente não encontrado", e);
         }
-        return User.builder()
+        return User.builder() //Cria um User com os dados corretos de login, depois o Spring Security verifica se os campos inseridos na pagina de login equivalem às informacoes dessa instancia UserDetails.
                 .username(client.getClientID())
                 .password("{noop}" + client.getPassword())
                 .roles(client.getRole())
