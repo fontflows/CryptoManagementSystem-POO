@@ -1,6 +1,7 @@
 package com.cryptomanager.services;
 
 import com.cryptomanager.exceptions.ClientServiceException;
+import com.cryptomanager.exceptions.PortfolioHasInvestmentsException;
 import com.cryptomanager.models.Client;
 import com.cryptomanager.models.Portfolio;
 import com.cryptomanager.repositories.ClientRepository;
@@ -67,7 +68,7 @@ public class ClientService{
         } catch (IOException e) {
             logger.error("Erro ao remover cliente", e);
             throw new ClientServiceException("Erro interno do servidor ao remover cliente" , e);
-        } catch (NoSuchElementException e){
+        } catch (NoSuchElementException | PortfolioHasInvestmentsException e){
             logger.error("Erro ao remover cliente", e);
             throw new ClientServiceException("Erro ao remover cliente: " + e.getMessage(), e);
         }
@@ -79,7 +80,7 @@ public class ClientService{
             client.setPassword(password.trim());
             clientRepository.updateClient(client);
         } catch (IOException e) {
-            logger.error("Erro ao atualizar cliente", e);
+            logger.error("Erro interno do servidor ao atualizar cliente", e);
             throw new ClientServiceException("Erro interno do servidor ao atualizar cliente", e);
         } catch (IllegalArgumentException | NoSuchElementException e) {
             logger.error("Erro ao atualizar cliente", e);
@@ -93,11 +94,36 @@ public class ClientService{
             client.setRole(role);
             clientRepository.updateClient(client);
         } catch (IOException e) {
-            logger.error("Erro ao atualizar cliente", e);
+            logger.error("Erro interno do servidor ao atualizar cliente", e);
             throw new ClientServiceException("Erro interno do servidor ao atualizar cliente", e);
         } catch (IllegalArgumentException | NoSuchElementException e) {
             logger.error("Erro ao atualizar cliente", e);
             throw new ClientServiceException("Erro ao atualizar cliente: " + e.getMessage(), e);
         }
+    }
+
+    public String getUnauthorizedClients(){
+        try {
+            int i = 1;
+            List<Client> clients = clientRepository.loadClients();
+            StringBuilder unauthorizedClients = new StringBuilder();
+            for(Client client : clients){
+                if(client.getRole().equalsIgnoreCase("UNAUTHORIZED")){
+                    unauthorizedClients.append(i).append(". ").append(getClientByClientIDToString(client.getClientID())).append('\n');
+                    i++;
+                }
+            }
+            if(unauthorizedClients.isEmpty()){
+                throw new NoSuchElementException("Nenhum cliente com Role 'UNAUTHORIZED'");
+            }
+            return "| UserID | PortfolioID | Password | Role |\n\n" + unauthorizedClients.toString();
+        } catch (IOException e){
+            logger.error("Erro interno do servidor ao carregar clientes", e);
+            throw new ClientServiceException("Erro interno do servidor ao carregar clientes", e);
+        } catch (NoSuchElementException e){
+            logger.error("Erro ao carregar clientes", e);
+            throw new ClientServiceException("Erro ao carregar clientes: " + e.getMessage(), e);
+        }
+
     }
 }

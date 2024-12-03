@@ -2,6 +2,7 @@ package com.cryptomanager.controllers;
 
 import com.cryptomanager.exceptions.ClientServiceException;
 import com.cryptomanager.exceptions.CryptoServiceException;
+import com.cryptomanager.exceptions.PortfolioHasInvestmentsException;
 import com.cryptomanager.models.StrategyNames;
 import com.cryptomanager.services.*;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -60,7 +61,7 @@ public class AdminController {
      * @return Mensagem de retorno da correta execucao das funcoes associadas a edicao de um cliente.
      */
     @PostMapping("/Clients/add")
-    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN"})) @RequestParam String role){
+    public ResponseEntity<String> addClient(@RequestParam String userID, @RequestParam String portfolioID, @RequestParam String password, @RequestParam StrategyNames strategyNames, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN", "UNAUTHORIZED"})) @RequestParam String role){
         try{
             clientService.addClient(userID, portfolioID, password, strategyNames.getDisplayName(), 0, role);
             return ResponseEntity.ok("Cliente cadastrado com sucesso");
@@ -99,10 +100,19 @@ public class AdminController {
     }
 
     @PostMapping("/Clients/edit-role-by-ID")
-    public ResponseEntity<String> updateUserRole(@RequestParam String userID, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN"})) @RequestParam String role){
+    public ResponseEntity<String> updateUserRole(@RequestParam String userID, @Parameter(description = "Role", schema = @Schema(allowableValues = {"CLIENT", "ADMIN", "UNAUTHORIZED"})) @RequestParam String role){
         try {
             clientService.updateUserRole(userID, role);
             return ResponseEntity.ok("Role atualizada com sucesso!");
+        } catch (ClientServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/Clients/get-unauthorized-clients")
+    public ResponseEntity<String> getUnauthorizedClients(){
+        try{
+            return ResponseEntity.ok(clientService.getUnauthorizedClients());
         } catch (ClientServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -131,12 +141,21 @@ public class AdminController {
      * @return Mensagem de retorno da correta execucao das funcoes associadas a remocao da criptomoeda.
      */
     @DeleteMapping("/Cryptos/delete")
-    public ResponseEntity<String> deleteCrypto(@RequestParam String cryptoName) {
+    public ResponseEntity<String> deleteCrypto(@RequestParam String cryptoName, @RequestParam String reason) {
         try {
-            cryptoService.deleteCryptoByName(cryptoName);
+            cryptoService.deleteCryptoByName(cryptoName, reason);
             return ResponseEntity.ok("Criptomoeda removida com sucesso!");
         } catch (CryptoServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/Cryptos/get-deleted-cryptos-history")
+    public ResponseEntity<String> getDeletedCryptosHistory() {
+        try {
+            return ResponseEntity.ok(cryptoService.getDeletedCryptosHistory());
+        } catch (CryptoServiceException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
