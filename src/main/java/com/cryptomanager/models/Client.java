@@ -1,7 +1,7 @@
 package com.cryptomanager.models;
 
 /**
- * Classe modelo da estrutura padrao do cliente a ser cadastrado/editado no sistema Swagger.
+ * Classe modelo da estrutura padrão do cliente a ser cadastrado/editado no sistema Swagger.
  */
 public class Client {
     private final String ClientID;

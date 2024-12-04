@@ -12,19 +12,12 @@ import java.util.NoSuchElementException;
 
 import static com.cryptomanager.services.CryptoService.calculateVolume24h;
 
-/**
- * Classe responsavel por lidar com a pertinencia de dados das criptomoedas no sistema.
- */
+
 @Repository
 public class CryptoRepository {
     private static final String FILE_PATH = "cryptos.txt";
     private static final String DELETED_HISTORY_PATH = "cryptoDeletionHistory.txt";
 
-    /** Metodo responsavel por salvar dada criptomoeda no arquivo "cryptos.txt".
-     * @param crypto Instancia da classe padrao para a estrutura de qualquer criptomoeda do sistema.
-     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante o salvamento da instancia.
-     * @throws IllegalArgumentException Excecao lancada, caso seja decetado algum argumento invalido para a execucao do metodo.
-     */
     public void saveCrypto(CryptoCurrency crypto) throws IOException {
         if(cryptoExists(crypto.getName())) { throw new IllegalArgumentException("Criptomoeda ja foi cadastrada"); }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
@@ -32,11 +25,6 @@ public class CryptoRepository {
         }
     }
 
-    /** Metodo responsavel por carregar as criptomoedas salvas e presentes o arquivo "cryptos.txt".
-     * @return Retorna a lista de criptomoedas existentes no sistema.
-     * @throws IOException Excecao lancada, caso ocorra algum erro na entrada/saida durante o carregamento das criptomoedas existentes no sistema.
-     * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
-     */
     public List<CryptoCurrency> loadCryptos() throws IOException {
         List<CryptoCurrency> cryptos = new ArrayList<>();
 
@@ -59,10 +47,7 @@ public class CryptoRepository {
         return cryptos;
     }
 
-    /** Metodo responsavel por carregar e formatar as criptomoedas existentes no sistema.
-     * @return Retorna a lista de Strings das criptomoedas formatadas
-     * @throws IOException Excecao lancada, caso ocorrra algum erro de entrada/saida durante o carregamento/formatacao das criptomoedas.
-     */
+
     public List<String> loadCryptosToString() throws IOException{
         List<CryptoCurrency> cryptos = loadCryptos();
         List<String> stringOut = new ArrayList<>();
@@ -72,12 +57,6 @@ public class CryptoRepository {
         return stringOut;
     }
 
-    /** Metodo responsavel por carregar dada criptomoeda, a partir do nome informado.
-     * @param cryptoName Recebe o nome da criptomoeda.
-     * @return Retorna as informacoes da criptomoeda, considerando o nome informado.
-     * @throws IOException Excecao lancada, caso, ocorra algum erro de entrada/saida durante o carregamento da criptomoeda, considerando o nome ofertado.
-     * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
-     */
     public static CryptoCurrency loadCryptoByName(String cryptoName) throws IOException {
         CryptoCurrency crypto = null;
 
@@ -99,12 +78,6 @@ public class CryptoRepository {
         return crypto;
     }
 
-    /** Metodo responsavel por remover a criptomoeda, considerando o nome informado no sistema.
-     * @param cryptoName Recebe o nome da criptomoeda.
-     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a remocao da criptomoeda.
-     * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
-     * @throws IllegalArgumentException Excecao lancada, caso o argumento detectado seja invalido para a execucao do metodo.
-     */
     public void deleteCryptoByName(String cryptoName) throws IOException {
         if(!cryptoExists(cryptoName)) { throw new NoSuchElementException("Criptomoeda não encontrada"); }
 
@@ -127,12 +100,6 @@ public class CryptoRepository {
         }
     }
 
-    /** Metodo responsavel por atualizar certa criptomoeda do sistema, no arquivo "cryptos.txt".
-     * @param updatedCrypto Instancia que recebe a criptomoeda a ser atualizada.
-     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a atualizacao da criptomoeda especificada.
-     * @throws NoSuchElementException Excecao lancada, caso o elemento detectado nao exista para o sistema.
-     * @throws IllegalArgumentException Excecao lancada, caso o argumento detectado seja invalido para a execucao do metodo.
-     */
     public void updateCrypto(CryptoCurrency updatedCrypto) throws IOException {
         if(updatedCrypto == null || updatedCrypto.getName() == null ) { throw new IllegalArgumentException("Criptomoeda inválida");}
 
@@ -156,11 +123,6 @@ public class CryptoRepository {
         }
     }
 
-    /** Metodo responsavel por verificar se determinada criptomoeda existe no sistema.
-     * @param cryptoName Recebe o nome da criptomoeda.
-     * @return Retorna o valor booleano da verificacao (verdadeiro ou falso).
-     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a verificacao.
-     */
     private boolean cryptoExists(String cryptoName) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
             String line;
