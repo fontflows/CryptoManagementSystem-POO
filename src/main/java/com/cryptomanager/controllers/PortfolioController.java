@@ -139,6 +139,17 @@ public class PortfolioController {
         }
     }
 
+    @PostMapping("/get-current-balance")
+    public ResponseEntity<String> getCurrentBalance() {
+        try{
+            return ResponseEntity.ok(portfolioService.getBalance(loginRepository.loadLoggedInfo()[0], loginRepository.loadLoggedInfo()[1]));
+        } catch (PortfolioNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (PortfolioLoadException | IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
     /** Metodo responsavel por realizar a compra da criptomoeda de interesse do usuario.
      * @param cryptoName Recebe o nome da criptomoeda a qual o usuario deseja comprar.
      * @param amount Recebe a quantia que o usuario deseja comprar em seu investimento.

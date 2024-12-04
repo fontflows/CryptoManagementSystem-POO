@@ -173,6 +173,11 @@ public class PortfolioService {
         }
     }
 
+    public String getBalance(String userID, String portfolioID){
+        Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
+        return "Saldo disponivel: " + portfolio.getBalance();
+    }
+
     /** Realiza a compra de uma criptomoeda em um Portfolio.
      * @param userID Identificador do usuario cujo Portfolio sera utilizado.
      * @param portfolioID Identificador do Portfolio do usuario.
