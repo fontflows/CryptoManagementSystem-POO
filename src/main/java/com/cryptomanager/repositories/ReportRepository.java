@@ -174,7 +174,7 @@ public class ReportRepository {
 
     /** Metodo responsavel por gerar um relatorio, a partir de uma lista formatada.
      * @param list Instancia que recebe a lista de Strings das informacoes, para compor o relatorio padronizado no arquivo "reportConfig.txt".
-     * @return Retorna o indice associado a lista gerada.
+     * @return Retorna o indice associado ao relatorio gerado.
      * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
      */
     public int generateListReport(List<String> list) throws IOException{

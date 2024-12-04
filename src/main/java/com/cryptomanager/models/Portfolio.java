@@ -34,7 +34,7 @@ public class Portfolio {
      * @param id Recebe o ID do portfolio.
      * @param userId Recebe o ID do usuario do portfolio.
      * @param investmentStrategy Recebe o tipo de estrategia de investimento do portfolio.
-     * @param balance Recebe o ID do portfolio.
+     * @param balance Recebe o saldo do portfolio.
      * @throws IOException Excecao lancada, caso uma das entradas informadas esteja em um padrao invalido para o sistema.
      */
     public Portfolio(String id, String userId, String investmentStrategy, double balance) throws IOException {

@@ -56,13 +56,13 @@ public class PortfolioController {
     /** Metodo responsavel por realizar a conversao de um tipo de criptomoeda para outro, a partir do ID do portfolio informado pelo usuario.
      * @param fromCryptoName Recebe o nome da criptomoeda a ser convertida.
      * @param toCryptoName Recebe o nome da criptomoeda de interesse do usuario a ser obtida.
-     * @param balance Recebe o saldo que o usuario deseja converter.
+     * @param amount Recebe a quantidade de criptomoeda que o usuario deseja converter.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a conversao do saldo.
      */
     @PostMapping("/crypto-conversion-by-portfolioId")
-    public ResponseEntity<String> convertCrypto(@RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double balance) {
+    public ResponseEntity<String> convertCrypto(@RequestParam String fromCryptoName, @RequestParam String toCryptoName, @RequestParam double amount) {
         try {
-            currencyConverterService.currencyConverter(loginRepository.loadLoggedInfo()[0], loginRepository.loadLoggedInfo()[1], fromCryptoName, toCryptoName, balance);
+            currencyConverterService.currencyConverter(loginRepository.loadLoggedInfo()[0], loginRepository.loadLoggedInfo()[1], fromCryptoName, toCryptoName, amount);
             return ResponseEntity.ok("Criptomoeda convertida com sucesso!");
         } catch (PortfolioNotFoundException | NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -132,6 +132,20 @@ public class PortfolioController {
             return ResponseEntity.ok("Saldo resgatado com sucesso!");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valor invalido para resgatar saldo: " + e.getMessage());
+        } catch (PortfolioNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (PortfolioLoadException | IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    /** Metodo responsavel por exibir o saldo disponivel no portfolio do usuario logado.
+     * @return Retorna o valor do saldo disponivel no portfolio do usuario.
+     */
+    @PostMapping("/get-current-balance")
+    public ResponseEntity<String> getCurrentBalance() {
+        try{
+            return ResponseEntity.ok(portfolioService.getBalance(loginRepository.loadLoggedInfo()[0], loginRepository.loadLoggedInfo()[1]));
         } catch (PortfolioNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (PortfolioLoadException | IOException e) {
