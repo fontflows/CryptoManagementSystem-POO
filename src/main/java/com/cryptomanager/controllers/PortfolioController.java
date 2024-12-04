@@ -139,6 +139,9 @@ public class PortfolioController {
         }
     }
 
+    /** Metodo responsavel por exibir o saldo disponivel no portfolio do usuario logado.
+     * @return Retorna o valor do saldo disponivel no portfolio do usuario.
+     */
     @PostMapping("/get-current-balance")
     public ResponseEntity<String> getCurrentBalance() {
         try{

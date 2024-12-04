@@ -173,6 +173,11 @@ public class PortfolioService {
         }
     }
 
+    /** Obtem o saldo disponivel em um portfolio especificado.
+     * @param userID Identificador do usuario cujo Portfolio sera utilizado.
+     * @param portfolioID Identificador do Portfolio do usuario.
+     * @return Retorna o valor do saldo disponivel no momento.
+     */
     public String getBalance(String userID, String portfolioID){
         Portfolio portfolio = portfolioRepository.loadPortfolioByUserIdAndPortfolioId(userID, portfolioID);
         return "Saldo disponivel: " + portfolio.getBalance();
