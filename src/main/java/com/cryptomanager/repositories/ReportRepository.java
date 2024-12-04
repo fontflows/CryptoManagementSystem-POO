@@ -16,11 +16,16 @@ import java.util.List;
 
 import static com.cryptomanager.repositories.TransactionsRepository.allListsToStringByID;
 
-
+/**
+ * Classe responsavel por lidar com a pertinencia de dados dos relatorios do sistema.
+ */
 @Repository
 public class ReportRepository {
     private int id = readID();
 
+    /** Metodo responsavel por ler o ID do relatorio informado.
+     * @return Retorna o ID apos sua verificacao.
+     */
     private int readID() {
         try (BufferedReader reader = new BufferedReader(new FileReader("reportConfig.txt"))) {
             String line = reader.readLine();
@@ -30,11 +35,20 @@ public class ReportRepository {
         }
     }
 
+    /** Metodo responsavel por salvar o ID do relatorio informado.
+     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
+     */
     private void saveID() throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("reportConfig.txt"))) {
             writer.write(Integer.toString(id));
         }
     }
+
+    /** Metodo responsavel por gerar o relatorio do portfolio atual no sistema.
+     * @param portfolio Instancia que recebe o portfolio informado no sistema.
+     * @return Retorna um indice associado ao relatorio gerado.
+     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
+     */
     public int generateCurrentPortfolioReport(Portfolio portfolio) throws IOException {
 
         LocalDateTime reportDate = LocalDateTime.now();
@@ -95,6 +109,14 @@ public class ReportRepository {
             throw new IOException(e);
         }
     }
+
+    /** Metodo responsavel por gerar a projecao do relatorio, considerando o total de meses informado no sistema.
+     * @param portfolio Instancia que recebe o portfolio associado.
+     * @param months Recebe o total de meses informado no sistema.
+     * @return Retorna um indice associado ao relatorio gerado.
+     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
+     * @throws IllegalStateException Excecao lancada, caso ocorra a invocacao do metodo em um momento inadequado/ilegal.
+     */
     public int generateProjectionReport(Portfolio portfolio,int months) throws IOException {
         if(portfolio.getInvestments().isEmpty())
             throw new IllegalStateException("Portfolio nao tem investimentos, logo nao pode criar report");
@@ -149,6 +171,12 @@ public class ReportRepository {
             throw new IOException(e);
         }
     }
+
+    /** Metodo responsavel por gerar um relatorio, a partir de uma lista formatada.
+     * @param list Instancia que recebe a lista de Strings das informacoes, para compor o relatorio padronizado no arquivo "reportConfig.txt".
+     * @return Retorna o indice associado a lista gerada.
+     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
+     */
     public int generateListReport(List<String> list) throws IOException{
         LocalDateTime reportDate = LocalDateTime.now();
         StringBuilder report = new StringBuilder();
@@ -166,6 +194,11 @@ public class ReportRepository {
             throw new IOException(e);
         }
     }
+
+    /** Metodo responsavel por salvar o relatorio produzido no sistema.
+     * @param report Instancia que recebe o relatorio gerado durante o uso do sistema, pelo usuario.
+     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
+     */
     public void saveReport(String report) throws IOException{
 
         String PATH =  Integer.toString(id);
@@ -178,6 +211,12 @@ public class ReportRepository {
 
         saveID();
     }
+
+    /** Metodo responsavel por obter o sumario dos relatorios.
+     * @return Retorna o sumario gerado/produzido dos relatorios, de maneira formatada.
+     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
+     * @throws IllegalStateException Excecao lancada, caso ocorra a invocacao do metodo em um momento inadequado/ilegal.
+     */
     public StringBuilder getSumReports() throws IOException{
         if(readID() <= 0)
             throw new IllegalStateException("Não há relatórios");
@@ -193,6 +232,13 @@ public class ReportRepository {
         }
         return out;
     }
+
+    /** Metodo responsavel por formatar o relatorio acessado especificamente.
+     * @param idreport Recebe o id do relatorio de interesse.
+     * @return Retorna o relatorio formatado devidamente.
+     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a execucao do metodo.
+     * @throws IllegalStateException Excecao lancada, caso ocorra a invocacao do metodo em um momento inadequado/ilegal.
+     */
     public StringBuilder acessReport(int idreport) throws IOException{
         if(readID() <= 0)
             throw new IllegalStateException("Não há relatórios");

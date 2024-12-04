@@ -3,7 +3,7 @@ package com.cryptomanager.models;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * Classe modelo da estrutura padrão das criptomoedas a serem administradas no sistema Swagger.
+ * Classe modelo da estrutura padrao das criptomoedas a serem administradas no sistema Swagger.
  */
 @Schema(description = "Modelo que representa uma criptomoeda")
 public class CryptoCurrency {
