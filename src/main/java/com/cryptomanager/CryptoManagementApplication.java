@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CryptoManagementApplication {
 
-    /** Main
+    /** Metodo Main que inicia a execução da aplicação.
      * @param args Recebe argumentos da linha de comando.
      */
     public static void main(String[] args) {
