@@ -154,6 +154,7 @@ public class AdminController {
 
     /** Metodo responsavel pela remocao da criptomoeda de interesse do sistema.
      * @param cryptoName Recebe o nome.
+     * @param reason Recebe a razao da remocao da criptomoeda.
      * @return Mensagem de retorno da correta execucao das funcoes associadas a remocao da criptomoeda.
      */
     @DeleteMapping("/Cryptos/delete")

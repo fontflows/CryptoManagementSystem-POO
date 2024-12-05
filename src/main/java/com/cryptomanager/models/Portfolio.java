@@ -99,6 +99,7 @@ public class Portfolio {
     }
 
     /** Metodo que atribuia estrategia de investimento associada ao portfolio do usuario.
+     * @param investmentStrategy Recebe a estrategia de investimento que sera atribuida.
      */
     public void setInvestmentStrategy(InvestmentStrategy investmentStrategy) {
         this.investmentStrategy = investmentStrategy;

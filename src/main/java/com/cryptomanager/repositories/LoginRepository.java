@@ -7,8 +7,7 @@ import java.io.*;
 /**Classe responsavel por lidar com a pertinencia de dados das informacoes do usuario logado*/
 @Repository
 public class LoginRepository {
-
-    public static final String FILE_PATH = "loggedClient.txt";
+    private static final String FILE_PATH = "loggedClient.txt";
 
     /** Metodo responsavel por armazenar os dados do usuario logado.
      * @param userID Recebe o userID do usuario logado.
