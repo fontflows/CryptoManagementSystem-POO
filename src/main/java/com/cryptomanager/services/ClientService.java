@@ -45,6 +45,7 @@ public class ClientService{
     }
 
     /** Metodo responsavel por obter as informacoes formatadas de um cliente especifico.
+     * @param clientID Recebe o identificador do cliente especifico.
      * @return Retorna uma lista com as informacoes de um cliente especifico de modo formatado.
      * @throws ClientServiceException Caso ocorra algum erro no processo de obter as informacoes do cliente.
      */

@@ -57,7 +57,15 @@ public class Client {
     public String getClientID() {
         return ClientID;
     }
+
+    /** Metodo responsavel por atribuir o Role ao cliente cadastrado/editado.
+     * @param role Recebe o Role associada ao cliente.
+     */
     public void setRole(String role) { this.role = role; }
+
+    /** Metodo responsavel por obter o Role associado ao cliente.
+     * @return Retorna o Role associado ao cliente.
+     */
     public String getRole() { return role; }
 
     /** Metodo que sobrepoe a funcionalidade padrão toString()

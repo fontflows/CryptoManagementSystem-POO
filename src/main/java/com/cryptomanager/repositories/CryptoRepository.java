@@ -174,6 +174,11 @@ public class CryptoRepository {
         return false;
     }
 
+    /** Metodo responsavel por salvar uma remocao no historico de criptomoedas removidas.
+     * @param cryptoName Recebe o nome da criptomoeda removida.
+     * @param reason Recebe a razao da remocao da criptomoeda.
+     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a verificacao.
+     */
     public void saveDeletionHistory(String cryptoName, String reason) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(DELETED_HISTORY_PATH, true))) {
             LocalDateTime localDateTime = LocalDateTime.now();
@@ -183,6 +188,10 @@ public class CryptoRepository {
         }
     }
 
+    /** Metodo reponsavel por obter o historico de criptomoedas removidas e formata-lo.
+     * @return Retorna o historico de criptomoedas removidas de maneira formatada.
+     * @throws IOException Excecao lancada, caso ocorra algum erro de entrada/saida durante a verificacao.
+     */
     public String getDeletionHistoryToString() throws IOException{
         StringBuilder history = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(DELETED_HISTORY_PATH))) {

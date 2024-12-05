@@ -150,6 +150,7 @@ public class TransactionsRepository {
     }
 
     /** Obtem todas as transacoes de um usuario de maneira formatada.
+     * @param userID recebe o identificador do usuario especificado.
      * @return {@code String} Todas transacoes de um usuario formatadas em uma String.
      * @throws IOException Caso ocorra um erro na leitura dos dados no arquivo.
      */

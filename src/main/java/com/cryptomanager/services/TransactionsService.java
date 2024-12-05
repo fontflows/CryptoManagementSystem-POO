@@ -44,6 +44,7 @@ public class TransactionsService {
 
     /**
      * Obtem o historico das transacoes realizadas por um cliente baseado no tipo de transacao.
+     * @param userID Recebe o identificador do cliente de interesse.
      * @param transactionType Tipo de transacao solicitado {@code SELL}, {@code BUY}, {@code CONVERSION} ou {@code ALL}.
      * @return {@code String} Lista com o historico ja formatado.
      * @throws TransactionServiceException Caso haja algum erro no carregamento do historico.
